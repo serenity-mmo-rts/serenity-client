@@ -1,14 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Tilemap</title>
-<script type="text/javascript" src="../easeljs/lib/easeljs-0.6.1.min.js"></script>
-<script type="text/javascript" src="../externals/jquery-1.10.1.js"></script>
-<script type="text/javascript" src="../externals/math.js"></script>
-<script src="http://localhost:8000/socket.io/socket.io.js"></script>
-<script>
-
 // resize the canvas
 window.addEventListener('resize', reresize, false);
 
@@ -162,21 +151,21 @@ function initMenu(){
 	
 
 	// base menu	
-	var base_menu_img = new createjs.Bitmap("../resources/icons/Globe.png");
+	var base_menu_img = new createjs.Bitmap("resources/icons/Globe.png");
 	base_menu_img.x = 0;
 	base_menu_img.y = canvas_height - 128;		
 	var base_menu_form = new createjs.Shape();
 	base_menu_form.graphics.drawCircle(64, canvas_height - 64,64);
 	
 	// delete button
-	var delete_button_img = new createjs.Bitmap("../resources/icons/destroy.png");
+	var delete_button_img = new createjs.Bitmap("resources/icons/destroy.png");
 	delete_button_img.x = 5;
 	delete_button_img.y = canvas_height - 128 -64 -20;
 	delete_button_img.scaleX = 0.5;
 	delete_button_img.scaleY = 0.5;	
 	
 	// move button
-	var move_button_img = new createjs.Bitmap("../resources/icons/move.png");
+	var move_button_img = new createjs.Bitmap("resources/icons/move.png");
 	move_button_img.x = 5 + 64;
 	move_button_img.y = canvas_height - 128 -64;	
 	move_button_img.scaleX = 0.5;
@@ -184,7 +173,7 @@ function initMenu(){
 	
 	// build button
 	
-	var build_button_img = new createjs.Bitmap("../resources/icons/build.png");
+	var build_button_img = new createjs.Bitmap("resources/icons/build.png");
 	build_button_img.x = 5 + 64 +64;
 	build_button_img.y = canvas_height - 128 - 64 +40;
 	build_button_img.scaleX = 0.5;
@@ -224,21 +213,21 @@ function initMenu(){
 	}
 	
 	// images 	
-	var bakery_preview = new createjs.Bitmap("../resources/bakery1.png");
+	var bakery_preview = new createjs.Bitmap("resources/objects/bakery1.png");
 		bakery_preview.x = 231;
 		bakery_preview.y = 161;	
 
-	var bank_preview = new createjs.Bitmap("../resources/bank1.png");
+	var bank_preview = new createjs.Bitmap("resources/objects/bank1.png");
 		bank_preview.x = 231 + 129;
 		bank_preview.y = 161;
 		bank_preview.scaleX = (2/3);
 		bank_preview.scaleY = (2/3);
 		
-	var burger_preview = new createjs.Bitmap("../resources/burger1.png");
+	var burger_preview = new createjs.Bitmap("resources/objects/burger1.png");
 		burger_preview.x = 231 + (2*129);
 		burger_preview.y = 161;
 	
-	var butcher_preview = new createjs.Bitmap("../resources/butcher1.png");
+	var butcher_preview = new createjs.Bitmap("resources/objects/butcher1.png");
 		butcher_preview.x = 231 + (3*129);
 		butcher_preview.y = 161;
 	
@@ -300,7 +289,7 @@ function initHeader(){
 	;
 	
 	woodi = new Image();
-	woodi.src = "../resources/icons/Wood_02.png";	
+	woodi.src = "resources/icons/Wood_02.png";	
 	wood = new createjs.Bitmap(woodi);		
 	wood.x = (canvas_width/2) -400 +10;
 	wood.y = 0;
@@ -539,7 +528,7 @@ function drawCapitol() {
 	stage.addChild(capitol_container);
 		
 	ciz= new Image();
-	ciz.src = "../resources/Cicero.jpg";	
+	ciz.src = "resources/Cicero.jpg";	
 		
 	cicero = new createjs.Bitmap(ciz);
 	
@@ -551,7 +540,7 @@ function drawCapitol() {
 	
 	var button_height = 63;
 	
-	var back_button = new createjs.Bitmap("../resources/button.gif");
+	var back_button = new createjs.Bitmap("resources/button.gif");
 		back_button.x = 1;	
 		back_button.y = canvas_height - button_height;			
 	// text menu
@@ -595,7 +584,7 @@ function buildhouse(evt1) {
 		move = false;
 		move_count = 1;
 		img = new Image();
-		img.src = "../resources/bank1.png";	
+		img.src = "resources/objects/bank1.png";	
 		
 		img_height = img.height;
 		img_width = img.width;
@@ -962,37 +951,3 @@ function tick(event) {
 	// update canvas  
 	stage.update(event);
 }
-
-
-
-
-
-</script>
-
-
-<style>
-body
-{
-background-color: rgba(200,200,200,1);
-}
-
-#canvas
-{
-background-color: rgba(235,217,118,0.3);
-}
-</style>
-
-
-
-</head>
-<body bgcolor="black" onLoad="init();">
-<div class="contain" style="width:0px; 
-                             height: 0px; 							
-                             position: absolute; left: 0px; top: 0px;
-                             border: none">
-<canvas style="position: relative" id="canvas"  width="1200" height="600"> Canvas not supported. Please update your browser. </canvas>
-</div>
-
-</body>
-</html>
-

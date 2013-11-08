@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Tilemap</title>
+<script type="text/javascript" src="lib/easeljs-0.6.1.min.js"></script>
+<script type="text/javascript" src="lib/jquery-1.10.1.js"></script>
+<script type="text/javascript" src="lib/math.js"></script>
+<script type="text/javascript" src="client.js"></script>
+<script src="http://localhost:8000/socket.io/socket.io.js"></script>
+
+<style>
+body
+{
+background-color: rgba(200,200,200,1);
+}
+
+#canvas
+{
+background-color: rgba(235,217,118,0.3);
+}
+</style>
+
+
+
+</head>
+<body bgcolor="black" onLoad="init();">
+<div class="contain" style="width:0px; 
+                             height: 0px; 							
+                             position: absolute; left: 0px; top: 0px;
+                             border: none">
+<canvas style="position: relative" id="canvas"  width="1200" height="600"> Canvas not supported. Please update your browser. </canvas>
+</div>
+
+</body>
+</html>
+
