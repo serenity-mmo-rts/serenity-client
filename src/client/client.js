@@ -108,8 +108,8 @@ function init() {
     
     socket = io.connect('http://localhost:8000');
     socket.on('mapData', onMapDataReceived);
-  
 }
+
 
 function onMapDataReceived(data){
     mapData = data;
