@@ -7,6 +7,8 @@ var MapData = function(layerid,width,height,mapTypeId) {
     this.objects = [];
 
     this.collisionDetecttion = function (object) {
-        return this.width*this.height;
+        object.width
+        var items = quad.retrieve({x:11, y:20, height:10, width:20});
+        return items;
     }
 }
