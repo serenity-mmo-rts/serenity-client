@@ -1,5 +1,5 @@
 // resize the canvas
-window.addEventListener('resize', reresize, false);
+window.addEventListener('resize', resize, false);
 
 function setup() {
 	stage.canvas.height = window.innerHeight;    
@@ -8,12 +8,12 @@ function setup() {
 	canvas_width = window.innerWidth; 	
 }
 
-function reresize() {
+function resize() {
 	stage.canvas.height = window.innerHeight;    
     stage.canvas.width = window.innerWidth;  
 	canvas_height = window.innerHeight; 
 	canvas_width = window.innerWidth; 
-	kill_child = menu_container.removeAllChildren();
+	menu_container.removeAllChildren();
 	initHeader();
 	initMenu(); 		
 }
@@ -154,28 +154,22 @@ function initMenu(){
 	var base_menu_img = new createjs.Bitmap("resources/icons/Globe.png");
 	base_menu_img.x = 0;
 	base_menu_img.y = canvas_height - 128;		
-	var base_menu_form = new createjs.Shape();
-	base_menu_form.graphics.drawCircle(64, canvas_height - 64,64);
 	
 	// delete button
 	var delete_button_img = new createjs.Bitmap("resources/icons/destroy.png");
-	delete_button_img.x = 5;
-	delete_button_img.y = canvas_height - 128 -64 -20;
 	delete_button_img.scaleX = 0.5;
 	delete_button_img.scaleY = 0.5;	
 	
 	// move button
 	var move_button_img = new createjs.Bitmap("resources/icons/move.png");
-	move_button_img.x = 5 + 64;
-	move_button_img.y = canvas_height - 128 -64;	
+	
 	move_button_img.scaleX = 0.5;
 	move_button_img.scaleY = 0.5;	
 	
 	// build button
 	
 	var build_button_img = new createjs.Bitmap("resources/icons/build.png");
-	build_button_img.x = 5 + 64 +64;
-	build_button_img.y = canvas_height - 128 - 64 +40;
+
 	build_button_img.scaleX = 0.5;
 	build_button_img.scaleY = 0.5;		
 	
@@ -233,7 +227,7 @@ function initMenu(){
 	
 	build_menu_container.addChild(build_menu_main_rect,build_menu_header_rect3,build_menu_header_rect2,build_menu_header_rect1,build_menu_grid_container,bakery_preview,bank_preview,burger_preview,butcher_preview);
 	build_button_container.addChild(build_button_img);	
-	baseMenu_container.addChild(base_menu_img,base_menu_form);
+	baseMenu_container.addChild(base_menu_img);
 	menu_container.addChild(baseMenu_container);
 	
 	// event listener for main menu
@@ -248,7 +242,18 @@ function initMenu(){
 function click_main_menu() { 
 	nr_child = menu_container.getNumChildren();
 	if (nr_child < 3){
+	
+	menu_buttons[0].x =  5;
+	menu_buttons[0].y = canvas_height - 128 -84;
+	
+	menu_buttons[1].x =  64 +5;
+	menu_buttons[1].y =canvas_height - 128 -64;	
+	
+	menu_buttons[2].x = 128 +5;
+	menu_buttons[2].y =canvas_height - 128 -44;		
+	
 	menu_container.addChild(menu_buttons[0],menu_buttons[1],menu_buttons[2]);
+	
 	menu_buttons[0].addEventListener("click", deletehouse);
 	menu_buttons[1].addEventListener("click", movehouse);	
 	menu_buttons[2].addEventListener("click",click_build_menu);
@@ -415,8 +420,6 @@ function handleMousedownMap(evt) {
 			document.body.style.cursor='default';
 			grid_con = main_container.getChildAt(2);			
 			main_container.removeChild(grid_con);
-			burger.localBuildPosX = local_buildXpos2;
-			burger.localBuildPosY = local_buildYpos2;
             socket.emit('buildHouse', { buildXpos2: local_buildXpos2, local_buildYpos2: local_buildYpos2 } );
 			amount_of_wood -=10;				//   put Object into collition matrix
 				putx = Col_ArrX[i];
@@ -609,7 +612,7 @@ function buildhouse(evt1) {
 		burger.x = x_int_pos;
 		burger.y = y_int_pos;
 		
-		just_start = true;	
+		//just_start = true;	
 		build = true;			
 		obj_container.addChild(burger);	
 		building_counter = building_counter +1;		
@@ -672,9 +675,6 @@ function movehouse(evt1) {
 		move_count = 0;
 		
 	}
-	
-	
-
 		
 }
 
@@ -691,18 +691,6 @@ function makeground(h,w) {
 		lowerX: (w/2),
 		lowerY: h
 	}	
-	
-	// specific but precise (maybe)
-	//ground = {
-	//	leftX : 0, 
-	//	leftY : 149,
-	//	rightX : 213,
-	//	rightY : 152,	
-	//	upperX : 102,
-	//	upperY: 98,
-	//	lowerX: 115,
-	//	lowerY: 206
-	//}
 	
 	return ground;
 }
@@ -845,23 +833,7 @@ function calculateCollition(X,Y) {
 function tick(event) {
 
 		if (build) { 
-			if (just_start)	{
-				
-				// after hit building
-				l = obj_container.getNumChildren();
-				start_movement = false;			
-				child = obj_container.getChildAt(l-1);				
-				var pt = child.globalToLocal(stage.mouseX, stage.mouseY);
-				if (child.hitTest(pt.x, pt.y)) { 
-					start_movement = true;
-					just_start = false;	
-					local_buildXpos2 = local_buildXpos;
-					local_buildYpos2 = local_buildYpos;					
-					local_buildYpos2 = local_buildYpos2;			
-				}
-			}
 			
-			else if (start_movement) {
 			
 				// get offset	
 				xoffinreal = (stage.mouseX - (burger.x+global_offsetX)) + burger.x -100;
@@ -869,10 +841,7 @@ function tick(event) {
 			
 				burger.x =(Math.floor(xoffinreal / 32))*32;
 				burger.y =(Math.floor(yoffinreal / 16))*16;
-				
-				
-
-				
+						
 				var edges = calc_edges(burger.x,burger.y,border);
 				get_tiles_from_world_coords(edges);
 				get_all_coll_points(Xlane,Ylane);
@@ -884,7 +853,7 @@ function tick(event) {
 				else {
 				burger.alpha = 0.5;
 				}								
-			}						
+									
 		}
 		
 		else if (moving) { // move building
