@@ -119,7 +119,8 @@ function onMapDataReceived(data){
 	
 	// init Grid	
 	initGrid();
-	menu_buttons = initMenu();
+	//menu_buttons = initMenu();
+	all_menu  = new BuildMenu(buildhouse,deletehouse,movehouse,menu_container);
 	initHeader();
 	Matrix = getMatrix();
 	
@@ -141,6 +142,7 @@ function onMapDataReceived(data){
 
 
 // make button and add it to button container
+/**
 function initMenu(){
 	baseMenu_container = new createjs.Container();
 	baseMenu_container.name = "menu";
@@ -282,7 +284,7 @@ function click_build_menu() {
 	}
 }
 
-
+**/
 
 function initHeader(){
 	// headermenu
