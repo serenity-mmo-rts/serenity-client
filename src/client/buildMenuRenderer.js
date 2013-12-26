@@ -134,18 +134,18 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 	}
 
 
-function click_build_menu() { 
-	nr_child = menu_container.getNumChildren();
-	if (nr_child < 6){
-	menu_container.addChild(menu_buttons[3]);
-	menu_buttons[3].children[6].addEventListener("click",eventBuild);	
-	stage.update();
+	function click_build_menu() { 
+		nr_child = menu_container.getNumChildren();
+		if (nr_child < 6){
+		menu_container.addChild(menu_buttons[3]);
+		menu_buttons[3].children[6].addEventListener("click",eventBuild);	
+		stage.update();
+		}
+		else {
+		kill_child = menu_container.getChildAt(5);
+		menu_container.removeChild(kill_child);
+		}
 	}
-	else {
-	kill_child = menu_container.getChildAt(5);
-	menu_container.removeChild(kill_child);
-	}
-}
 
 
 
