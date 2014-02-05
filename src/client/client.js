@@ -207,9 +207,9 @@ function handleMousedownMap(evt) {
 			main_container.removeChild(grid_con);
             socket.emit('buildHouse', { buildXpos2: local_buildXpos2, local_buildYpos2: local_buildYpos2 } );
 			amount_of_wood -=10;				//   put Object into collition matrix
-				putx = Col_ArrX[i];
-				puty = Col_ArrY[i];				
-				Matrix[putx][puty] = 101;
+				//putx = Col_ArrX[i];
+				//puty = Col_ArrY[i];
+				//Matrix[putx][puty] = 101;
 		} 
 	}	
 
