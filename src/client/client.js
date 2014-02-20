@@ -62,7 +62,6 @@ var destroyed = false;
 
 ///// OBJECTS /////
 var current_object;
-var grid_con;
 var ground;
 var menu_buttons;
 
@@ -95,7 +94,6 @@ function init() {
 	
 	map_container = new createjs.Container();
 	obj_container = new createjs.Container();
-	grid_container = new createjs.Container();		
 	
 	stage.mouseMoveOutside = true;
 	main_container.mouseMoveOutside = true;
@@ -113,12 +111,9 @@ function onMapDataReceived(data){
 	tileset.src = mapData.tilesets[0].image;
 	//tileset.onLoad = initLayers();
 	tileset.onLoad = new Map(mapData,map_container);
-	
-	
-	// init Grid	
-	initGrid();
+
 	//menu_buttons = initMenu();
-	buildMenu  = new BuildMenu(buildhouse,deletehouse,movehouse,menu_container);
+	buildMenu  = new BuildMenu(buildhouse,deletehouse,movehouse,menu_container);  // (func, func,func,container)
 	headMenu = new HeaderMenu(menu_container);
 	Matrix = getMatrix();
 	
@@ -139,60 +134,7 @@ function onMapDataReceived(data){
 }
 
 
-function initGrid() {
 
-	for ( var y = 0; y < 90; y++) {	
-	
-	diamond = {
-		upX : 0,
-		upY : -1440,
-		riX : 32,
-		riY : -1424,
-		loX : 0,
-		loY : -1408,
-		leX : -32, 
-		leY : -1424
-	}
-	
-		diamond.upX = diamond.leX - (y*32);
-		diamond.upY = diamond.leY + (y*16);
-		diamond.riX = diamond.riX - (y*32);
-		diamond.riY = diamond.riY + (y*16);
-		diamond.loX = diamond.loX - (y*32)
-		diamond.loY = diamond.loY + (y*16);	
-		diamond.leX = diamond.leX - (y*32)
-		diamond.leY = diamond.leY + (y*16);
-	
-	
-		for ( var x = 0; x < 90; x++) {			
-			
-			
-		// wired exeption for first row
-		if (x == 0) {		
-			var grid = new createjs.Shape();
-			grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(0- (y*32),- 1440 + (y*16)).lineTo(32 - (y*32),16- 1440 + (y*16)).lineTo(0 - (y*32),32- 1440 + (y*16)).lineTo(-32 - (y*32),16- 1440 + (y*16)).lineTo(0 - (y*32),- 1440 + (y*16));	
-			grid.alpha = 0.1;
-			grid_container.addChild(grid);
-		}	
-		else {
-		// add grid
-			var grid = new createjs.Shape();
-			grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(diamond.upX,diamond.upY).lineTo(diamond.riX,diamond.riY).lineTo(diamond.loX,diamond.loY).lineTo(diamond.leX,diamond.leY).lineTo(diamond.upX,diamond.upY);			
-			grid.alpha = 0.1;
-			grid_container.addChild(grid);		
-		}
-			
-			diamond.upX = diamond.riX;
-			diamond.upY = diamond.riY;
-			diamond.leX = diamond.loX;
-			diamond.leY = diamond.loY;
-			diamond.riX = diamond.riX +32;
-			diamond.riY = diamond.riY +16;
-			diamond.loX = diamond.loX +32;
-			diamond.loY = diamond.loY +16;
-		}
-	}		
-}
 
 
 // event Listener for dragging map
@@ -203,8 +145,6 @@ function handleMousedownMap(evt) {
 		if (allowedToBuild) {
 			build = false;
 			document.body.style.cursor='default';
-			grid_con = main_container.getChildAt(2);			
-			main_container.removeChild(grid_con);
             socket.emit('buildHouse', { buildXpos2: local_buildXpos2, local_buildYpos2: local_buildYpos2 } );
 			amount_of_wood -=10;				//   put Object into collition matrix
 				//putx = Col_ArrX[i];
@@ -356,11 +296,10 @@ function buildhouse(evt1) {
 		obj_container.removeChild(del_child); 
 		build = false;
 		document.body.style.cursor='default';
-		grid_con = main_container.getChildAt(2);			
-		main_container.removeChild(grid_con);
+
+
 	}
 	else {
-		main_container.addChild(grid_container);
 		document.body.style.cursor='pointer';
 		
 		kill_child = menu_container.getChildAt(5);
@@ -413,8 +352,6 @@ function deletehouse(evt1) {
 		var del_child = obj_container.getChildByName(obname); 
 		obj_container.removeChild(del_child);
 		document.body.style.cursor='default';
-		grid_con = main_container.getChildAt(2);			
-		main_container.removeChild(grid_con);		
 	}
 	
 	build = false;
@@ -440,19 +377,15 @@ function movehouse(evt1) {
 		var del_child = obj_container.getChildByName(obname); 
 		obj_container.removeChild(del_child);
 		document.body.style.cursor='default';
-		grid_con = main_container.getChildAt(2);			
-		main_container.removeChild(grid_con);		
 	}
-	
-	main_container.addChild(grid_container);
+
 	build = false;
 	document.body.style.cursor='default';
 	destroy = false;
 	del_count =1;
 	move = truthArr[move_count];
 	if (!move) {
-		grid_con = main_container.getChildAt(2);			
-		main_container.removeChild(grid_con);
+
 	}
 	
 	move_count += 1;
