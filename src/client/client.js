@@ -101,7 +101,10 @@ function init() {
 	obj_container.mouseMoveOutside = true;
     
     socket = io.connect('http://localhost:8000');
-    socket.on('mapData', onMapDataReceived);
+
+    socket.emit('ready');
+
+    socket.on('mapData', (function(msg){ onMapDataReceived(msg.message);}));
 }
 
 
