@@ -100,17 +100,51 @@ function init() {
 	map_container.mouseMoveOutside = true;
 	obj_container.mouseMoveOutside = true;
     
-    socket = io.connect('http://localhost:8000');
+    socket = io.connect('http://localhost');
 
     socket.emit('ready');
 
     socket.on('mapData', (function(msg){ onMapDataReceived(msg.message);}));
+
+    socket.on('loginPrompt', (function(){
+        $(function() {
+            $("<form><fieldset><label for=\"name\">Name</label><input type=\"text\" name=\"name\" id=\"name\" /></fieldset></form>")
+                .dialog({
+                    autoOpen: true,
+                    modal: true,
+                    open: function(event,ui) { ... },
+                    close: function(event,ui) {
+
+                        $(this).dialog('destroy');
+                    }
+                    draggable: false,
+                    resizable: false
+            })
+        });
+
+        $.msgBox({ type: "prompt",
+            title: "Log In",
+            inputs: [
+                { header: "User Name", type: "text", name: "username" },
+                { header: "Password", type: "password", name: "password" },
+                { header: "Remember me", type: "checkbox", name: "rememberMe", value: "theValue" }],
+            buttons: [
+                { value: "Login" }, {value:"Cancel"}],
+            success: function (result, values) {
+                socket.emit('login',values);
+            }
+        });
+        $( "#dialog-form" ).dialog( "open" );
+
+    }));
+
+
 }
 
 
 function onMapDataReceived(data){
     mapData = data;
-	tileset = new Image();	
+	tileset = new Image();
 	tileset.src = mapData.tilesets[0].image;
 	//tileset.onLoad = initLayers();
 	tileset.onLoad = new Map(mapData,map_container);
@@ -119,12 +153,12 @@ function onMapDataReceived(data){
 	buildMenu  = new BuildMenu(buildhouse,deletehouse,movehouse,menu_container);  // (func, func,func,container)
 	headMenu = new HeaderMenu(menu_container);
 	Matrix = getMatrix();
-	
+
 	// inherit
-	main_container.addChild(map_container,obj_container);	
+	main_container.addChild(map_container,obj_container);
 	stage.addChild(main_container,menu_container);
-	
-					
+
+
 	// event listener for dragging map
 	main_container.addEventListener("mousedown", handleMousedownMap);
 

@@ -5,6 +5,8 @@
 <title>Tilemap</title>
 <script type="text/javascript" src="lib/easeljs-0.6.1.min.js"></script>
 <script type="text/javascript" src="lib/jquery-1.10.1.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+<script type="text/javascript" src="lib/jquery.msgBox.js"></script>
 <script type="text/javascript" src="lib/math.js"></script>
 <script type="text/javascript" src="mapRenderer.js"></script>
 <script type="text/javascript" src="buildMenuRenderer.js"></script>
@@ -13,7 +15,7 @@
 <script type="text/javascript" src="sidebarRenderer.js"></script>
 <script type="text/javascript" src="chatRenderer.js"></script>
 <script type="text/javascript" src="client.js"></script>
-<script src="http://localhost:8000/socket.io/socket.io.js"></script>
+<script src="http://localhost/socket.io/socket.io.js"></script>
 
 <style>
 body
@@ -36,6 +38,19 @@ background-color: rgba(235,217,118,0.3);
                              position: absolute; left: 0px; top: 0px;
                              border: none">
 <canvas style="position: relative" id="canvas"  width="1200" height="600"> Canvas not supported. Please update your browser. </canvas>
+</div>
+
+<div id="dialog-form" title="Create new user">
+    <p class="validateTips">All form fields are required.</p>
+
+    <form>
+        <fieldset>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" value=""/>
+        </fieldset>
+    </form>
 </div>
 
 </body>
