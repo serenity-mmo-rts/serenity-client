@@ -3,7 +3,17 @@
 
 var BuildMenu = function (eventBuild, eventDelete, eventMove, menu_container) {
 
-    var menu_buttons;
+    this.init(eventBuild, eventDelete, eventMove, menu_container)
+
+
+}
+
+BuildMenu.prototype.init = function (eventBuild, eventDelete, eventMove, menu_container) {
+    var self = this;
+    this.eventBuild = eventBuild;
+    this.eventDelete = eventDelete;
+    this.eventMove = eventMove;
+    this.menu_buttons = [];
 
     baseMenu_container = new createjs.Container();
     baseMenu_container.name = "menu";
@@ -98,32 +108,31 @@ var BuildMenu = function (eventBuild, eventDelete, eventMove, menu_container) {
     menu_container.addChild(baseMenu_container);
 
     // event listener for main menu
-    baseMenu_container.addEventListener("click", this.click_main_menu);
+    baseMenu_container.addEventListener("click", function () {self.click_main_menu()});
 
 
-    menu_buttons = [delete_button_img, move_button_img, build_button_container, build_menu_container];
-
-
+    this.menu_buttons = [delete_button_img, move_button_img, build_button_container, build_menu_container];
 }
 
 BuildMenu.prototype.click_main_menu = function () {
+    var self = this;
     nr_child = menu_container.getNumChildren();
     if (nr_child < 3) {
 
-        menu_buttons[0].x = 5;
-        menu_buttons[0].y = canvas_height - 128 - 84;
+        this.menu_buttons[0].x = 5;
+        this.menu_buttons[0].y = canvas_height - 128 - 84;
 
-        menu_buttons[1].x = 64 + 5;
-        menu_buttons[1].y = canvas_height - 128 - 64;
+        this.menu_buttons[1].x = 64 + 5;
+        this.menu_buttons[1].y = canvas_height - 128 - 64;
 
-        menu_buttons[2].x = 128 + 5;
-        menu_buttons[2].y = canvas_height - 128 - 44;
+        this.menu_buttons[2].x = 128 + 5;
+        this.menu_buttons[2].y = canvas_height - 128 - 44;
 
-        menu_container.addChild(menu_buttons[0], menu_buttons[1], menu_buttons[2]);
+        menu_container.addChild(this.menu_buttons[0], this.menu_buttons[1], this.menu_buttons[2]);
 
-        menu_buttons[0].addEventListener("click", eventDelete);
-        menu_buttons[1].addEventListener("click", eventMove);
-        menu_buttons[2].addEventListener("click", click_build_menu);
+        this.menu_buttons[0].addEventListener("click", function() { self.eventDelete() });
+        this.menu_buttons[1].addEventListener("click", function() { self.eventMove() });
+        this.menu_buttons[2].addEventListener("click", function() { self.click_build_menu() });
         stage.update();
     }
     else {
@@ -137,10 +146,11 @@ BuildMenu.prototype.click_main_menu = function () {
 
 
 BuildMenu.prototype.click_build_menu = function () {
+    var self = this;
     nr_child = menu_container.getNumChildren();
     if (nr_child < 6) {
-        menu_container.addChild(menu_buttons[3]);
-        menu_buttons[3].children[6].addEventListener("click", eventBuild);
+        menu_container.addChild(this.menu_buttons[3]);
+        this.menu_buttons[3].children[6].addEventListener("click", function() { self.eventBuild() } );
         stage.update();
     }
     else {
