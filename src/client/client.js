@@ -22,6 +22,7 @@ function resize() {
 var stage;
 var mapData;
 var socket;
+var userid;
 
 ///// PARAMETERS /////
 // Canvas
@@ -100,45 +101,17 @@ function init() {
 	map_container.mouseMoveOutside = true;
 	obj_container.mouseMoveOutside = true;
     
-    socket = io.connect('http://localhost');
+    socket = io.connect('http://localhost:8080');
 
     socket.emit('ready');
 
     socket.on('mapData', (function(msg){ onMapDataReceived(msg.message);}));
 
+    $( "#login-form" ).dialog( "open" );
+
     socket.on('loginPrompt', (function(){
-        $(function() {
-            $("<form><fieldset><label for=\"name\">Name</label><input type=\"text\" name=\"name\" id=\"name\" /></fieldset></form>")
-                .dialog({
-                    autoOpen: true,
-                    modal: true,
-                    open: function(event,ui) { ... },
-                    close: function(event,ui) {
-
-                        $(this).dialog('destroy');
-                    }
-                    draggable: false,
-                    resizable: false
-            })
-        });
-
-        $.msgBox({ type: "prompt",
-            title: "Log In",
-            inputs: [
-                { header: "User Name", type: "text", name: "username" },
-                { header: "Password", type: "password", name: "password" },
-                { header: "Remember me", type: "checkbox", name: "rememberMe", value: "theValue" }],
-            buttons: [
-                { value: "Login" }, {value:"Cancel"}],
-            success: function (result, values) {
-                socket.emit('login',values);
-            }
-        });
-        $( "#dialog-form" ).dialog( "open" );
-
+        $( "#login-form" ).dialog( "open" );
     }));
-
-
 }
 
 
