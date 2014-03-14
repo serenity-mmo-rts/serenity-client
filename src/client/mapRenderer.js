@@ -1,11 +1,12 @@
 // loading layers
 var Map = function initLayers(mapData,map_container) {
+
 	// compose EaselJS tileset from image (fixed 64x64 now, but can be parametized)
 	var imageData = {
 		images : [ tileset ],
 		frames : {
 			width : 64,//in pixel
-			height :64,//in pixel
+			height :64//in pixel
 		}
 	};
 	// create spritesheet
@@ -37,4 +38,11 @@ var Map = function initLayers(mapData,map_container) {
 			}
 		}		
 	}
+
+
+
+
+
+
+
 }
