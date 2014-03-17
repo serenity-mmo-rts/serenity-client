@@ -1,14 +1,12 @@
-// resize the whole canvas
-window.addEventListener('resize', resize, false);
+
 
 //// GLOBAL VARIABLES ////
 var stage;
 var socket;
-var currentLayer = 1;
-var t;
-
-// OBJECTS
-var current_object;
+var currentLayer = 1;      // Layers number
+var t = 0;                     // Tick counter
+var render = false;        // whether to render or not
+var current_object;        // current object under mouse
 
 
 
@@ -19,23 +17,23 @@ function init() {
 	stage = new createjs.Stage("canvas");
     stage.mouseMoveOutside = true;
 
-    main_container1 = new createjs.Container();
-    main_container2 = new createjs.Container();
-    main_container3 = new createjs.Container();
-    main_container4 = new createjs.Container();
-    main_container5 = new createjs.Container();
-    main_container6 = new createjs.Container();
+    var main_container1 = new createjs.Container();
+    var main_container2 = new createjs.Container();
+    var main_container3 = new createjs.Container();
+    var main_container4 = new createjs.Container();
+    var main_container5 = new createjs.Container();
+    var main_container6 = new createjs.Container();
 
-    menu_container1 = new createjs.Container();
-    menu_container2 = new createjs.Container();
-    menu_container3 = new createjs.Container();
-    menu_container4 = new createjs.Container();
-    menu_container5 = new createjs.Container();
-    menu_container6 = new createjs.Container();
+    var menu_container1 = new createjs.Container();
+    var menu_container2 = new createjs.Container();
+    var menu_container3 = new createjs.Container();
+    var menu_container4 = new createjs.Container();
+    var menu_container5 = new createjs.Container();
+    var menu_container6 = new createjs.Container();
 
     // combine containers
-    main = [main_container1,main_container2,main_container3,main_container4,main_container5, main_container6];
-    menu = [menu_container1,menu_container2,menu_container3,menu_container4,menu_container5, menu_container6];
+    var main = [main_container1,main_container2,main_container3,main_container4,main_container5, main_container6];
+    var menu = [menu_container1,menu_container2,menu_container3,menu_container4,menu_container5, menu_container6];
 
 	// resize to full window
     stage.canvas.height = window.innerHeight;
@@ -83,16 +81,19 @@ function goLayerDown() {
     tick();
 }
 
+
+///// TICK METHODS /////
+
 // get object under mouse position
 function getCurrentObject() {
-    l = obj_container.getNumChildren();
+    var l = main[currentLayer].getChildAt(1).getNumChildren(); // Number of Objects
     var hit_object = false;
-    for(var i = 0; i<l; i++){
-        child = obj_container.getChildAt(i);
+    for(var i = 0; i<l; i++){ // loop through all objects
+        var child = main[currentLayer].getChildAt(1).getChildAt(i);
         var pt = child.globalToLocal(stage.mouseX, stage.mouseY);
         if (child.hitTest(pt.x, pt.y)) {
             hit_object = true;
-            current_object = obj_container.getChildAt(i);
+            current_object = child;
         }
     }
 }
@@ -100,26 +101,35 @@ function getCurrentObject() {
 
 // move object
 function moveCurrentObject(current_object) {
-    var xoffinreal = (stage.mouseX - (this.x+global_offsetX)) + current_object.x -100;
-    var yoffinreal = (stage.mouseY - (this.y+global_offsetY)) + current_object.y -100;
+    var xoffinreal = (stage.mouseX - (this.x+layerData.global_offsetX)) + this.x -100;
+    var yoffinreal = (stage.mouseY - (this.y+layerData.global_offsetY)) + this.y -100;
 
     this.x =(Math.floor(xoffinreal / 32))*32;
     this.y =(Math.floor(yoffinreal / 16))*16;
 }
 
+
 // tick function called every frame
 function tick(event) {
 
     t+=1; // tick counter
+    render = createjs.Ticker.getPaused();    // check whether there is something to render
 
-		if  (moving || build ) { // move object
-            moveCurrentObject();
+		if  (layerData.moving || layerData.build ) { // move object
+            moveCurrentObject(current_object);
 		}
 
 
-		else if (t%15 == 0) {  // every 500ms
+		else if (t == 6) {  // every 200ms
             getCurrentObject();
+            t = 0;
 		}
+
+     if (render) {
+
+         stage.update();
+
+     }
 
 }
 

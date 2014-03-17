@@ -1,3 +1,6 @@
+
+
+
 var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu_container,stage) {
 
     //// GLOBAL VARIABLES /////
@@ -23,6 +26,7 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
     var moving = false;
     var destroyed = false;
     var truthArr = [false,true];
+    var visit = false;
 
      // setup containers
     map_container = new createjs.Container();
@@ -56,30 +60,34 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
         if (build) { // build object
             if (allowedToBuild) {   // collision  detection from server goes here
                 build = false;
+                // turn rendering off
+                createjs.Ticker.setPaused(true);
+                // send to server
                 socket.emit('buildHouse', { buildXpos2: local_buildXpos2, local_buildYpos2: local_buildYpos2 } );
-                stage.update();
             }
         }
 
         else if (destroy) { // delete object
             if (hit_object){
+                // remove object and directly render it
                 obj_container.removeChild(current_object);
                 stage.update();
             }
         }
 
         else if (move) { // move object
-            if (hit_object && visit ==0){
+            if (hit_object && !visit){
                 moving = true;
-                visit = 1;
+                visit = true;
 
                 // turn rendering on
                 createjs.Ticker.setPaused(false);
+                // get offset
                 offset = {
                     x:evt.target.x-evt.stageX,
                     y:evt.target.y-evt.stageY
                 };
-
+                // calculate global offset
                 evt.addEventListener("mousemove",function(ev) {
                     ev.target.x = ev.stageX+offset.x;
                     ev.target.y = ev.stageY+offset.y;
@@ -88,11 +96,11 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
                 });
 
             }
-            else if (hit_object && visit ==1 && allowedToBuild) {
+            else if (hit_object && visit && allowedToBuild) {
 
                 moving = false;
                 // turn rendering off
-                createjs.Ticker.setPaused(false);
+                createjs.Ticker.setPaused(true);
 
             }
         }
@@ -121,7 +129,7 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
                 });
 
                 // turn rendering off
-                createjs.Ticker.setPaused(false);
+                createjs.Ticker.setPaused(true);
 
             }
 
@@ -171,6 +179,8 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
 
             // start build rendering
             build = true;
+            // turn rendering on
+            createjs.Ticker.setPaused(false);
 
         }
     }
@@ -223,6 +233,9 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu
         }
 
     }
+
+    // resize the whole canvas
+    window.addEventListener('resize', resize, false);
 
      // if browser is resized draw menu again
     function resize() {

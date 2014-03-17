@@ -147,7 +147,4 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 		}
 	}
 
-
-
-	
 }
