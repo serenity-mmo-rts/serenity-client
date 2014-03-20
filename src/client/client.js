@@ -17,24 +17,6 @@ function init() {
 	stage = new createjs.Stage("canvas");
     stage.mouseMoveOutside = true;
 
-    var main_container1 = new createjs.Container();
-    var main_container2 = new createjs.Container();
-    var main_container3 = new createjs.Container();
-    var main_container4 = new createjs.Container();
-    var main_container5 = new createjs.Container();
-    var main_container6 = new createjs.Container();
-
-    var menu_container1 = new createjs.Container();
-    var menu_container2 = new createjs.Container();
-    var menu_container3 = new createjs.Container();
-    var menu_container4 = new createjs.Container();
-    var menu_container5 = new createjs.Container();
-    var menu_container6 = new createjs.Container();
-
-    // combine containers
-    var main = [main_container1,main_container2,main_container3,main_container4,main_container5, main_container6];
-    var menu = [menu_container1,menu_container2,menu_container3,menu_container4,menu_container5, menu_container6];
-
 	// resize to full window
     stage.canvas.height = window.innerHeight;
     stage.canvas.width = window.innerWidth;
@@ -50,7 +32,7 @@ function onMapDataReceived(data)        {
     mainData = data; // from which layer?
     menuData = [];  // for now
     // Create Layer Object
-    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,main[currentLayer],menu[currentLayer],stage);
+    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
     // Render it once
     stage.update();
     // set FPS and setup tick
@@ -65,7 +47,7 @@ function goLayerUp() {
 
     currentLayer +=1;
     stage.removeAllChildren();
-    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,main[currentLayer],menu[currentLayer],stage);
+    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
     stage.addChild(mainData[currentLayer]);
     stage.addChild(menuData[currentLayer]);
     tick();
@@ -75,7 +57,7 @@ function goLayerUp() {
 function goLayerDown() {
     currentLayer -=1;
     stage.removeAllChildren();
-    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,main[currentLayer],menu[currentLayer]);
+    layerData =  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
     stage.addChild(mainData[currentLayer]);
     stage.addChild(menuData[currentLayer]);
     tick();

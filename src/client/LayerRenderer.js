@@ -1,56 +1,63 @@
 
 
 
-var Layer = function(goLayerUp,goLayerDown,mainData,menuData,main_container,menu_container,stage) {
+var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
 
     //// GLOBAL VARIABLES /////
+    this.mainData = mainData;
+    this.menuData = menuData;
+    this.stage = stage;
+
 
     // CANVAS
-    var canvas_height;
-    var canvas_width;
+    this.canvas_height;
+    this.canvas_width;
 
     // POSITONING
-    var global_offsetX = 0;
-    var global_offsetY = 0;
-    var global_buildXpos;
-    var global_buildYpos;
-    var local_buildXpos = (Math.floor(360/64))*64;
-    var local_buildYpos = (Math.floor(161/32))*32;
+    this.global_offsetX = 0;
+    this.global_offsetY = 0;
+    this.global_buildXpos;
+    this.global_buildYpos;
+    this.local_buildXpos = (Math.floor(360/64))*64;
+    this.local_buildYpos = (Math.floor(161/32))*32;
 
     //BOOLEANS
-    var build = false;
-    var allowedToBuild = true;         // collision detection need to be included
-    var hit_object = false;
-    var destroy = false;
-    var move = false;
-    var moving = false;
-    var destroyed = false;
-    var truthArr = [false,true];
-    var visit = false;
-
-     // setup containers
-    map_container = new createjs.Container();
-    obj_container = new createjs.Container();
-    map_container.mouseMoveOutside = true;
-    obj_container.mouseMoveOutside = true;
+    this.build = false;
+    this.allowedToBuild = true;         // collision detection need to be included
+    this.hit_object = false;
+    this.destroy = false;
+    this.move = false;
+    this.moving = false;
+    this.destroyed = false;
+    this.truthArr = [false,true];
+    this.visit = false;
 
     // Render Map
-    mapData = mainData;     // objects missing
-    tileset = new Image();
-    tileset.src = mapData.tilesets[0].image;
-    tileset.onLoad = new Map(mapData,map_container);
+    this.main_container = new createjs.Container();
+    this.main_container.mouseMoveOutside = true;
+    this.map_container = new createjs.Container();
+    this.map_container.mouseMoveOutside = true;
+    this.obj_container = new createjs.Container();
+    this.obj_container.mouseMoveOutside = true;
+
+    this.mapData = mainData;     // objects missing
+    this.tileset = new Image();
+    this.tileset.src = mapData.tilesets[0].image;
+    this.tileset.onLoad = new Map(mapData,map_container);
 
     // Render Menu
-    buildMenu  = new BuildMenu(initializeObject,deleteObject,moveObject,menu_container);
-    headMenu = new HeaderMenu(menu_container);
+    this.menu_container = new createjs.Container();
+    this.menu_container.mouseMoveOutside = true;
+    this.buildMenu  = new BuildMenu(initializeObject,deleteObject,moveObject,menu_container);
+    this.headMenu = new HeaderMenu(menu_container);
 
     // inherit
 
-    main_container.addChild(map_container,obj_container);
-    stage.addChild(main_container, menu_container);
+    this.main_container.addChild(this.map_container,this.obj_container);
+    this.stage.addChild(this.main_container, this.menu_container);
 
     // event listener for main container
-    main_container.addEventListener("mousedown", handleMousedownMap);
+    this.main_container.addEventListener("mousedown", handleMousedownMap);
 
 
 // main Event Listener for map interaction
