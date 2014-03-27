@@ -4,7 +4,7 @@
 var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
 
     //// GLOBAL VARIABLES /////
-    this.mainData = mainData;
+    this.mapData = mainData;
     this.menuData = menuData;
     this.stage = stage;
 
@@ -42,14 +42,14 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
 
     this.mapData = mainData;     // objects missing
     this.tileset = new Image();
-    this.tileset.src = mapData.tilesets[0].image;
-    this.tileset.onLoad = new Map(mapData,map_container);
+    this.tileset.src = this.mapData.tilesets[0].image;
+    this.tileset.onLoad = new Map(this.mapData,this.map_container);
 
     // Render Menu
     this.menu_container = new createjs.Container();
     this.menu_container.mouseMoveOutside = true;
-    this.buildMenu  = new BuildMenu(initializeObject,deleteObject,moveObject,menu_container);
-    this.headMenu = new HeaderMenu(menu_container);
+    this.buildMenu  = new BuildMenu(initializeObject,deleteObject,moveObject,this.menu_container);
+    this.headMenu = new HeaderMenu(this.menu_container);
 
     // inherit
 

@@ -1,7 +1,7 @@
 // loading layers
 var Map = function initLayers(mapData,map_container) {
 
-	// compose EaselJS tileset from image (fixed 64x64 now, but can be parametized)
+
 	var imageData = {
 		images : [ tileset ],
 		frames : {
