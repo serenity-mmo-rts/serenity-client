@@ -7,7 +7,7 @@ var currentLayer = 1;      // Layers number
 var t = 0;                     // Tick counter
 var render = false;        // whether to render or not
 var current_object;        // current object under mouse
-
+var canvas_size;           // size of canvas at start
 
 
 // Init function
@@ -17,10 +17,7 @@ function init() {
 	stage = new createjs.Stage("canvas");
     stage.mouseMoveOutside = true;
 
-	// resize to full window
-    stage.canvas.height = window.innerHeight;
-    stage.canvas.width = window.innerWidth;
-    // load Layer Data
+    // load Data
     socket = io.connect('http://localhost:8000');
     socket.on('mapData', onMapDataReceived);    //  from which layer?
 
@@ -68,10 +65,10 @@ function goLayerDown() {
 
 // get object under mouse position
 function getCurrentObject() {
-    var l = main[currentLayer].getChildAt(1).getNumChildren(); // Number of Objects
+    var l = stage.getChildAt(0).getChildAt(1).getNumChildren(); // Number of Objects
     var hit_object = false;
     for(var i = 0; i<l; i++){ // loop through all objects
-        var child = main[currentLayer].getChildAt(1).getChildAt(i);
+        var child = stage.getChildAt(0).getChildAt(1).getChildAt(i);
         var pt = child.globalToLocal(stage.mouseX, stage.mouseY);
         if (child.hitTest(pt.x, pt.y)) {
             hit_object = true;
