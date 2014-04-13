@@ -11,4 +11,4 @@ var HeaderMenu = function initHeader(menu_container,canvas_size){
 
 	this.header_container.addChild(this.header_rect);
 	this.menu_container.addChild(this.header_container);
-}
+};
