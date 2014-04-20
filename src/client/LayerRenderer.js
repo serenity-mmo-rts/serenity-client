@@ -106,7 +106,7 @@ Layer.prototype.handleMousedownMain = function(evt) {
 
         }
         else if (this.hit_object && this.visit && this.allowedToBuild) {
-
+            this.visit = false;
             this.moving = false;
 
         }
@@ -244,6 +244,7 @@ Layer.prototype.getCurrentObject = function() {
         if (child.hitTest(pt.x, pt.y)) {
             this.hit_object = true;
             this.current_object = child;
+
         }
     }
 };

@@ -105,6 +105,11 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     // menu buttons
     this.menu_buttons =  [this.delete_button_img,this.move_button_img,this.build_button_container,this.build_menu_container];
 
+    this.menu_buttons[0].addEventListener("click", (function(){self.eventDelete()}));
+    this.menu_buttons[1].addEventListener("click", (function(){self.eventMove()}));
+    this.menu_buttons[2].addEventListener("click", (function(){self.click_build_menu()}));
+    this.menu_buttons[3].children[6].addEventListener("click",(function(){self.eventBuild()}));
+
 };
 
 BuildMenu.prototype.click_main_menu = function() {
@@ -123,16 +128,12 @@ var nr_child = this.menu_container.getNumChildren();
 
         this.menu_container.addChild(this.menu_buttons[0],this.menu_buttons[1],this.menu_buttons[2]);
 
-        this.menu_buttons[0].addEventListener("click", (function(){self.eventDelete()}));
-        this.menu_buttons[1].addEventListener("click", (function(){self.eventMove()}));
-        this.menu_buttons[2].addEventListener("click", (function(){self.click_build_menu()}));
-
     }
     else {
         for (var c = 2; c<5; c++) {
         var kill_child = this.menu_container.getChildAt(2);
             this.menu_container.removeChild(kill_child);
-            //stage.update();
+
         }
 
     }
@@ -145,13 +146,12 @@ BuildMenu.prototype.click_build_menu = function() {
     var nr_child = this.menu_container.getNumChildren();
     if (nr_child < 6){
         this.menu_container.addChild(this.menu_buttons[3]);
-        this.menu_buttons[3].children[6].addEventListener("click",(function(){self.eventBuild()}));
-        //stage.update();
+
     }
     else {
     var kill_child = this.menu_container.getChildAt(5);
         this.menu_container.removeChild(kill_child);
-        //stage.update();
+
     }
 };
 
