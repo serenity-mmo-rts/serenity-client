@@ -1,161 +1,155 @@
 // make button and add it to button container
 
-
-var BuildMenu = function (eventBuild, eventDelete, eventMove, menu_container) {
-
-    this.init(eventBuild, eventDelete, eventMove, menu_container)
+var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_container,canvas_size){
 
 
-}
-
-BuildMenu.prototype.init = function (eventBuild, eventDelete, eventMove, menu_container) {
     var self = this;
+
     this.eventBuild = eventBuild;
     this.eventDelete = eventDelete;
     this.eventMove = eventMove;
-    this.menu_buttons = [];
 
-    baseMenu_container = new createjs.Container();
-    baseMenu_container.name = "menu";
+	this.canvas_height = canvas_size[0];
+    this.canvas_width = canvas_size[1];
 
-    build_button_container = new createjs.Container();
-    build_menu_container = new createjs.Container();
-    build_menu_grid_container = new createjs.Container();
+    this.menu_container = menu_container;
 
+	this.baseMenu_container = new createjs.Container();
+	this.baseMenu_container.name = "menu";
+	
+	this.build_button_container = new createjs.Container();
+	this.build_menu_container = new createjs.Container();
+	this.build_menu_grid_container = new createjs.Container();
+	
 
-    // base menu
-    var base_menu_img = new createjs.Bitmap("resources/icons/Globe.png");
-    base_menu_img.x = 0;
-    base_menu_img.y = canvas_height - 128;
+	// base menu	
+	this.base_menu_img = new createjs.Bitmap("resources/icons/Globe.png");
+	this.base_menu_img.x = 0;
+	this.base_menu_img.y = this.canvas_height - 128;
+	
+	// delete button
+	this.delete_button_img = new createjs.Bitmap("resources/icons/destroy.png");
+	this.delete_button_img.scaleX = 0.5;
+	this.delete_button_img.scaleY = 0.5;
+	
+	// move button
+	this.move_button_img = new createjs.Bitmap("resources/icons/move.png");
+    this.move_button_img.scaleX = 0.5;
+	this.move_button_img.scaleY = 0.5;
+	
+	// build button
+	this.build_button_img = new createjs.Bitmap("resources/icons/build.png");
+	this.build_button_img.scaleX = 0.5;
+	this.build_button_img.scaleY = 0.5;
+	
+	// build menu	
+	this.build_menu_main_rect = new createjs.Shape();
+    this.build_menu_main_rect.graphics.beginFill("#F5F7C4").drawRoundRect(220,120,665,437,30);
 
-    // delete button
-    var delete_button_img = new createjs.Bitmap("resources/icons/destroy.png");
-    delete_button_img.scaleX = 0.5;
-    delete_button_img.scaleY = 0.5;
+    this.build_menu_header_rect1 = new createjs.Shape();
+    this.build_menu_header_rect1.graphics.beginFill("#eee081").drawRoundRectComplex(220,120,280,30,30,0,0,0);
 
-    // move button
-    var move_button_img = new createjs.Bitmap("resources/icons/move.png");
+    this.build_menu_header_rect2 = new createjs.Shape();
+    this.build_menu_header_rect2.graphics.beginFill("#eed781").drawRoundRectComplex(410,120,280,30,0,0,0,0);
 
-    move_button_img.scaleX = 0.5;
-    move_button_img.scaleY = 0.5;
+    this.build_menu_header_rect3 = new createjs.Shape();
+    this.build_menu_header_rect3.graphics.beginFill("#eece81").drawRoundRectComplex(600,120,285,30,0,30,0,0);
+	
+	// grid	
+		// horizontal
+		xstart = 230; ystart = 160; yend = 547; 
+	for (var x = 0; x<6; x++ ){	
+		var menu_grid = new createjs.Shape();	
+		menu_grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(xstart,ystart).lineTo(xstart,yend);	
+		xstart += 129;
+		menu_grid.alpha = 0.75;
+        this.build_menu_grid_container.addChild(menu_grid);
+	}
+		// vertical
+	xstart = 230; xend = 875; ystart = 160;  
+	for (var x = 0; x<4; x++ ){	
+		var menu_grid = new createjs.Shape();	
+		menu_grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(xstart,ystart).lineTo(xend,ystart);	
+		ystart += 129;
+		menu_grid.alpha = 0.75;
+        this.build_menu_grid_container.addChild(menu_grid);
+	}
+	
+	// images 	
+    this.bakery_preview = new createjs.Bitmap("resources/objects/bakery1.png");
+    this.bakery_preview.x = 231;
+    this.bakery_preview.y = 161;
 
-    // build button
+    this.bank_preview = new createjs.Bitmap("resources/objects/bank1.png");
+    this.bank_preview.x = 231 + 129;
+    this.bank_preview.y = 161;
+    this.bank_preview.scaleX = (2/3);
+    this.bank_preview.scaleY = (2/3);
 
-    var build_button_img = new createjs.Bitmap("resources/icons/build.png");
+    this.burger_preview = new createjs.Bitmap("resources/objects/burger1.png");
+    this.burger_preview.x = 231 + (2*129);
+    this.burger_preview.y = 161;
 
-    build_button_img.scaleX = 0.5;
-    build_button_img.scaleY = 0.5;
+    this.butcher_preview = new createjs.Bitmap("resources/objects/butcher1.png");
+    this.butcher_preview.x = 231 + (3*129);
+    this.butcher_preview.y = 161;
 
-    // build menu
-    var build_menu_main_rect = new createjs.Shape();
-    build_menu_main_rect.graphics.beginFill("#F5F7C4").drawRoundRect(220, 120, 665, 437, 30);
+    this.build_menu_container.addChild(this.build_menu_main_rect,this.build_menu_header_rect3,this.build_menu_header_rect2,this.build_menu_header_rect1,this.build_menu_grid_container,this.bakery_preview,this.bank_preview,this.burger_preview,this.butcher_preview);
+    this.build_button_container.addChild(this.build_button_img);
+    this.baseMenu_container.addChild(this.base_menu_img);
+    this.menu_container.addChild(this.baseMenu_container);
+	
+	// event listener for main menu
+    this.baseMenu_container.addEventListener("click",(function(){self.click_main_menu()}));
+    // menu buttons
+    this.menu_buttons =  [this.delete_button_img,this.move_button_img,this.build_button_container,this.build_menu_container];
 
-    var build_menu_header_rect1 = new createjs.Shape();
-    build_menu_header_rect1.graphics.beginFill("#eee081").drawRoundRectComplex(220, 120, 280, 30, 30, 0, 0, 0);
+    this.menu_buttons[0].addEventListener("click", (function(){self.eventDelete()}));
+    this.menu_buttons[1].addEventListener("click", (function(){self.eventMove()}));
+    this.menu_buttons[2].addEventListener("click", (function(){self.click_build_menu()}));
+    this.menu_buttons[3].children[6].addEventListener("click",(function(){self.eventBuild()}));
 
-    var build_menu_header_rect2 = new createjs.Shape();
-    build_menu_header_rect2.graphics.beginFill("#eed781").drawRoundRectComplex(410, 120, 280, 30, 0, 0, 0, 0);
+};
 
-    var build_menu_header_rect3 = new createjs.Shape();
-    build_menu_header_rect3.graphics.beginFill("#eece81").drawRoundRectComplex(600, 120, 285, 30, 0, 30, 0, 0);
+BuildMenu.prototype.click_main_menu = function() {
+var nr_child = this.menu_container.getNumChildren();
+    if (nr_child < 3){
 
-    // grid
-    // horizontal
-    xstart = 230;
-    ystart = 160;
-    yend = 547;
-    for (var x = 0; x < 6; x++) {
-        var menu_grid = new createjs.Shape();
-        menu_grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(xstart, ystart).lineTo(xstart, yend);
-        xstart += 129;
-        menu_grid.alpha = 0.75;
-        build_menu_grid_container.addChild(menu_grid);
-    }
-    // vertical
-    xstart = 230;
-    xend = 875;
-    ystart = 160;
-    for (var x = 0; x < 4; x++) {
-        var menu_grid = new createjs.Shape();
-        menu_grid.graphics.setStrokeStyle(1, "butt", "miter").beginStroke("#000000").moveTo(xstart, ystart).lineTo(xend, ystart);
-        ystart += 129;
-        menu_grid.alpha = 0.75;
-        build_menu_grid_container.addChild(menu_grid);
-    }
+        var self = this;
+        this.menu_buttons[0].x =  5;
+        this.menu_buttons[0].y = this.canvas_height - 128 -84;
 
-    // images
-    var bakery_preview = new createjs.Bitmap("resources/objects/bakery1.png");
-    bakery_preview.x = 231;
-    bakery_preview.y = 161;
+        this.menu_buttons[1].x =  64 +5;
+        this.menu_buttons[1].y = this.canvas_height - 128 -64;
 
-    var bank_preview = new createjs.Bitmap("resources/objects/bank1.png");
-    bank_preview.x = 231 + 129;
-    bank_preview.y = 161;
-    bank_preview.scaleX = (2 / 3);
-    bank_preview.scaleY = (2 / 3);
+        this.menu_buttons[2].x = 128 +5;
+        this.menu_buttons[2].y = this.canvas_height - 128 -44;
 
-    var burger_preview = new createjs.Bitmap("resources/objects/burger1.png");
-    burger_preview.x = 231 + (2 * 129);
-    burger_preview.y = 161;
+        this.menu_container.addChild(this.menu_buttons[0],this.menu_buttons[1],this.menu_buttons[2]);
 
-    var butcher_preview = new createjs.Bitmap("resources/objects/butcher1.png");
-    butcher_preview.x = 231 + (3 * 129);
-    butcher_preview.y = 161;
-
-    build_menu_container.addChild(build_menu_main_rect, build_menu_header_rect3, build_menu_header_rect2, build_menu_header_rect1, build_menu_grid_container, bakery_preview, bank_preview, burger_preview, butcher_preview);
-    build_button_container.addChild(build_button_img);
-    baseMenu_container.addChild(base_menu_img);
-    menu_container.addChild(baseMenu_container);
-
-    // event listener for main menu
-    baseMenu_container.addEventListener("click", function () {self.click_main_menu()});
-
-
-    this.menu_buttons = [delete_button_img, move_button_img, build_button_container, build_menu_container];
-}
-
-BuildMenu.prototype.click_main_menu = function () {
-    var self = this;
-    nr_child = menu_container.getNumChildren();
-    if (nr_child < 3) {
-
-        this.menu_buttons[0].x = 5;
-        this.menu_buttons[0].y = canvas_height - 128 - 84;
-
-        this.menu_buttons[1].x = 64 + 5;
-        this.menu_buttons[1].y = canvas_height - 128 - 64;
-
-        this.menu_buttons[2].x = 128 + 5;
-        this.menu_buttons[2].y = canvas_height - 128 - 44;
-
-        menu_container.addChild(this.menu_buttons[0], this.menu_buttons[1], this.menu_buttons[2]);
-
-        this.menu_buttons[0].addEventListener("click", function() { self.eventDelete() });
-        this.menu_buttons[1].addEventListener("click", function() { self.eventMove() });
-        this.menu_buttons[2].addEventListener("click", function() { self.click_build_menu() });
-        stage.update();
     }
     else {
-        for (var c = 2; c < 5; c++) {
-            kill_child = menu_container.getChildAt(2);
-            menu_container.removeChild(kill_child);
+        for (var c = 2; c<5; c++) {
+        var kill_child = this.menu_container.getChildAt(2);
+            this.menu_container.removeChild(kill_child);
+
         }
 
     }
-}
+};
 
 
-BuildMenu.prototype.click_build_menu = function () {
-    var self = this;
-    nr_child = menu_container.getNumChildren();
-    if (nr_child < 6) {
-        menu_container.addChild(this.menu_buttons[3]);
-        this.menu_buttons[3].children[6].addEventListener("click", function() { self.eventBuild() } );
-        stage.update();
+BuildMenu.prototype.click_build_menu = function() {
+
+    var self= this;
+    var nr_child = this.menu_container.getNumChildren();
+    if (nr_child < 6){
+        this.menu_container.addChild(this.menu_buttons[3]);
+
     }
     else {
-        kill_child = menu_container.getChildAt(5);
-        menu_container.removeChild(kill_child);
-    }
-}
+    var kill_child = this.menu_container.getChildAt(5);
+        this.menu_container.removeChild(kill_child);
 
+    }
+};
