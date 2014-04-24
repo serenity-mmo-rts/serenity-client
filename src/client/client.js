@@ -8,7 +8,6 @@ var socket;
 var userid;
 var currentLayer = 1;      // Layers number
 var t200 = 0;              // Tick counter resets every 200ms
-var current_object;        // current object under mouse
 var layer;
 var loginForm;
 
@@ -18,6 +17,7 @@ function init() {
 	// initialize stage and main containers
 	stage = new createjs.Stage("canvas");
     stage.mouseMoveOutside = true;
+
 
     socket = io.connect('http://localhost:8080');
 
@@ -46,6 +46,7 @@ function onMapDataReceived(data)        {
     layer =  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
     // Render it once
     stage.update();
+
     // set FPS and setup tick
 	createjs.Ticker.setFPS(60);
 	createjs.Ticker.addEventListener("tick", tick);
@@ -74,7 +75,11 @@ function goLayerDown() {
 function tick() {
 
     t200+=1; // tick counter
+
+
     layer.tick();
+
+
 
 
     stage.update();

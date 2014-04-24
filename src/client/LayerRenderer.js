@@ -3,10 +3,15 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
 
 
     var self = this;
+    this.goLayerDown = goLayerDown;
+    this.goLayerUp = goLayerUp;
+
     // resize to full window
     stage.canvas.height = window.innerHeight;
     stage.canvas.width = window.innerWidth;
     this.canvas_size = [window.innerHeight,window.innerWidth];
+
+
 
     //// GLOBAL VARIABLES /////
     this.mapData = mainData;
@@ -68,10 +73,16 @@ Layer.prototype.handleMousedownMain = function(evt) {
     var self = this;
     this.getCurrentObject();
 
+        var kchild = this.menu_container.getChildByName("submenu");
+        this.menu_container.removeChild(kchild);
+        this.stage.enableMouseOver([frequency =0]);
+
     if (this.build) { // build object
         if (this.allowedToBuild) {   // collision  detection from server goes here
             this.build = false;
             // send to server
+            // calculate x pos agian
+            this.moveCurrentObject();
             socket.emit('buildHouse', { buildXpos: this.current_object.x, buildYpos: this.current_object.y } );
         }
     }
@@ -115,7 +126,45 @@ Layer.prototype.handleMousedownMain = function(evt) {
     else if (!this.build && !this.move) {
 
         if (this.hit_object) { // move in house (submenu missing)
-            goLayerDown();
+
+            this.stage.enableMouseOver([frequency = 50]);
+
+            this.icon   = "resources/objects/bank1.png";
+            var x = stage.mouseX;
+            var y = stage.mouseY;
+            var height  = 40;
+            var width   = 160;
+
+            this.submenu3 = new Menu();
+            this.submenu3.addButton(x+(2*width),y+(1*height),this.icon,'Reload Layer',[],(function(){self.goLayerDown()}));
+            this.submenu3.addButton(x+(2*width),y+(2*height),this.icon,'submenu32',[]);
+            this.submenu3.addButton(x+(2*width),y+(3*height),this.icon,'submenu33',[]);
+
+            this.submenu2 = new Menu();
+            this.submenu2.addButton(x+(2*width),y+(0*height),this.icon,'submenu21',[]);
+            this.submenu2.addButton(x+(2*width),y+(1*height),this.icon,'submenu22',[]);
+            this.submenu2.addButton(x+(2*width),y+(2*height),this.icon,'submenu23',[]);
+
+            this.submenu1 = new Menu();
+            this.submenu1.addButton(x+(1*width),y+(0*height),this.icon,'submenu11',this.submenu2);
+            this.submenu1.addButton(x+(1*width),y+(1*height),this.icon,'submenu12',this.submenu3);
+
+            this.mainmenu = new Menu();
+            this.mainmenu.addButton(x+(0*width),y+(0*height),this.icon,'mainmenu1',this.submenu1);
+            this.mainmenu.addButton(x+(0*width),y+(1*height),this.icon,'mainmenu2',[]);
+            this.mainmenu.addButton(x+(0*width),y+(2*height),this.icon,'mainmenu3',[]);
+            this.mainmenu.addButton(x+(0*width),y+(3*height),this.icon,'mainmenu4',[]);
+            this.mainmenu.addButton(x+(0*width),y+(4*height),this.icon,'mainmenu5',[]);
+
+            this.buttonMenuContainer = new createjs.Container();
+            var dummy1 = new createjs.Container(); var dummy2 = new createjs.Container(); var dummy3 = new createjs.Container();
+            this.buttonMenuContainer.addChild(dummy1,dummy2,dummy3,this.mainmenu.menuItems[0],this.mainmenu.menuItems[1],this.mainmenu.menuItems[2],this.mainmenu.menuItems[3],this.mainmenu.menuItems[4]);
+            this.buttonMenuContainer.name = "submenu";
+            this.menu_container.addChild(this.buttonMenuContainer);
+
+
+
+
         }
 
         else { // drag main container
@@ -173,11 +222,12 @@ Layer.prototype.initializeObject = function() {  // ObjectID missing
         object.x = (Math.floor(this.global_buildXpos/64)) * 64;
         object.y = (Math.floor(this.global_buildYpos/32)) * 32;
 
-        // set object as current object
-        this.current_object = object;
 
         // add object to object Container
         this.obj_container.addChild(object);
+
+        // set object as current object
+        this.current_object = object;
 
         // start build rendering
        this.build = true;
