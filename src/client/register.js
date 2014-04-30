@@ -5,7 +5,7 @@
         this.name = $( "#register_name" );
         this.email = $( "#register_email" );
         this.password = $( "#register_password" );
-        this.allFields = $( [] ).add( this.name ).add( this.password );
+        this.allFields = $( [] ).add( this.name ).add(this.email).add( this.password );
         //this.allFields = $( [] ).add( this.name ).add( this.email ).add( this.password );
         this.tips = $( ".register_validateTips" );
         this.socket = socket;
@@ -67,7 +67,7 @@
     Register.prototype.checkLength = function( o, n, min, max ) {
         if ( o.val().length > max || o.val().length < min ) {
             o.addClass( "ui-state-error" );
-            self.updateTips( "Length of " + n + " must be between " +
+            this.updateTips( "Length of " + n + " must be between " +
                 min + " and " + max + "." );
             return false;
         } else {
@@ -78,7 +78,7 @@
     Register.prototype.checkRegexp = function( o, regexp, n ) {
         if ( !( regexp.test( o.val() ) ) ) {
             o.addClass( "ui-state-error" );
-            self.updateTips( n );
+            this.updateTips( n );
             return false;
         } else {
             return true;
