@@ -49,7 +49,7 @@ function init() {
         gameData.objectTypes = new GameList(ObjectType,msg);
     }));
     socket.on('map', (function(msg){
-        gameData.maps = new GameList(ObjectType,[msg]);
+        gameData.maps = new GameList(MapData,[msg]);
     }));
 
 }
