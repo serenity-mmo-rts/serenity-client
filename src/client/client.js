@@ -10,6 +10,7 @@ var currentLayer = 1;      // Layers number
 var t200 = 0;              // Tick counter resets every 200ms
 var layer;
 var loginForm;
+var gameData;
 
 // Init function
 function init() {
@@ -18,6 +19,7 @@ function init() {
 	stage = new createjs.Stage("canvas");
     stage.mouseMoveOutside = true;
 
+    gameData = new GameData();
 
     socket = io.connect('http://localhost:8080');
 
@@ -36,8 +38,24 @@ function init() {
         loginForm.close();
     }));
 
+    socket.on('spritesheets', (function(msg){
+        gameData.spritesheets = new GameList(Spritesheet,msg);
+    }));
+    socket.on('mapTypes', (function(msg){
+        gameData.mapTypes = new GameList(MapType,msg);
+    }));
+    socket.on('objectTypes', (function(msg){
+        gameData.objectTypes = new GameList(ObjectType,msg);
+    }));
+    socket.on('map', (function(msg){
+        gameData.maps = new GameList(MapData,[msg]);
+    }));
+
 }
 
+function getMap(mapId) {
+    socket.emit('getMap',mapId);
+}
 
 function onMapDataReceived(data)        {
     mainData = data; // from which layer?
