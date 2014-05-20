@@ -1,21 +1,20 @@
 
-var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
+var Layer = function(client,stage,gameData,mapId) {
 
 
     var self = this;
-    this.goLayerDown = goLayerDown;
-    this.goLayerUp = goLayerUp;
+
+    this.client = client;
 
     // resize to full window
-    stage.canvas.height = window.innerHeight;
-    stage.canvas.width = window.innerWidth;
+    this.client.stage.canvas.height = window.innerHeight;
+    this.client.stage.canvas.width = window.innerWidth;
     this.canvas_size = [window.innerHeight,window.innerWidth];
 
 
 
-    //// GLOBAL VARIABLES /////
-    this.mapData = mainData;
-    this.menuData = menuData;
+    this.gameData = gameData;
+    this.mapId = mapId;
     this.stage = stage;
 
     // POSITONING
@@ -49,7 +48,7 @@ var Layer = function(goLayerUp,goLayerDown,mainData,menuData,stage) {
     this.obj_container.mouseMoveOutside = true;
 
     // Initialize Map
-    this.map = new Map(this.mapData,this.map_container);
+    this.map = new Map(this.map_container,this.gameData,this.mapId);
 
     // Render Menu
     this.menu_container = new createjs.Container();
@@ -136,7 +135,7 @@ Layer.prototype.handleMousedownMain = function(evt) {
             var width   = 160;
 
             this.submenu3 = new Menu();
-            this.submenu3.addButton(x+(2*width),y+(1*height),this.icon,'Reload Layer',[],(function(){self.goLayerDown()}));
+            this.submenu3.addButton(x+(2*width),y+(1*height),this.icon,'Reload Layer',[],(function(){self.client.goLayerDown()}));
             this.submenu3.addButton(x+(2*width),y+(2*height),this.icon,'submenu32',[]);
             this.submenu3.addButton(x+(2*width),y+(3*height),this.icon,'submenu33',[]);
 

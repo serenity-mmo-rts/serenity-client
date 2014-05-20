@@ -1,25 +1,22 @@
 
-
-//// GLOBAL VARIABLES ////
-var stage;
-var socket;
-
-
-var userid;
-var currentLayer = 1;      // Layers number
-var t200 = 0;              // Tick counter resets every 200ms
-var layer;
-var loginForm;
-var gameData;
+var Client = function() {
+    this.stage;
+    this.socket;
+    this.userid;
+    this.currentLayer = 1;      // Layers number
+    this.t200 = 0;              // Tick counter resets every 200ms
+    this.layer;
+    this.loginForm;
+    this.gameData = new GameData();
+};
 
 // Init function
-function init() {
+Client.prototype.init = function() {
+    var self = this;
 
 	// initialize stage and main containers
-	stage = new createjs.Stage("canvas");
-    stage.mouseMoveOutside = true;
-
-    gameData = new GameData();
+    this.stage = new createjs.Stage("canvas");
+    this.stage.mouseMoveOutside = true;
 
     socket = io.connect('http://localhost:8080');
 
@@ -27,81 +24,82 @@ function init() {
 
     socket.emit('ready');
 
-    socket.on('mapData', (function(msg){ onMapDataReceived(msg.message);}));
+    socket.on('mapData', (function(mapData){ self.onMapDataReceived(mapData.message);}));
 
     socket.on('loginPrompt', (function(){
         loginForm.show();
     }));
 
     socket.on('loggedIn', (function(data){
-        userId = data.userId;
+        self.userId = data.userId;
         loginForm.close();
     }));
 
-    socket.on('spritesheets', (function(msg){
-        gameData.spritesheets = new GameList(Spritesheet,msg);
+    socket.on('spritesheets', (function(spritesheets){
+        self.gameData.spritesheets = new GameList(Spritesheet,spritesheets);
     }));
-    socket.on('mapTypes', (function(msg){
-        gameData.mapTypes = new GameList(MapType,msg);
+    socket.on('mapTypes', (function(mapTypes){
+        self.gameData.mapTypes = new GameList(MapType,mapTypes);
     }));
-    socket.on('objectTypes', (function(msg){
-        gameData.objectTypes = new GameList(ObjectType,msg);
+    socket.on('objectTypes', (function(objectTypes){
+        self.gameData.objectTypes = new GameList(ObjectType,objectTypes);
     }));
-    socket.on('map', (function(msg){
-        gameData.maps = new GameList(MapData,[msg]);
-    }));
+    //socket.on('map', (function(mapData){
+    //    self.layer =  new Layer(self.goLayerUp,self.goLayerDown,[],[],self.stage);
+    //}));
+    socket.on('map', (function(mapData){ self.onMapDataReceived(mapData);}));
 
+    socket.on('initGameData',(function(initGameData){ self.onInitGameData(initGameData);}));
 }
 
-function getMap(mapId) {
+Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',mapId);
 }
 
-function onMapDataReceived(data)        {
-    mainData = data; // from which layer?
-    menuData = [];  // for now
+Client.prototype.onInitGameData = function(initGameData) {
+    var self = this;
+
+    //init all global gameData variables:
+    this.gameData.spritesheets = new GameList(Spritesheet,initGameData.spritesheets);
+    this.gameData.mapTypes = new GameList(MapType,initGameData.mapTypes);
+    this.gameData.objectTypes = new GameList(ObjectType,initGameData.objectTypes);
+
+    //init only one map
+    this.gameData.maps = new GameList(MapData,[initGameData.initMap]);
+
     // Create Layer Object
-    layer =  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
+    this.layer =  new Layer(this,this.stage,this.gameData,initGameData.initMap._id);
     // Render it once
-    stage.update();
+    this.stage.update();
 
     // set FPS and setup tick
-	createjs.Ticker.setFPS(60);
-	createjs.Ticker.addEventListener("tick", tick);
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", function() {
+        self.t200+=1; // tick counter
+        self.layer.tick();
+        self.stage.update();
+    });
+}
+
+Client.prototype.onMapDataReceived = function(mapData) {
+    var self = this;
+
+    //mainData = data; // from which layer?
+    menuData = [];  // for now
+
 }
 
 
  // not yet working
-function goLayerUp() {
-
+Client.prototype.goLayerUp = function() {
     currentLayer +=1;
     stage.removeAllChildren();
     layer=  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
 }
 
 
-function goLayerDown() {
+Client.prototype.goLayerDown = function() {
     currentLayer -=1;
     stage.removeAllChildren();
     layer=  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
 }
-
-
-
-
-// tick function called every frame
-function tick() {
-
-    t200+=1; // tick counter
-
-
-    layer.tick();
-
-
-
-
-    stage.update();
-
-
-}
-
