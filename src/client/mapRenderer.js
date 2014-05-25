@@ -38,8 +38,8 @@ Map.prototype.createMap = function() {
         var objType = this.gameData.objectTypes.hashList[mapObject.objTypeId];
         var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
         objectBitmap.gotoAndStop(objType.spriteFrame);
-        objectBitmap.x = mapObject.x;
-        objectBitmap.y = mapObject.y;
+        objectBitmap.x = 2 * (mapObject.x - mapObject.y);
+        objectBitmap.y = mapObject.x + mapObject.y;
         this.map_container.addChild(objectBitmap);
     }
 };
