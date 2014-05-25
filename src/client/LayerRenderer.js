@@ -299,8 +299,8 @@ Layer.prototype.getCurrentObject = function() {
 
  // if browser is resized draw menu again
 Layer.prototype.resize = function() {
-    stage.canvas.height = window.innerHeight;
-    stage.canvas.width = window.innerWidth;
+    this.stage.canvas.height = window.innerHeight;
+    this.stage.canvas.width = window.innerWidth;
     this.menu_container.removeAllChildren();
     this.buildMenu  = new BuildMenu((function(){self.initializeObject()}),(function(){self.deleteObject()}),(function(){self.moveObject()}),this.menu_container,this.canvas_size);
     this.headMenu = new HeaderMenu(this.menu_container);

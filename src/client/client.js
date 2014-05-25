@@ -24,8 +24,6 @@ Client.prototype.init = function() {
 
     socket.emit('ready');
 
-    socket.on('mapData', (function(mapData){ self.onMapDataReceived(mapData.message);}));
-
     socket.on('loginPrompt', (function(){
         loginForm.show();
     }));
@@ -79,14 +77,6 @@ Client.prototype.onInitGameData = function(initGameData) {
         self.layer.tick();
         self.stage.update();
     });
-}
-
-Client.prototype.onMapDataReceived = function(mapData) {
-    var self = this;
-
-    //mainData = data; // from which layer?
-    menuData = [];  // for now
-
 }
 
 
