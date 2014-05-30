@@ -1,11 +1,12 @@
 // loading layers
-var Map = function(map_container,gameData,mapId) {
+var Map = function(map_container,obj_container,gameData,mapId) {
 
     var self = this;
 
     this.gameData = gameData;
     this.mapId = mapId;
     this.map_container = map_container;
+    this.obj_container = obj_container;
     this.spritesheets = {};
     this.bgImg;
     this.mapData = this.gameData.maps.hashList[this.mapId];
@@ -67,20 +68,24 @@ Map.prototype.createMap = function() {
     }
 
     for (mapObjectId in this.mapData.mapObjects.hashList) {
-        var mapObject = this.mapData.mapObjects.hashList[mapObjectId];
-        // create a new Bitmap for the object:
-        var objType = this.gameData.objectTypes.hashList[mapObject.objTypeId];
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
-        objectBitmap.gotoAndStop(objType.spriteFrame);
-        objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
-        objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
-
-        //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
-
-        objectBitmap.mapObjectId = mapObjectId;
-        this.map_container.addChild(objectBitmap);
+        this.addObject(this.mapData.mapObjects.hashList[mapObjectId]);
     }
+    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 };
+
+Map.prototype.addObject = function(mapObject) {
+    // create a new Bitmap for the object:
+    var objType = this.gameData.objectTypes.hashList[mapObject.objTypeId];
+    var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
+    objectBitmap.gotoAndStop(objType.spriteFrame);
+    objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
+    objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
+
+    //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
+
+    objectBitmap.mapObjectId = mapObjectId;
+    this.obj_container.addChild(objectBitmap);
+}
 
 Map.prototype.gameCoord2RenderX = function(gameX,gameY) {
     var renderX = this.mapType.scale * this.mapType.ratioWidthHeight * (gameX - gameY);

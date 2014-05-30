@@ -48,7 +48,7 @@ var Layer = function(client,stage,gameData,mapId) {
     this.obj_container.mouseMoveOutside = true;
 
     // Initialize Map
-    this.map = new Map(this.map_container,this.gameData,this.mapId);
+    this.map = new Map(this.map_container,this.obj_container,this.gameData,this.mapId);
 
     // Render Menu
     this.menu_container = new createjs.Container();
@@ -129,8 +129,8 @@ Layer.prototype.handleMousedownMain = function(evt) {
             this.stage.enableMouseOver([frequency = 50]);
 
             this.icon   = "resources/objects/bank1.png";
-            var x = stage.mouseX;
-            var y = stage.mouseY;
+            var x = this.stage.mouseX;
+            var y = this.stage.mouseY;
             var height  = 40;
             var width   = 160;
 
