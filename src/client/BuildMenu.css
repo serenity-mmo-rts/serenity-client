@@ -1,0 +1,111 @@
+#buildMenu3 {
+     position: absolute;
+     left: 250px;
+     top: 200px;
+     padding: 5px;
+     width: 400px;
+     height: 400px;
+     border: 0px;
+ }
+
+.buildMenuImg0 {
+    position: absolute;
+    left: 10px;
+    top: 30px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuImg1 {
+    position: absolute;
+    left: 104px;
+    top: 30px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuImg2 {
+    position: absolute;
+    left: 198px;
+    top: 30px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuImg3 {
+    position: absolute;
+    left: 290px;
+    top: 30px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuImg4 {
+    position: absolute;
+    left: 10px;
+    top: 144px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+
+
+.buildMenuText0 {
+    position: absolute;
+    left: 10px;
+    top: 0px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuText1 {
+    position: absolute;
+    left: 104px;
+    top: 0px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuText2 {
+    position: absolute;
+    left: 198px;
+    top: 0px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuText3 {
+    position: absolute;
+    left: 290px;
+    top: 0px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
+
+.buildMenuText4 {
+    position: absolute;
+    left: 10px;
+    top: 114px;
+    padding: 16px;
+    width: 64px;
+    height: 64px;
+    border: 0px;
+}
