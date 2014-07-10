@@ -20,6 +20,10 @@ Client.prototype.init = function() {
 
     socket = io.connect('http://localhost:8080');
 
+    socket.socket.on('error', function (reason){
+        console.error('Unable to connect Socket.IO', reason);
+    });
+
     loginForm = new Login(socket);
 
     socket.emit('ready');
