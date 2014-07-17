@@ -54,36 +54,54 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 	this.build_button_img.scaleY = 0.5;
     this.build_button_container.addChild(this.build_button_img);
 
-    // buildMenu   with J-Query
-    this.clickcount = 0;
-    $(function() {
-        $( "#accordion" ).accordion({
-            heightStyle: "fill"
-        });
-        $("#buildMenu").hide();
-        $("#accordion").hide();
 
-    });
+    // build menu data sample
+    this.BuildMenuData = {
+        submenus: [
+        {
+            'name': 'Resources',
+            'images': ['test1.png','bank1.png','bakery1.png','butcher1.png','burger1.png'],
+            'objNames': ['building1','building2','building3','building4','building5'],
+            'tooltips': ['this house is very nice','this house is rich','this house is delicous','this house is brutal','this house is fat']
+        },
+        {
+            'name': 'Production',
+            'images': ['test1.png','bank1.png','bakery1.png','butcher1.png','burger1.png'],
+            'objNames':  ['building1','building2','building3','building4','building5'],
+            'tooltips': ['this house is very nice','this house is rich','this house is delicous','this house is brutal','this house is fat']
+        },
+        {
+            'name': 'Military',
+            'images': ['test1.png','bank1.png','bakery1.png','butcher1.png','burger1.png'],
+            'objNames':  ['building1','building2','building3','building4','building5'],
+            'tooltips': ['this house is very nice','this house is rich','this house is delicous','this house is brutal','this house is fat']
 
-    var types  = ['Resource','Production','Military'];
-    var images = {
-        'image1':'resources/objects/test1.png',
-        'image2':'resources/objects/bank1.png',
-        'image3':'resources/objects/bakery1.png',
-        'image4':'resources/objects/butcher1.png',
-        'image5':'resources/objects/burger1.png'
+        }]
+
     };
 
-    for (var i = 0; i< types.length; i++) {
-        $( "#accordion" ).append('<h3 id="header'+i+'"></h3>').addClass("buildSubmenu");
-        $("#header"+i+"").text(types[i]);
-    }
 
-    $.each(images, function(){
-        $(".buildSubmenu").add('<div><p><img src="' + this + '" height=64 width=64></p></div>');
+    this.nr =  this.BuildMenuData.submenus.length;
+
+    // buildMenu   with J-Query
+    this.clickcount = 0;
+
+    $( "#accordion"+this.nr+"" ).accordion({
+        heightStyle: "fill"
     });
+    $("#buildMenu"+this.nr+"").hide();
 
 
+    for (var i = 0; i< this.nr; i++) {
+        $("#ui-accordion-accordion"+this.nr+"-header-"+i+"").text(this.BuildMenuData.submenus[i].name);
+         for (var k=0; k<this.BuildMenuData.submenus[i].images.length; k ++) {
+             var img = this.BuildMenuData.submenus[i].images[k];
+             var objectname = this.BuildMenuData.submenus[i].objNames[k];
+             $("#ui-accordion-accordion"+this.nr+"-panel-"+i+"").append('<div class = "buildMenuImg' + k +'"><img src="resources/objects/' + img + '" height=64 width=64></div>');
+             $("#ui-accordion-accordion"+this.nr+"-panel-"+i+"").append('<div class = "buildMenuText' + k +'"><p>'+objectname+'</p></div>');
+
+         }
+    }
 
     // add base image to menu
     this.menu_container.addChild(this.baseMenu_container);
@@ -102,7 +120,8 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 };
 
 BuildMenu.prototype.click_main_menu = function() {
-var nr_child = this.baseMenu_container.getNumChildren();
+
+    var nr_child = this.baseMenu_container.getNumChildren();
     if (nr_child < 2){
 
         this.menu_buttons[0].x =  5;
@@ -129,16 +148,14 @@ var nr_child = this.baseMenu_container.getNumChildren();
 
 
 BuildMenu.prototype.click_build_menu = function() {
-
+    var self = this;
 
     if  (this.clickcount == 0){
-        $("#accordion").show();
-        $("#buildMenu").show();
+        $("#buildMenu"+self.nr+"").show();
         this.clickcount = 1;
     }
     else{
-        $("#accordion").hide();
-        $("#buildMenu").hide();
+        $("#buildMenu"+self.nr+"").hide();
         this.clickcount = 0;
     }
 

@@ -63,7 +63,7 @@ var Layer = function(client,stage,gameData,mapId) {
     // event listener for main container
     this.main_container.addEventListener("mousedown", (function(evt){self.handleMousedownMain(evt)}));
     // on resize
-    window.addEventListener('resize',(function(){self.resize()}), false);
+    //window.addEventListener('resize',(function(){self.resize()}), false);
 };
 
 
@@ -298,6 +298,7 @@ Layer.prototype.getCurrentObject = function() {
 
 
  // if browser is resized draw menu again
+/*
 Layer.prototype.resize = function() {
     this.stage.canvas.height = window.innerHeight;
     this.stage.canvas.width = window.innerWidth;
@@ -306,7 +307,7 @@ Layer.prototype.resize = function() {
     this.headMenu = new HeaderMenu(this.menu_container);
     this.canvas_size = [window.innerHeight,window.innerWidth];
 };
-
+*/
 
 // move object
 Layer.prototype.moveCurrentObject = function() {
