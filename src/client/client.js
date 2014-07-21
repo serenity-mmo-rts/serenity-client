@@ -24,6 +24,10 @@ Client.prototype.init = function() {
         console.error('Unable to connect Socket.IO', reason);
     });
 
+    socket.on('connect', function (){
+        console.info('successfully established a working connection \o/');
+    });
+
     loginForm = new Login(socket);
 
     socket.emit('ready');
