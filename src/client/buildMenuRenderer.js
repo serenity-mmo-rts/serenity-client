@@ -60,7 +60,7 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
         submenus: [
         {
             'name': 'Resources',
-            'images': ['test1.gif','bank1.gif','bakery1.gif','butcher1.gif','burger1.gif'],
+            'images': ['button.gif','bank1.gif','bakery1.gif','butcher1.gif','burger1.gif'],
             'objNames': ['building1','building2','building3','building4','building5'],
             'tooltips': ['this house is very nice','this house is rich','this house is delicous','this house is brutal','this house is fat']
         },
@@ -81,6 +81,17 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     };
 
     this.nr =  this.BuildMenuData.submenus.length;
+	// button
+        $( "#testbutton").button({
+                icons: {
+                    primary:  'ui-icon-custom',
+                    secondary: null
+                },
+                text: "this is some icon"
+        });
+
+
+
 
     // buildMenu   with J-Query
     // weather to show menu or not
@@ -120,11 +131,16 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
                 self.eventBuild();
             });
 
+
             $("#Img"+self.allObj[counter]+"").mouseover(function()  {
-                $("#buildMenu3").hide();
-                self.clickcount = 0;
-                self.eventBuild();
+                document.body.style.cursor="pointer";
             });
+
+            $("#Img"+self.allObj[counter]+"").mouseout(function()  {
+                document.body.style.cursor="default";
+            });
+
+
 
         }
 
