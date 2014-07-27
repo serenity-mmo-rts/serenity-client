@@ -1,111 +1,35 @@
-#buildMenu3 {
+#buildMenu {
      position: absolute;
-     left: 250px;
-     top: 200px;
+     left: 20px;
+     bottom: 200px;
      padding: 5px;
-     width: 400px;
-     height: 400px;
+     width: 280px;
+     height: 300px;
      border: 0px;
  }
 
-.buildMenuImg0 {
-    position: absolute;
-    left: 10px;
-    top: 30px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
+.buildMenuItem {
+    display: block;
+    width: 80px;
+    float: left;
+    height: 90px;
     border: 0px;
 }
 
-.buildMenuImg1 {
-    position: absolute;
-    left: 104px;
-    top: 30px;
-    padding: 16px;
+.buildMenuImg {
+    position: relative;
+    display: block;
     width: 64px;
     height: 64px;
-    border: 0px;
+    margin:auto;
 }
 
-.buildMenuImg2 {
-    position: absolute;
-    left: 198px;
-    top: 30px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
+.buildMenuText {
+    position: relative;
+    text-align: center;
+    margin:auto;
 }
 
-.buildMenuImg3 {
-    position: absolute;
-    left: 290px;
-    top: 30px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-.buildMenuImg4 {
-    position: absolute;
-    left: 10px;
-    top: 144px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-
-
-.buildMenuText0 {
-    position: absolute;
-    left: 10px;
-    top: 0px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-.buildMenuText1 {
-    position: absolute;
-    left: 104px;
-    top: 0px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-.buildMenuText2 {
-    position: absolute;
-    left: 198px;
-    top: 0px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-.buildMenuText3 {
-    position: absolute;
-    left: 290px;
-    top: 0px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
-}
-
-.buildMenuText4 {
-    position: absolute;
-    left: 10px;
-    top: 114px;
-    padding: 16px;
-    width: 64px;
-    height: 64px;
-    border: 0px;
+#accordion ol.build-menu-list {
+    padding: 5px;
 }
