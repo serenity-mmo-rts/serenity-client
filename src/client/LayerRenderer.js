@@ -53,7 +53,7 @@ var Layer = function(client,stage,gameData,mapId) {
     // Render Menu
     this.menu_container = new createjs.Container();
     this.menu_container.mouseMoveOutside = true;
-    this.buildMenu  = new BuildMenu((function(){self.initializeObject()}),(function(){self.deleteObject()}),(function(){self.moveObject()}),this.menu_container,this.canvas_size);
+    this.buildMenu  = new BuildMenu((function(){self.initializeObject()}),(function(){self.deleteObject()}),(function(){self.moveObject()}),this.menu_container,this.canvas_size,this.gameData,this.mapId);
     this.headMenu = new HeaderMenu(this.menu_container,this.canvas_size);
 
     // inherit
@@ -186,7 +186,7 @@ Layer.prototype.handleMousedownMain = function(evt) {
 
 
 // initialize  Object
-Layer.prototype.initializeObject = function() {  // ObjectID missing
+Layer.prototype.initializeObject = function(objectTypeId) {  // ObjectID missing
 
     if (this.build) {     // if building is cancelled
         var n = this.obj_container.getNumChildren();
@@ -205,6 +205,9 @@ Layer.prototype.initializeObject = function() {  // ObjectID missing
         move_count = 1;
 
         // load image
+        //var currentlyBuilding = new MapObject({_id: 'tempObject', x: 0, y: 0, objTypeId: objectTypeId, userId: this.client.userid});
+        //this.map.addObject(currentlyBuilding);
+
         var img = new Image();
         img.src = "resources/objects/bank1.png";    // must be dynamic from server data
 
@@ -216,6 +219,8 @@ Layer.prototype.initializeObject = function() {  // ObjectID missing
         // calculate global position of map
         this.global_buildXpos = - this.global_offsetX + this.local_buildXpos;
         this.global_buildYpos = - this.global_offsetY + this.local_buildYpos;
+
+        //this.map.moveObjectToRenderCoord('tempObject',global_buildXpos,global_buildYpos);
 
         // position in grid
         object.x = (Math.floor(this.global_buildXpos/64)) * 64;
@@ -316,6 +321,7 @@ Layer.prototype.moveCurrentObject = function() {
 
     this.current_object.x =(Math.floor(xoffinreal / 32))*32;
     this.current_object.y =(Math.floor(yoffinreal / 16))*16;
+
 };
 
 

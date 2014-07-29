@@ -1,9 +1,13 @@
 // make button and add it to button container
 
-var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_container,canvas_size){
+var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_container,canvas_size,gameData,mapId){
 
     // canvas size and reference
     var self = this;
+
+    this.gameData = gameData;
+    this.mapId = mapId;
+
     this.canvas_height = canvas_size[0];
     this.canvas_width = canvas_size[1];
 
@@ -56,7 +60,7 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 
 
     // build menu data sample
-    this.BuildMenuData = {
+    /*this.BuildMenuData = {
         submenus: [
         {
             'name': 'Resources',
@@ -78,9 +82,12 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
 
         }]
 
-    };
+    };*/
 
-    this.nr =  this.BuildMenuData.submenus.length;
+    //this.nr =  this.BuildMenuData.submenus.length;
+    var mapTypeId =  this.gameData.maps.hashList[this.mapId].mapTypeId;
+    this.BuildMenuData = this.gameData.mapTypes.hashList[mapTypeId].buildCategories;
+    this.nr =  this.BuildMenuData.length;
 
     // buildMenu   with J-Query
     // weather to show menu or not
@@ -93,22 +100,26 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     $("#buildMenu").hide();
 
     // fill it
-    this.allObj = [];
     this.counter = 0;
     for (var i = 0; i< this.nr; i++) {
-        $("#ui-accordion-accordion-header-"+i+"").text(this.BuildMenuData.submenus[i].name);
-        for (var k=0; k<this.BuildMenuData.submenus[i].images.length; k ++) {
-            var img = this.BuildMenuData.submenus[i].images[k];
-            var objectname = this.BuildMenuData.submenus[i].objNames[k];
-            this.allObj[this.counter] = objectname;
+        $("#ui-accordion-accordion-header-"+i+"").text(this.BuildMenuData[i].name);
+        for (var k=0; k<this.BuildMenuData[i].objectTypeIds.length; k ++) {
+            var objectTypeId = this.BuildMenuData[i].objectTypeIds[k];
+            var objectType = this.gameData.objectTypes.hashList[objectTypeId];
+            var spritesheet = this.gameData.spritesheets.hashList[objectType.spritesheetId];
+            var spriteFrameIcon = spritesheet.frames[objectType.spriteFrameIcon];
+            var img = spritesheet.images[spriteFrameIcon[4]];
+            var objectname = objectType.name;
 
-            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="' + objectname +'" title="Text"></a></li>');
-            $("#"+objectname).append('<p class="buildMenuText">'+objectname+'</p>');
-            $("#"+objectname).append('<img class="buildMenuImg" src="resources/objects/' + img + '" height=64 width=64 >');
-            $("#"+objectname).click(function()  {
+            var buildMenuItemId = 'cat' + i + 'obj' + k;
+            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" title="Text"></a></li>');
+            $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectname+'</p>');
+            //$("#"+buildMenuItemId).append('<img class="buildMenuImg" src="' + img + '" height=64 width=64 >');
+            $("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />');
+            $("#"+buildMenuItemId).click(function()  {
                 $("#buildMenu").hide();
                 self.clickcount = 0;
-                self.eventBuild();
+                self.eventBuild(objectTypeId);
             });
 
             this.counter +=1;
