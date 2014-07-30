@@ -100,7 +100,6 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     $("#buildMenu").hide();
 
     // fill it
-    this.counter = 0;
     for (var i = 0; i< this.nr; i++) {
         $("#ui-accordion-accordion-header-"+i+"").text(this.BuildMenuData[i].name);
         for (var k=0; k<this.BuildMenuData[i].objectTypeIds.length; k ++) {
@@ -112,17 +111,14 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
             var objectname = objectType.name;
 
             var buildMenuItemId = 'cat' + i + 'obj' + k;
-            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" title="Text"></a></li>');
+            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="Text"></a></li>');
             $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectname+'</p>');
-            //$("#"+buildMenuItemId).append('<img class="buildMenuImg" src="' + img + '" height=64 width=64 >');
             $("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />');
             $("#"+buildMenuItemId).click(function()  {
                 $("#buildMenu").hide();
                 self.clickcount = 0;
-                self.eventBuild(objectTypeId);
+                self.eventBuild(this.name);
             });
-
-            this.counter +=1;
         }
     }
 

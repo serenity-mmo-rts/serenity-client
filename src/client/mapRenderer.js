@@ -84,8 +84,10 @@ Map.prototype.addObject = function(mapObject) {
     //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
     objectBitmap.mapObjectId = mapObjectId;
-    mapObject.bitmap = objectBitmap;
+    mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
+
+    return objectBitmap;
 }
 
 Map.prototype.moveObjectToGameCoord = function(objId, x, y) {
