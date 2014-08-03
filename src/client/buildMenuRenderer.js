@@ -93,6 +93,10 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     // weather to show menu or not
     this.clickcount = 0;
 
+    for (var i = 0; i< this.nr; i++) {
+        $("#accordion").append('<h3>Building Category</h3><ol class="build-menu-list"></ol>');
+    }
+
     // initialize correct one
     $( "#accordion" ).accordion({
         heightStyle: "fill"
