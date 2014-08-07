@@ -53,7 +53,7 @@ var Layer = function(client,stage,gameData,mapId) {
     // Render Menu
     this.menu_container = new createjs.Container();
     this.menu_container.mouseMoveOutside = true;
-    this.buildMenu  = new BuildMenu((function(){self.initializeObject()}),(function(){self.deleteObject()}),(function(){self.moveObject()}),this.menu_container,this.canvas_size);
+    this.buildMenu  = new BuildMenu((function(objectTypeId){self.initializeObject(objectTypeId)}),(function(){self.deleteObject()}),(function(){self.moveObject()}),this.menu_container,this.canvas_size,this.gameData,this.mapId);
     this.headMenu = new HeaderMenu(this.menu_container,this.canvas_size);
 
     // inherit
@@ -82,7 +82,13 @@ Layer.prototype.handleMousedownMain = function(evt) {
             // send to server
             // calculate x pos agian
             this.moveCurrentObject();
-            socket.emit('buildHouse', { buildXpos: this.current_object.x, buildYpos: this.current_object.y } );
+            this.currBuildingObj.x = this.map.renderCoord2GameX(this.current_object.x,this.current_object.y);
+            this.currBuildingObj.y = this.map.renderCoord2GameY(this.current_object.x,this.current_object.y);
+
+
+            delete this.currBuildingObj.objectBitmap;
+            socket.emit('buildHouse', this.currBuildingObj );
+
         }
     }
 
@@ -186,7 +192,7 @@ Layer.prototype.handleMousedownMain = function(evt) {
 
 
 // initialize  Object
-Layer.prototype.initializeObject = function() {  // ObjectID missing
+Layer.prototype.initializeObject = function(objectTypeId) {  // ObjectID missing
 
     if (this.build) {     // if building is cancelled
         var n = this.obj_container.getNumChildren();
@@ -204,31 +210,18 @@ Layer.prototype.initializeObject = function() {  // ObjectID missing
         this.move = false;
         move_count = 1;
 
-        // load image
-        var img = new Image();
-        img.src = "resources/objects/bank1.png";    // must be dynamic from server data
-
-        // create object
-        var object = new createjs.Bitmap(img);
-        object.mouseMoveOutside = true;
-        object.alpha = 1;
+        this.currBuildingObj = new MapObject({_id: 'tempObject', x: 0, y: 0, objTypeId: objectTypeId, userId: this.client.userid});
+        this.currentlyBuildingBitmap = this.map.addObject(this.currBuildingObj);
+        this.currentlyBuildingBitmap.mouseMoveOutside = true;
+        this.currentlyBuildingBitmap.alpha = 1;
 
         // calculate global position of map
         this.global_buildXpos = - this.global_offsetX + this.local_buildXpos;
         this.global_buildYpos = - this.global_offsetY + this.local_buildYpos;
 
-        // position in grid
-        object.x = (Math.floor(this.global_buildXpos/64)) * 64;
-        object.y = (Math.floor(this.global_buildYpos/32)) * 32;
+        this.currentlyBuildingBitmap.x = this.global_buildXpos;
+        this.currentlyBuildingBitmap.y = this.global_buildYpos;
 
-
-        // add object to object Container
-        this.obj_container.addChild(object);
-
-        // set object as current object
-        this.current_object = object;
-
-        // start build rendering
        this.build = true;
     }
 };
@@ -298,7 +291,6 @@ Layer.prototype.getCurrentObject = function() {
 
 
  // if browser is resized draw menu again
-/*
 Layer.prototype.resize = function() {
     this.stage.canvas.height = window.innerHeight;
     this.stage.canvas.width = window.innerWidth;
@@ -307,15 +299,19 @@ Layer.prototype.resize = function() {
     this.headMenu = new HeaderMenu(this.menu_container);
     this.canvas_size = [window.innerHeight,window.innerWidth];
 };
-*/
+
 
 // move object
 Layer.prototype.moveCurrentObject = function() {
-    var xoffinreal = (this.stage.mouseX - (this.current_object.x+this.global_offsetX)) + this.current_object.x -100;
-    var yoffinreal = (this.stage.mouseY - (this.current_object.y+this.global_offsetY)) + this.current_object.y -100;
+    //var xoffinreal = (this.stage.mouseX - (this.current_object.x+this.global_offsetX)) + this.current_object.x -100;
+    //var yoffinreal = (this.stage.mouseY - (this.current_object.y+this.global_offsetY)) + this.current_object.y -100;
 
-    this.current_object.x =(Math.floor(xoffinreal / 32))*32;
-    this.current_object.y =(Math.floor(yoffinreal / 16))*16;
+    //this.current_object.x =(Math.floor(xoffinreal / 32))*32;
+    //this.current_object.y =(Math.floor(yoffinreal / 16))*16;
+
+
+    this.currentlyBuildingBitmap.x = this.stage.mouseX - this.global_offsetX;
+    this.currentlyBuildingBitmap.y = this.stage.mouseY - this.global_offsetY;
 };
 
 
