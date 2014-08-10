@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>slide demo</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="lib/development-bundle/themes/cupertino/jquery.ui.all.css">
+  <style>
+  #topLeftUi {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    width: 200px;
+    height: 150px;
+  }
+  #topLeftUi.visible {
+    left: 0px;
+    top: 0px;
+  }
+  #topLeftUi.hidden {
+    left: -200px;
+    top: -150px;
+  }
+  .toggleButton {
+    background-color:#b0c4de;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    right: -20px;
+    bottom: -20px;
+  }
+
+  #bottomLeftUi {
+    position: absolute;
+    width: 200px;
+    height: 150px;
+  }
+  #bottomLeftUi.visible {
+    bottom: 0px;
+    left: 0px;
+  }
+  #bottomLeftUi.hidden {
+    bottom: -130px;
+    left: -180px;
+  }
+  </style>
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+</head>
+<body>
+
+
+<div id="topLeftUi" class="ui-widget-content ui-corner-all visible">
+  <div>
+    <p>
+      Some Options.
+    </p>
+    <div id="topLeftToggleButton" class="toggleButton ui-corner-all"></div>
+  </div>
+</div>
+
+<div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
+  <div>
+    <p>
+      Build Menu.
+    </p>
+  </div>
+</div>
+
+<script>
+$( "#topLeftToggleButton" ).click(function() {
+    $( "#topLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
+});
+
+$( "#bottomLeftUi" ).click(function() {
+    $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
+});
+</script>
+ 
+</body>
+</html>
