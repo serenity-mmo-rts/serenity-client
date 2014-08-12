@@ -11,11 +11,14 @@ var Layer = function(client,stage,gameData,mapId) {
     this.client.stage.canvas.width = window.innerWidth;
     this.canvas_size = [window.innerHeight,window.innerWidth];
 
-
-
     this.gameData = gameData;
     this.mapId = mapId;
     this.stage = stage;
+
+    this.stage.regX= window.innerWidth/2;
+    this.stage.regY= window.innerHeight/2;
+    this.stage.x=window.innerWidth/2;
+    this.stage.y=window.innerHeight/2;
 
     // POSITONING
     this.global_offsetX = 0;
@@ -62,6 +65,25 @@ var Layer = function(client,stage,gameData,mapId) {
 
     // event listener for main container
     this.main_container.addEventListener("mousedown", (function(evt){self.handleMousedownMain(evt)}));
+
+    // mouse zoom
+    var canvas= document.getElementById("canvas");
+    canvas.addEventListener("mousewheel", MouseWheelHandler, false);
+    canvas.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+
+    var zoom;
+
+    function MouseWheelHandler(e) {
+        if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)
+            zoom=1.1;
+        else
+            zoom=1/1.1;
+
+        self.stage.scaleX=self.stage.scaleY*=zoom;
+        self.stage.update();
+    }
+
+
     // on resize
     //window.addEventListener('resize',(function(){self.resize()}), false);
 };
@@ -313,6 +335,7 @@ Layer.prototype.moveCurrentObject = function() {
     this.currentlyBuildingBitmap.x = this.stage.mouseX - this.global_offsetX;
     this.currentlyBuildingBitmap.y = this.stage.mouseY - this.global_offsetY;
 };
+
 
 
 
