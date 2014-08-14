@@ -21,6 +21,7 @@ var Layer = function(client,stage,gameData,mapId) {
     this.stage.y=window.innerHeight/2;
 
     // POSITONING
+    this.zoom = 1;
     this.global_offsetX = 0;
     this.global_offsetY = 0;
     this.global_buildXpos;
@@ -68,20 +69,9 @@ var Layer = function(client,stage,gameData,mapId) {
 
     // mouse zoom
     var canvas= document.getElementById("canvas");
-    canvas.addEventListener("mousewheel", MouseWheelHandler, false);
-    canvas.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+    canvas.addEventListener("mousewheel", (function(evt){self.MouseWheelHandler(evt)}), false);
+    canvas.addEventListener("DOMMouseScroll",(function(evt){self.MouseWheelHandler(evt)}), false);
 
-    var zoom;
-
-    function MouseWheelHandler(e) {
-        if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)
-            zoom=1.1;
-        else
-            zoom=1/1.1;
-
-        self.stage.scaleX=self.stage.scaleY*=zoom;
-        self.stage.update();
-    }
 
 
     // on resize
@@ -237,12 +227,15 @@ Layer.prototype.initializeObject = function(objectTypeId) {  // ObjectID missing
         this.currentlyBuildingBitmap.mouseMoveOutside = true;
         this.currentlyBuildingBitmap.alpha = 1;
 
+
+
         // calculate global position of map
         this.global_buildXpos = - this.global_offsetX + this.local_buildXpos;
         this.global_buildYpos = - this.global_offsetY + this.local_buildYpos;
 
         this.currentlyBuildingBitmap.x = this.global_buildXpos;
         this.currentlyBuildingBitmap.y = this.global_buildYpos;
+        this.current_object = this.currentlyBuildingBitmap;
 
        this.build = true;
     }
@@ -306,7 +299,7 @@ Layer.prototype.getCurrentObject = function() {
         if (child.hitTest(pt.x, pt.y)) {
             this.hit_object = true;
             this.current_object = child;
-
+            this.currentlyBuildingBitmap = child;
         }
     }
 };
@@ -325,11 +318,11 @@ Layer.prototype.resize = function() {
 
 // move object
 Layer.prototype.moveCurrentObject = function() {
-    //var xoffinreal = (this.stage.mouseX - (this.current_object.x+this.global_offsetX)) + this.current_object.x -100;
-    //var yoffinreal = (this.stage.mouseY - (this.current_object.y+this.global_offsetY)) + this.current_object.y -100;
+   // var xoffinreal = (this.stage.mouseX - (this.current_object.x+this.global_offsetX)) + this.current_object.x -100;
+   // var yoffinreal = (this.stage.mouseY - (this.current_object.y+this.global_offsetY)) + this.current_object.y -100;
 
-    //this.current_object.x =(Math.floor(xoffinreal / 32))*32;
-    //this.current_object.y =(Math.floor(yoffinreal / 16))*16;
+   // this.current_object.x =(Math.floor(xoffinreal / 32))*32;
+  //  this.current_object.y =(Math.floor(yoffinreal / 16))*16;
 
 
     this.currentlyBuildingBitmap.x = this.stage.mouseX - this.global_offsetX;
@@ -337,6 +330,32 @@ Layer.prototype.moveCurrentObject = function() {
 };
 
 
+Layer.prototype.MouseWheelHandler= function(e) {
+
+    var zoom;
+    if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)
+        zoom=1.1;
+    else
+        zoom=1/1.1;
+
+    this.stage.scaleX*=zoom;
+    this.stage.scaleY*=zoom;
+    var yZoom = (this.canvas_size[0] -(this.canvas_size[0]*zoom))/2;
+    var xZoom = (this.canvas_size[1] -(this.canvas_size[1]*zoom))/2;
+    if (zoom > 1)  {
+        this.global_offsetX -= xZoom;
+        this.global_offsetY -= yZoom;
+    }
+
+    else {
+        this.global_offsetX += xZoom;
+        this.global_offsetY += yZoom;
+    }
+
+    this.zoom*=zoom;
+
+    this.stage.update();
+}
 
 
 Layer.prototype.tick = function()  {
