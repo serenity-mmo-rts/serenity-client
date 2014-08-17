@@ -20,14 +20,29 @@ var Layer = function(client,stage,gameData,mapId) {
     this.stage.x=window.innerWidth/2;
     this.stage.y=window.innerHeight/2;
 
+    // Zooming
+    this.zoomFactors = [0.3486784401, 0.387420489, 0.43046721, 0.4782969, 0.531441, 0.59049, 0.6561, 0.729, 0.81, 0.9, 1, 1.1, 1.21, 1.331, 1.4641, 1.61051, 1.771561, 1.9487171, 2.14358881, 2.357947691, 2.5937424601];
+    this.zoom_level = 10;
+    this.zoomOffset = [];
+    this.zoomOffsetsWidth =[];
+    this.zoomOffsetsHeight =[];
+    for( var i =0; i <this.zoomFactors.length; i++){
+        this.zoomOffsetsWidth.push((((window.innerWidth / 64) - (window.innerWidth / (64*(this.zoomFactors[i]))))/2) * (64*(this.zoomFactors[i])));
+        this.zoomOffsetsHeight.push((((window.innerHeight / 32) - (window.innerHeight / (32*(this.zoomFactors[i]))))/2) * (32*(this.zoomFactors[i])));
+    }
+    this.zoom = this.zoomFactors[this.zoom_level];
+    this.zoomOffset[1] =  this.zoomOffsetsWidth[this.zoom_level];
+    this.zoomOffset[2] =  this.zoomOffsetsHeight[this.zoom_level];
+
+
+
     // POSITONING
-    this.zoom = 1;
     this.global_offsetX = 0;
     this.global_offsetY = 0;
     this.global_buildXpos;
     this.global_buildYpos;
-    this.local_buildXpos = (Math.floor(360/64))*64;
-    this.local_buildYpos = (Math.floor(161/32))*32;
+    //this.local_buildXpos = (Math.floor(360/64))*64;
+    //this.local_buildYpos = (Math.floor(161/32))*32;
 
     // Objects
     this.current_object;
@@ -193,8 +208,8 @@ Layer.prototype.handleMousedownMain = function(evt) {
             evt.addEventListener("mousemove",function(ev) {
                 ev.target.x = ev.stageX+offset.x;
                 ev.target.y = ev.stageY+offset.y;
-                self.global_offsetX = ev.target.x;
-                self.global_offsetY = ev.target.y;
+                self.global_offsetX = ev.target.x* self.zoom;
+                self.global_offsetY = ev.target.y* self.zoom;
             });
         }
     }
@@ -230,14 +245,14 @@ Layer.prototype.initializeObject = function(objectTypeId) {  // ObjectID missing
 
 
         // calculate global position of map
-        this.global_buildXpos = - this.global_offsetX + this.local_buildXpos;
-        this.global_buildYpos = - this.global_offsetY + this.local_buildYpos;
+        this.global_buildXpos =  - this.global_offsetX + this.zoomOffset[1] + this.stage.mouseX;
+        this.global_buildYpos =  - this.global_offsetY + this.zoomOffset[2] + this.stage.mouseY;
 
         this.currentlyBuildingBitmap.x = this.global_buildXpos;
         this.currentlyBuildingBitmap.y = this.global_buildYpos;
         this.current_object = this.currentlyBuildingBitmap;
 
-       this.build = true;
+        this.build = true;
     }
 };
 
@@ -325,37 +340,81 @@ Layer.prototype.moveCurrentObject = function() {
   //  this.current_object.y =(Math.floor(yoffinreal / 16))*16;
 
 
-    this.currentlyBuildingBitmap.x = this.stage.mouseX - this.global_offsetX;
-    this.currentlyBuildingBitmap.y = this.stage.mouseY - this.global_offsetY;
+    this.currentlyBuildingBitmap.x = (- this.global_offsetX +this.stage.mouseX)*1/this.zoom;
+    this.currentlyBuildingBitmap.y =  (- this.global_offsetY +this.stage.mouseY)*1/this.zoom;
 };
+
 
 
 Layer.prototype.MouseWheelHandler= function(e) {
 
-    var zoom;
-    if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)
-        zoom=1.1;
-    else
-        zoom=1/1.1;
 
-    this.stage.scaleX*=zoom;
-    this.stage.scaleY*=zoom;
-    var yZoom = (this.canvas_size[0] -(this.canvas_size[0]*zoom))/2;
-    var xZoom = (this.canvas_size[1] -(this.canvas_size[1]*zoom))/2;
-    if (zoom > 1)  {
-        this.global_offsetX -= xZoom;
-        this.global_offsetY -= yZoom;
+
+    if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
+
+        if (this.zoom_level <20) {
+          this.zoom_level+=1;
+          this.zoom = this.zoomFactors[this.zoom_level];
+            this.zoomOffset[1] =  this.zoomOffsetsWidth[this.zoom_level];
+            this.zoomOffset[2] =  this.zoomOffsetsHeight[this.zoom_level];
+        }
     }
-
     else {
-        this.global_offsetX += xZoom;
-        this.global_offsetY += yZoom;
+        if (this.zoom_level >0) {
+            this.zoom_level-= 1;
+            this.zoom = this.zoomFactors[this.zoom_level];
+            this.zoomOffset[1] =  this.zoomOffsetsWidth[this.zoom_level];
+            this.zoomOffset[2] =  this.zoomOffsetsHeight[this.zoom_level];
+        }
     }
 
-    this.zoom*=zoom;
 
-    this.stage.update();
-}
+/**
+    if (this.zoom_level <20&& this.zoom_level >0) {
+        // X,Y offset calculation
+        // zoom in bigger than zero
+        if (this.zoom > this.formerzoom && this.zoom > 1.01){
+            this.global_offsetX -= xoff_down;
+            this.global_offsetY -= yoff_down;
+
+        }  // zoom out bigger than zero
+        else if (this.zoom < this.formerzoom && this.zoom > 1.01){
+            this.global_offsetX += xoff_down;
+            this.global_offsetY += yoff_down;
+
+        }
+        // zoom in smaller than zero
+        else if (this.zoom > this.formerzoom && this.zoom < 0.99){
+            this.global_offsetX -= xoff_up;
+            this.global_offsetY -= yoff_up;
+
+        }  // zoom out bigger than zero
+        else if (this.zoom < this.formerzoom && this.zoom < 0.99){
+            this.global_offsetX += xoff_up;
+            this.global_offsetY += yoff_up;
+        }
+        // go back to normal
+        else if (this.zoom <= 1.01 && this.zoom >=0.99)  {
+            if (this.zoom < this.formerzoom){
+                this.global_offsetX += xoff_down;
+                this.global_offsetY += yoff_down;
+            }
+            else {
+                this.global_offsetX -= xoff_up;
+                this.global_offsetY -= yoff_up;
+            }
+        }
+    }
+**/
+        this.stage.scaleX=this.zoom;
+        this.stage.scaleY=this.zoom;
+
+        this.formerzoom = this.zoom;
+
+        this.stage.update();
+
+
+};
 
 
 Layer.prototype.tick = function()  {
