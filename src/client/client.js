@@ -66,12 +66,12 @@ Client.prototype.onInitGameData = function(initGameData) {
     var self = this;
 
     //init all global gameData variables:
-    this.gameData.spritesheets = new GameList(Spritesheet,initGameData.spritesheets);
-    this.gameData.mapTypes = new GameList(MapType,initGameData.mapTypes);
-    this.gameData.objectTypes = new GameList(ObjectType,initGameData.objectTypes);
+    this.gameData.spritesheets.load(initGameData.spritesheets);
+    this.gameData.mapTypes.load(initGameData.mapTypes);
+    this.gameData.objectTypes.load(initGameData.objectTypes);
 
     //init only one map
-    this.gameData.maps = new GameList(MapData,[initGameData.initMap]);
+    this.gameData.maps.add(new MapData(this.gameData,initGameData.initMap));
 
     // Create Layer Object
     this.layer =  new Layer(this,this.stage,this.gameData,initGameData.initMap._id);
