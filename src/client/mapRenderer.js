@@ -9,8 +9,8 @@ var Map = function(map_container,obj_container,gameData,mapId) {
     this.obj_container = obj_container;
     this.spritesheets = {};
     this.bgImg;
-    this.mapData = this.gameData.maps.hashList[this.mapId];
-    this.mapType = this.gameData.mapTypes.hashList[this.mapData.mapTypeId];
+    this.mapData = this.gameData.maps.get(this.mapId);
+    this.mapType = this.gameData.mapTypes.get(this.mapData.mapTypeId);
 
     // create unique list of images to load:
     var imagesToLoadHashList = {}, imagesToLoad = [];
@@ -74,8 +74,15 @@ Map.prototype.createMap = function() {
 };
 
 Map.prototype.addObject = function(mapObject) {
+
+    this.mapData.mapObjects.add(mapObject);
+    this.renderObj(mapObject);
+
+}
+
+Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
-    var objType = this.gameData.objectTypes.hashList[mapObject.objTypeId];
+    var objType = this.gameData.objectTypes.get(mapObject.objTypeId);
     var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
     objectBitmap.gotoAndStop(objType.spriteFrame);
     objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
@@ -119,11 +126,11 @@ Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
 }
 
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
-    var gameX = (renderX / this.mapType.ratioWidthHeight + renderY) / this.mapType.scale;
+    var gameX = (renderX / this.mapType.ratioWidthHeight + renderY) / (2*this.mapType.scale);
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
-    var gameY = (renderY - renderX / this.mapType.ratioWidthHeight) / this.mapType.scale;
+    var gameY = (renderY - renderX / this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameY;
 }
