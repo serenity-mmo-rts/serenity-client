@@ -82,6 +82,34 @@
     </style>
 
 
+    <style>
+        #topLeftUi {
+            position: absolute;
+            margin: 0px;
+            padding: 0px;
+            width: 200px;
+            height: 150px;
+        }
+        #topLeftUi.visible {
+            left: 0px;
+            top: 0px;
+        }
+        #topLeftUi.hidden {
+            left: -200px;
+            top: -150px;
+        }
+        .toggleButton {
+            background-color:#b0c4de;
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            right: -20px;
+            bottom: -20px;
+        }
+
+    </style>
+
+
 
 </head>
 <body bgcolor="black" onLoad="gameClient.init();">
@@ -119,13 +147,28 @@
     </form>
 </div>
 
-
-
+<div id="topLeftUi" class="ui-widget-content ui-corner-all visible">
+    <div id="someOptions">
+        <p id="debugInfo">
+            Some Options.
+        </p>
+        <div id="topLeftToggleButton" class="toggleButton ui-corner-all"></div>
+    </div>
+</div>
 
 <div id="buildMenu" class="ui-widget-content">
     <div id="accordion"></div>
 </div>
 
 </body>
+
+
+<script>
+    $( "#topLeftToggleButton" ).click(function() {
+        $( "#topLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
+    });
+
+</script>
+
 </html>
 

@@ -23,23 +23,9 @@ var Layer = function (client, stage, gameData, mapId) {
     // Zooming
     this.zoomFactors = [0.3486784401, 0.387420489, 0.43046721, 0.4782969, 0.531441, 0.59049, 0.6561, 0.729, 0.81, 0.9, 1, 1.1, 1.21, 1.331, 1.4641, 1.61051, 1.771561, 1.9487171, 2.14358881, 2.357947691, 2.5937424601];
     this.zoom_level = 10;
-    this.zoomOffset = [];
-    this.zoomOffsetsWidth =[];
-    this.zoomOffsetsHeight =[];
-    for( var i =0; i <this.zoomFactors.length; i++){
-        this.zoomOffsetsWidth.push((((window.innerWidth / 64) - (window.innerWidth / (64*(this.zoomFactors[i]))))/2) * (64*(this.zoomFactors[i])));
-        this.zoomOffsetsHeight.push((((window.innerHeight / 32) - (window.innerHeight / (32*(this.zoomFactors[i]))))/2) * (32*(this.zoomFactors[i])));
-    }
     this.zoom = this.zoomFactors[this.zoom_level];
-    this.zoomOffset[0] =  this.zoomOffsetsWidth[this.zoom_level];
-    this.zoomOffset[1] =  this.zoomOffsetsHeight[this.zoom_level];
 
 
-    // POSITONING
-    this.global_offsetX = 0;
-    this.global_offsetY = 0;
-    this.global_buildXpos;
-    this.global_buildYpos;
     this.move_count = 1;
     this.del_count = 1;
 
@@ -60,6 +46,8 @@ var Layer = function (client, stage, gameData, mapId) {
 
     // Map Container
     this.main_container = new createjs.Container();
+    this.main_container.x = this.stage.x;
+    this.main_container.y = this.stage.y;
     this.main_container.mouseMoveOutside = true;
     this.map_container = new createjs.Container();
     this.map_container.mouseMoveOutside = true;
@@ -101,7 +89,7 @@ var Layer = function (client, stage, gameData, mapId) {
 
 
     // on resize
-    //window.addEventListener('resize',(function(){self.resize()}), false);
+    window.addEventListener('resize',(function(){self.resize()}), false);
 };
 
 
@@ -200,21 +188,14 @@ Layer.prototype.handleMousedownMain = function (evt) {
             this.buttonMenuContainer.addChild(dummy1, dummy2, dummy3, this.mainmenu.menuItems[0], this.mainmenu.menuItems[1], this.mainmenu.menuItems[2], this.mainmenu.menuItems[3], this.mainmenu.menuItems[4]);
             this.buttonMenuContainer.name = "submenu";
             this.menu_container.addChild(this.buttonMenuContainer);
-
-
         }
 
         else { // drag main container
-            offset = {
-                x: evt.target.x - evt.stageX,
-                y: evt.target.y - evt.stageY
-            };
-
+            var startDragAt = this.main_container.globalToLocal(evt.stageX,evt.stageY);
             evt.addEventListener("mousemove", function (ev) {
-                ev.target.x = ev.stageX + offset.x;
-                ev.target.y = ev.stageY + offset.y;
-                self.global_offsetX = ev.target.x;
-                self.global_offsetY = ev.target.y;
+                var mouseAt = self.main_container.globalToLocal(ev.stageX,ev.stageY);
+                self.main_container.x += mouseAt.x - startDragAt.x;
+                self.main_container.y += mouseAt.y - startDragAt.y;
             });
         }
     }
@@ -339,23 +320,16 @@ Layer.prototype.resize = function () {
 
 // move object
 Layer.prototype.moveCurrentObject = function () {
-    var x = (this.stage.mouseX - this.global_offsetX)*1/this.zoom;
-    var y = (this.stage.mouseY - this.global_offsetY)*1/this.zoom;
-    this.map.moveObjectToRenderCoord(this.currBuildingObj._id, x, y);
+    var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+    this.map.moveObjectToRenderCoord(this.currBuildingObj._id, pt.x, pt.y);
 };
 
-
 Layer.prototype.MouseWheelHandler = function (e) {
-
-
-
     if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
         if (this.zoom_level <20) {
             this.zoom_level+=1;
             this.zoom = this.zoomFactors[this.zoom_level];
-            this.zoomOffset[0] =  this.zoomOffsetsWidth[this.zoom_level];
-            this.zoomOffset[1] =  this.zoomOffsetsHeight[this.zoom_level];
         }
     }
 
@@ -363,8 +337,6 @@ Layer.prototype.MouseWheelHandler = function (e) {
         if (this.zoom_level >0) {
             this.zoom_level-= 1;
             this.zoom = this.zoomFactors[this.zoom_level];
-            this.zoomOffset[0] =  this.zoomOffsetsWidth[this.zoom_level];
-            this.zoomOffset[1] =  this.zoomOffsetsHeight[this.zoom_level];
         }
     }
 
@@ -375,6 +347,17 @@ Layer.prototype.MouseWheelHandler = function (e) {
 
 
 Layer.prototype.tick = function () {
+
+    var mouseInMainCoord = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+    $("#debugInfo").html(
+        "this.zoom="+this.zoom +
+            "<br>window.innerWidth=" + window.innerWidth +
+            "<br>window.innerHeight=" + window.innerHeight +
+            "<br>mouseInMainCoord.x="+mouseInMainCoord.x +
+            "<br>mouseInMainCoord.y="+mouseInMainCoord.y +
+            "<br>main_container.x="+this.main_container.x +
+            "<br>main_container.y="+this.main_container.y
+    );
 
     if (this.moving || this.build) { // move object
         this.moveCurrentObject();
