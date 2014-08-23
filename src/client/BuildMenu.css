@@ -1,11 +1,7 @@
 #buildMenu {
-     position: absolute;
-     left: 20px;
-     bottom: 200px;
-     padding: 5px;
+
      width: 280px;
      height: 300px;
-     border: 0px;
  }
 
 .buildMenuItem {

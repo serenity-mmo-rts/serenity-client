@@ -101,7 +101,7 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
     $( "#accordion" ).accordion({
         heightStyle: "fill"
     });
-    $("#buildMenu").hide();
+    //$("#buildMenu").hide();
 
     // fill it
     for (var i = 0; i< this.nr; i++) {
@@ -119,8 +119,8 @@ var BuildMenu = function initMenu(eventBuild,eventDelete,eventMove,menu_containe
             $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectname+'</p>');
             $("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />');
             $("#"+buildMenuItemId).click(function()  {
-                $("#buildMenu").hide();
-                self.clickcount = 0;
+                //$("#buildMenu").hide();
+                //self.clickcount = 0;
                 self.eventBuild(this.name);
             });
         }

@@ -80,6 +80,10 @@ var Layer = function (client, stage, gameData, mapId) {
 
     // mouse zoom
     var canvas = document.getElementById("canvas");
+
+    canvas.onmousedown = function(event){
+        event.preventDefault();
+    };
     canvas.addEventListener("mousewheel", (function (evt) {
         self.MouseWheelHandler(evt)
     }), false);
@@ -191,6 +195,7 @@ Layer.prototype.handleMousedownMain = function (evt) {
         }
 
         else { // drag main container
+            //document.body.style.cursor='move';
             var startDragAt = this.main_container.globalToLocal(evt.stageX,evt.stageY);
             evt.addEventListener("mousemove", function (ev) {
                 var mouseAt = self.main_container.globalToLocal(ev.stageX,ev.stageY);
@@ -212,8 +217,9 @@ Layer.prototype.initializeObject = function (objectTypeId) {  // ObjectID missin
     }
     else {
         // remove build menu
-        var kill_child = this.menu_container.getChildAt(5);
-        this.menu_container.removeChild(kill_child);
+        //var kill_child = this.menu_container.getChildAt(5);
+        //this.menu_container.removeChild(kill_child);
+        $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
 
         // if deleting or moving was still on switch it off
         this.destroy = false;
@@ -221,16 +227,10 @@ Layer.prototype.initializeObject = function (objectTypeId) {  // ObjectID missin
         this.move = false;
         this.move_count = 1;
 
-        this.currBuildingObj = new MapObject(this.gameData, {_id: 'tempObject', x: 0, y: 0, objTypeId: objectTypeId, userId: this.client.userid});
-
+        this.currBuildingObj = new MapObject(this.gameData, {_id: 'tempObject', x: 0, y: 0, objTypeId: objectTypeId, userId: this.client.userId});
         this.map.addObject(this.currBuildingObj);
-
         this.currBuildingObj.objectBitmap.mouseMoveOutside = true;
         this.currBuildingObj.objectBitmap.alpha = 1;
-
-        // calculate global position of map
-        this.global_buildXpos = -this.global_offsetX + this.stage.mouseX;
-        this.global_buildYpos = -this.global_offsetY + this.stage.mouseY;
 
         //this.current_object = this.currentlyBuildingBitmap;
         this.build = true;
@@ -305,15 +305,6 @@ Layer.prototype.getCurrentObject = function () {
 Layer.prototype.resize = function () {
     this.stage.canvas.height = window.innerHeight;
     this.stage.canvas.width = window.innerWidth;
-    this.menu_container.removeAllChildren();
-    this.buildMenu = new BuildMenu((function () {
-        self.initializeObject()
-    }), (function () {
-        self.deleteObject()
-    }), (function () {
-        self.moveObject()
-    }), this.menu_container, this.canvas_size);
-    this.headMenu = new HeaderMenu(this.menu_container);
     this.canvas_size = [window.innerHeight, window.innerWidth];
 };
 
@@ -349,7 +340,7 @@ Layer.prototype.MouseWheelHandler = function (e) {
 Layer.prototype.tick = function () {
 
     var mouseInMainCoord = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
-    $("#debugInfo").html(
+    $("#layerDebug").html(
         "this.zoom="+this.zoom +
             "<br>window.innerWidth=" + window.innerWidth +
             "<br>window.innerHeight=" + window.innerHeight +

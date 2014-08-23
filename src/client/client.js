@@ -2,12 +2,13 @@
 var Client = function() {
     this.stage;
     this.socket;
-    this.userid;
+    this.userId;
     this.currentLayer = 1;      // Layers number
     this.t200 = 0;              // Tick counter resets every 200ms
     this.layer;
     this.loginForm;
     this.gameData = new GameData();
+    this.timeoffset = 0;
 };
 
 // Init function
@@ -16,9 +17,12 @@ Client.prototype.init = function() {
 
 	// initialize stage and main containers
     this.stage = new createjs.Stage("canvas");
+    createjs.Touch.enable(this.stage);
     this.stage.mouseMoveOutside = true;
 
-    socket = io.connect('http://localhost:8080');
+    socket = io.connect(window.location.href);
+
+
 
     socket.socket.on('error', function (reason){
         console.error('Unable to connect Socket.IO', reason);
@@ -26,11 +30,14 @@ Client.prototype.init = function() {
 
     socket.on('connect', function (){
         console.info('successfully established a working connection \o/');
+
+        ntp.init(socket);
+
     });
 
     loginForm = new Login(socket);
 
-    socket.emit('ready');
+
 
     socket.on('loginPrompt', (function(){
         loginForm.show();
@@ -56,6 +63,18 @@ Client.prototype.init = function() {
     socket.on('map', (function(mapData){ self.onMapDataReceived(mapData);}));
 
     socket.on('initGameData',(function(initGameData){ self.onInitGameData(initGameData);}));
+
+    socket.on('buildHouse', (function(data){
+        var newObject = new MapObject(this.gameData,data[1]);
+        if (self.layer.mapId == data[0]) {
+            self.layer.map.addObject(newObject);
+        }
+        else {
+            self.gameData.maps.get(data[0]).mapObjects.add(newObject);
+        }
+    }));
+
+    socket.emit('ready');
 }
 
 Client.prototype.loadMap = function(mapId) {
@@ -84,6 +103,12 @@ Client.prototype.onInitGameData = function(initGameData) {
         self.t200+=1; // tick counter
         self.layer.tick();
         self.stage.update();
+
+        self.timeoffset = ntp.offset(); // time offset from the server in ms
+        $("#clientDebug").html(
+            "timeoffset="+self.timeoffset +
+                "<br>userId=" + self.userId
+        );
     });
 }
 

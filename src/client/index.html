@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="lib/development-bundle/themes/cupertino/jquery.ui.all.css">
     <link rel="stylesheet" href="BuildMenu.css">
+    <link rel="stylesheet" href="uiMenus.css">
 
     <script type="text/javascript" src="lib/easeljs-0.6.1.min.js"></script>
     <script type="text/javascript" src="lib/preloadjs-0.3.1.min.js"></script>
@@ -14,7 +15,7 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="lib/math.js"></script>
     <script type="text/javascript" src="lib/QuadTree.js"></script>
-
+    <script src="/ntpClient/ntp.js"></script>
 
 
     <script src="lib/development-bundle/ui/jquery.ui.core.js"></script>
@@ -69,9 +70,19 @@
         .validateTips { border: 1px solid transparent; padding: 0.3em; }
     </style>
     <style>
+        html {
+            width:100%;
+            height:100%;
+            overflow:hidden
+        }
+
         body
         {
             background-color: rgba(200,200,200,1);
+            width:100%;
+            height:100%;
+            overflow:hidden;
+            margin:0
         }
 
         #canvas
@@ -79,33 +90,7 @@
             background-color: rgba(235,217,118,0.3);
         }
 
-    </style>
 
-
-    <style>
-        #topLeftUi {
-            position: absolute;
-            margin: 0px;
-            padding: 0px;
-            width: 200px;
-            height: 150px;
-        }
-        #topLeftUi.visible {
-            left: 0px;
-            top: 0px;
-        }
-        #topLeftUi.hidden {
-            left: -200px;
-            top: -150px;
-        }
-        .toggleButton {
-            background-color:#b0c4de;
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            right: -20px;
-            bottom: -20px;
-        }
 
     </style>
 
@@ -148,17 +133,27 @@
 </div>
 
 <div id="topLeftUi" class="ui-widget-content ui-corner-all visible">
-    <div id="someOptions">
-        <p id="debugInfo">
+    <div>
+        <p id="clientDebug">
+            Some Options.
+        </p>
+        <p id="layerDebug">
             Some Options.
         </p>
         <div id="topLeftToggleButton" class="toggleButton ui-corner-all"></div>
     </div>
 </div>
 
-<div id="buildMenu" class="ui-widget-content">
-    <div id="accordion"></div>
+<div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
+    <div>
+        <div id="buildMenu" class="ui-widget-content">
+            <div id="accordion"></div>
+        </div>
+        <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
+    </div>
 </div>
+
+
 
 </body>
 
@@ -167,7 +162,9 @@
     $( "#topLeftToggleButton" ).click(function() {
         $( "#topLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
     });
-
+    $( "#bottomLeftToggleButton" ).click(function() {
+        $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
+    });
 </script>
 
 </html>
