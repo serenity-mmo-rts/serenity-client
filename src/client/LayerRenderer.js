@@ -44,7 +44,7 @@ var Layer = function (client, stage, gameData, mapId) {
     this.truthArr = [false, true];
     this.visit = false;
 
-    // Map Container
+    // Container
     this.main_container = new createjs.Container();
     this.main_container.x = this.stage.x;
     this.main_container.y = this.stage.y;
@@ -55,7 +55,7 @@ var Layer = function (client, stage, gameData, mapId) {
     this.obj_container.mouseMoveOutside = true;
 
     // Initialize Map
-    this.map = new Map(this.map_container, this.obj_container, this.gameData, this.mapId);
+    this.map = new Map(this.map_container, this.obj_container, this.canvas_size, this.gameData, this.mapId);
 
     // Render Menu
     this.menu_container = new createjs.Container();
@@ -66,12 +66,12 @@ var Layer = function (client, stage, gameData, mapId) {
         self.deleteObject()
     }), (function () {
         self.moveObject()
-    }), this.menu_container, this.canvas_size, this.gameData, this.mapId);
-    this.headMenu = new HeaderMenu(this.menu_container, this.canvas_size);
+    }), this.canvas_size, this.gameData, this.mapId);
+    //this.headMenu = new HeaderMenu(this.menu_container, this.canvas_size);
 
     // inherit
     this.main_container.addChild(this.map_container, this.obj_container);
-    this.stage.addChild(this.main_container, this.menu_container);
+    this.stage.addChild(this.main_container,this.menu_container);
 
     // event listener for main container
     this.main_container.addEventListener("mousedown", (function (evt) {
@@ -80,7 +80,6 @@ var Layer = function (client, stage, gameData, mapId) {
 
     // mouse zoom
     var canvas = document.getElementById("canvas");
-
     canvas.onmousedown = function(event){
         event.preventDefault();
     };
@@ -152,46 +151,29 @@ Layer.prototype.handleMousedownMain = function (evt) {
     //  change Layer or drag main container
     else if (!this.build && !this.move) {
 
-        if (this.hit_object) { // move in house (submenu missing)
+        if (this.hit_object) { // submenu on click onto object
 
             this.stage.enableMouseOver([frequency = 50]);
 
-            this.icon = "resources/objects/bank1.png";
+            var subicon = "resources/objects/bank1.png";
             var x = this.stage.mouseX;
             var y = this.stage.mouseY;
             var height = 40;
             var width = 160;
 
-            this.submenu3 = new Menu();
-            this.submenu3.addButton(x + (2 * width), y + (1 * height), this.icon, 'Reload Layer', [], (function () {
-                self.client.goLayerDown()
+            var buttonMenu = new Menu();
+            buttonMenu.addButton(x + (0 * width), y + (0 * height), subicon, 'Go into', [], (function () {
+                self.client.changeLayer() ;
             }));
-            this.submenu3.addButton(x + (2 * width), y + (2 * height), this.icon, 'submenu32', []);
-            this.submenu3.addButton(x + (2 * width), y + (3 * height), this.icon, 'submenu33', []);
+            buttonMenu.addButton(x + (0 * width), y + (1 * height), subicon, 'Something else', [], []);
 
-            this.submenu2 = new Menu();
-            this.submenu2.addButton(x + (2 * width), y + (0 * height), this.icon, 'submenu21', []);
-            this.submenu2.addButton(x + (2 * width), y + (1 * height), this.icon, 'submenu22', []);
-            this.submenu2.addButton(x + (2 * width), y + (2 * height), this.icon, 'submenu23', []);
 
-            this.submenu1 = new Menu();
-            this.submenu1.addButton(x + (1 * width), y + (0 * height), this.icon, 'submenu11', this.submenu2);
-            this.submenu1.addButton(x + (1 * width), y + (1 * height), this.icon, 'submenu12', this.submenu3);
+            var buttonMenuContainer = new createjs.Container();
+            dummy1 = dummy2 = dummy3 = new createjs.Container();
 
-            this.mainmenu = new Menu();
-            this.mainmenu.addButton(x + (0 * width), y + (0 * height), this.icon, 'mainmenu1', this.submenu1);
-            this.mainmenu.addButton(x + (0 * width), y + (1 * height), this.icon, 'mainmenu2', []);
-            this.mainmenu.addButton(x + (0 * width), y + (2 * height), this.icon, 'mainmenu3', []);
-            this.mainmenu.addButton(x + (0 * width), y + (3 * height), this.icon, 'mainmenu4', []);
-            this.mainmenu.addButton(x + (0 * width), y + (4 * height), this.icon, 'mainmenu5', []);
-
-            this.buttonMenuContainer = new createjs.Container();
-            var dummy1 = new createjs.Container();
-            var dummy2 = new createjs.Container();
-            var dummy3 = new createjs.Container();
-            this.buttonMenuContainer.addChild(dummy1, dummy2, dummy3, this.mainmenu.menuItems[0], this.mainmenu.menuItems[1], this.mainmenu.menuItems[2], this.mainmenu.menuItems[3], this.mainmenu.menuItems[4]);
-            this.buttonMenuContainer.name = "submenu";
-            this.menu_container.addChild(this.buttonMenuContainer);
+            buttonMenuContainer.addChild(dummy1, dummy2, dummy3, buttonMenu.menuItems[0],buttonMenu.menuItems[1]);
+            buttonMenuContainer.name = "submenu";
+            this.menu_container.addChild(buttonMenuContainer);
         }
 
         else { // drag main container
@@ -202,6 +184,10 @@ Layer.prototype.handleMousedownMain = function (evt) {
                 self.main_container.x += mouseAt.x - startDragAt.x;
                 self.main_container.y += mouseAt.y - startDragAt.y;
             });
+
+            this.map.checkRendering(this.gameData.maps.get(this.mapId).mapObjects.hashList,this.main_container.x, this.main_container.y,this.zoom);
+
+
         }
     }
 };
@@ -210,15 +196,6 @@ Layer.prototype.handleMousedownMain = function (evt) {
 // initialize  Object
 Layer.prototype.initializeObject = function (objectTypeId) {  // ObjectID missing
 
-    if (this.build) {     // if building is cancelled
-        var n = this.obj_container.getNumChildren();
-        var del_child = this.obj_container.getChildAt(n - 1); // correct index missing
-        this.obj_container.removeChild(del_child);
-    }
-    else {
-        // remove build menu
-        //var kill_child = this.menu_container.getChildAt(5);
-        //this.menu_container.removeChild(kill_child);
         $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
 
         // if deleting or moving was still on switch it off
@@ -234,20 +211,13 @@ Layer.prototype.initializeObject = function (objectTypeId) {  // ObjectID missin
 
         //this.current_object = this.currentlyBuildingBitmap;
         this.build = true;
-    }
+ //   }
 };
 
 
 // delete Object
 Layer.prototype.deleteObject = function () {
 
-    if (this.build) {  // if building is cancelled
-        var n = this.obj_container.getNumChildren();
-        var del_child = this.obj_container.getChildAt(n - 1); // correct index missing
-        this.obj_container.removeChild(del_child);
-    }
-
-    // if building or moving was still on switch it off
     this.build = false;
     this.move = false;
     this.move_count = 1;
@@ -264,13 +234,6 @@ Layer.prototype.deleteObject = function () {
 // moving Object
 Layer.prototype.moveObject = function () {
 
-    if (this.build) {    // if building is cancelled
-        var n = this.obj_container.getNumChildren();
-        var del_child = this.obj_container.getChildAt(n - 1); // correct index missing
-        this.obj_container.removeChild(del_child);
-    }
-
-    // if building or deleting was still on switch it off
     this.build = false;
     this.destroy = false;
     this.del_count = 1;
@@ -346,8 +309,8 @@ Layer.prototype.tick = function () {
             "<br>window.innerHeight=" + window.innerHeight +
             "<br>mouseInMainCoord.x="+mouseInMainCoord.x +
             "<br>mouseInMainCoord.y="+mouseInMainCoord.y +
-            "<br>main_container.x="+this.main_container.x +
-            "<br>main_container.y="+this.main_container.y
+            "<br>main_container.x="+ -this.main_container.x +
+            "<br>main_container.y="+ -this.main_container.y
     );
 
     if (this.moving || this.build) { // move object

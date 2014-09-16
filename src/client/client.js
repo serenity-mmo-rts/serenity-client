@@ -3,8 +3,6 @@ var Client = function() {
     this.stage;
     this.socket;
     this.userId;
-    this.currentLayer = 1;      // Layers number
-    this.t200 = 0;              // Tick counter resets every 200ms
     this.layer;
     this.loginForm;
     this.gameData = new GameData();
@@ -60,7 +58,7 @@ Client.prototype.init = function() {
     //socket.on('map', (function(mapData){
     //    self.layer =  new Layer(self.goLayerUp,self.goLayerDown,[],[],self.stage);
     //}));
-    socket.on('map', (function(mapData){ self.onMapDataReceived(mapData);}));
+   // socket.on('map', (function(mapData){ self.onMapDataReceived(mapData);}));            // where is the implementation???
 
     socket.on('initGameData',(function(initGameData){ self.onInitGameData(initGameData);}));
 
@@ -92,7 +90,8 @@ Client.prototype.onInitGameData = function(initGameData) {
     //init only one map
     this.gameData.maps.add(new MapData(this.gameData,initGameData.initMap));
 
-    // Create Layer Object
+    // Create Layer Object                                            k
+
     this.layer =  new Layer(this,this.stage,this.gameData,initGameData.initMap._id);
     // Render it once
     this.stage.update();
@@ -100,7 +99,6 @@ Client.prototype.onInitGameData = function(initGameData) {
     // set FPS and setup tick
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function() {
-        self.t200+=1; // tick counter
         self.layer.tick();
         self.stage.update();
 
@@ -114,15 +112,18 @@ Client.prototype.onInitGameData = function(initGameData) {
 
 
  // not yet working
-Client.prototype.goLayerUp = function() {
-    currentLayer +=1;
-    stage.removeAllChildren();
-    layer=  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
+Client.prototype.changeLayer = function(initGameData) {
+    this.stage.removeAllChildren();
+    this.stage.update();
+    var self = this;
+
+    this.gameData.maps.add(new MapData(this.gameData,initGameData.initMap));
+
+    // Create Layer Object                                            k
+
+    this.layer =  new Layer(this,this.stage,this.gameData,initGameData.initMap._id);
+    // Render it once
+
 }
 
 
-Client.prototype.goLayerDown = function() {
-    currentLayer -=1;
-    stage.removeAllChildren();
-    layer=  new Layer(goLayerUp,goLayerDown,mainData,menuData,stage);
-}

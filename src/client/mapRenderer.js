@@ -1,8 +1,9 @@
 // loading layers
-var Map = function(map_container,obj_container,gameData,mapId) {
+var Map = function(map_container,obj_container,canvas_size, gameData,mapId) {
 
     var self = this;
 
+    this.canvas_size = canvas_size;
     this.gameData = gameData;
     this.mapId = mapId;
     this.map_container = map_container;
@@ -63,22 +64,43 @@ Map.prototype.createMap = function() {
     backgroundShape.y = 0;
     this.map_container.addChild(backgroundShape);
 
+    // load spritesheets
     for (var spritesheetId in this.gameData.spritesheets.hashList) {
         this.spritesheets[spritesheetId] = new createjs.SpriteSheet(this.gameData.spritesheets.hashList[spritesheetId]);
     }
 
-    for (mapObjectId in this.mapData.mapObjects.hashList) {
-        this.addObject(this.mapData.mapObjects.hashList[mapObjectId]);
-    }
+    this.checkRendering(this.mapData.mapObjects.hashList,this.canvas_size[1]/2,this.canvas_size[0]/2,1);
+
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 };
 
-Map.prototype.addObject = function(mapObject) {
+Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
 
-    this.mapData.mapObjects.add(mapObject);
-    this.renderObj(mapObject);
+    for (mapObjectId in objectList) {
+        var DistanceX = this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff;
+        var DistanceY = this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff;
+        var isalreadyRendered  = false;
+        var shouldbeRendered = false;
 
+        if(DistanceX >= (-this.canvas_size[1]*(1/zoomfac))  &&  DistanceX <= (2*this.canvas_size[1]*(1/zoomfac)) && DistanceY >= (-this.canvas_size[0]*(1/zoomfac))  &&  DistanceY <= (2*this.canvas_size[0])*(1/zoomfac)) {
+            shouldbeRendered = true;
+        }
+
+        var checkedObj = this.obj_container.getChildByName(mapObjectId);
+        isalreadyRendered = this.obj_container.contains(checkedObj);
+
+        if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
+            var childToRemove = this.obj_container.getChildByName(mapObjectId);
+            this.obj_container.removeChild(childToRemove);
+        }
+        else if (!isalreadyRendered && shouldbeRendered) {   // add to rendering container
+            //this.mapData.mapObjects.add(objectList[mapObjectId]);
+            this.renderObj(objectList[mapObjectId]);
+        }
+
+    }
 }
+
 
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
@@ -91,6 +113,7 @@ Map.prototype.renderObj = function(mapObject) {
     //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
     objectBitmap.mapObjectId = mapObjectId;
+    objectBitmap.name = mapObjectId;
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
 
