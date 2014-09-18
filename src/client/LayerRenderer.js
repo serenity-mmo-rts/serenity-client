@@ -1,4 +1,4 @@
-var Layer = function (client, stage, gameData, mapId) {
+var Layer = function (client, stage,gameData, mapId) {
 
 
     var self = this;
@@ -8,6 +8,7 @@ var Layer = function (client, stage, gameData, mapId) {
     // resize to full window
     this.client.stage.canvas.height = window.innerHeight;
     this.client.stage.canvas.width = window.innerWidth;
+
     this.canvas_size = [window.innerHeight, window.innerWidth];
 
     this.gameData = gameData;
@@ -19,12 +20,10 @@ var Layer = function (client, stage, gameData, mapId) {
     this.stage.x = window.innerWidth / 2;
     this.stage.y = window.innerHeight / 2;
 
-
     // Zooming
     this.zoomFactors = [0.3486784401, 0.387420489, 0.43046721, 0.4782969, 0.531441, 0.59049, 0.6561, 0.729, 0.81, 0.9, 1, 1.1, 1.21, 1.331, 1.4641, 1.61051, 1.771561, 1.9487171, 2.14358881, 2.357947691, 2.5937424601];
     this.zoom_level = 10;
     this.zoom = this.zoomFactors[this.zoom_level];
-
 
     this.move_count = 1;
     this.del_count = 1;
@@ -45,6 +44,11 @@ var Layer = function (client, stage, gameData, mapId) {
     this.visit = false;
 
     // Container
+    this.zoom_container = new createjs.Container();
+    this.zoom_container.regX = window.innerWidth / 2;
+    this.zoom_container.regY = window.innerHeight/ 2;
+    this.zoom_container.x = window.innerWidth / 2;
+    this.zoom_container.y = window.innerHeight / 2;
     this.main_container = new createjs.Container();
     this.main_container.x = this.stage.x;
     this.main_container.y = this.stage.y;
@@ -53,6 +57,7 @@ var Layer = function (client, stage, gameData, mapId) {
     this.map_container.mouseMoveOutside = true;
     this.obj_container = new createjs.Container();
     this.obj_container.mouseMoveOutside = true;
+
 
     // Initialize Map
     this.map = new Map(this.map_container, this.obj_container, this.canvas_size, this.gameData, this.mapId);
@@ -68,10 +73,14 @@ var Layer = function (client, stage, gameData, mapId) {
         self.moveObject()
     }), this.canvas_size, this.gameData, this.mapId);
     //this.headMenu = new HeaderMenu(this.menu_container, this.canvas_size);
+    this.minimap = new Minimap(this.stage,this.main_container,this.menu_container,this.canvas_size,(function (x,y,list,zoom) {
+        self.RenderObjects(self.main_container.x, self.main_container.y,self.gameData.maps.get(self.mapId).mapObjects.hashList,self.zoom)
+    }));
 
     // inherit
     this.main_container.addChild(this.map_container, this.obj_container);
-    this.stage.addChild(this.main_container,this.menu_container);
+    this.zoom_container.addChild(this.main_container);
+    this.stage.addChild(this.zoom_container,this.menu_container);
 
     // event listener for main container
     this.main_container.addEventListener("mousedown", (function (evt) {
@@ -183,9 +192,20 @@ Layer.prototype.handleMousedownMain = function (evt) {
                 var mouseAt = self.main_container.globalToLocal(ev.stageX,ev.stageY);
                 self.main_container.x += mouseAt.x - startDragAt.x;
                 self.main_container.y += mouseAt.y - startDragAt.y;
+
             });
 
-            this.map.checkRendering(this.gameData.maps.get(this.mapId).mapObjects.hashList,this.main_container.x, this.main_container.y,this.zoom);
+
+            evt.addEventListener("mouseup", function (ev) {
+                //var minimapCenter = self.stage.globalToLocal(self.canvas_size[1]*(9/10),self.canvas_size[1]*(1/10)/2);
+                var minicoords = self.minimap.render2MiniCoords(-self.main_container.x,-self.main_container.y);
+                self.minimap.location.x = minicoords[0];
+                self.minimap.location.y = minicoords[1];
+                self.RenderObjects(self.main_container.x, self.main_container.y,self.gameData.maps.get(self.mapId).mapObjects.hashList,self.zoom);
+                var mouseAt = self.main_container.globalToLocal(ev.stageX,ev.stageY);
+                //self.main_container.regX= self.main_container.x+window.innerWidth/2;
+                //self.main_container.regY= self.main_container.y+window.innerHeight/2;
+            });
 
 
         }
@@ -279,6 +299,7 @@ Layer.prototype.moveCurrentObject = function () {
 };
 
 Layer.prototype.MouseWheelHandler = function (e) {
+    var self = this;
     if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
         if (this.zoom_level <20) {
@@ -294,10 +315,16 @@ Layer.prototype.MouseWheelHandler = function (e) {
         }
     }
 
-    this.stage.scaleX=this.zoom;
-    this.stage.scaleY=this.zoom;
+    this.zoom_container.scaleX=this.zoom;
+    this.zoom_container.scaleY=this.zoom;
+
     this.stage.update();
 };
+
+
+Layer.prototype.RenderObjects = function(x,y,List,zoom){
+    this.map.checkRendering(List,x,y,zoom);
+}
 
 
 Layer.prototype.tick = function () {
@@ -310,7 +337,9 @@ Layer.prototype.tick = function () {
             "<br>mouseInMainCoord.x="+mouseInMainCoord.x +
             "<br>mouseInMainCoord.y="+mouseInMainCoord.y +
             "<br>main_container.x="+ -this.main_container.x +
-            "<br>main_container.y="+ -this.main_container.y
+            "<br>main_container.y="+ -this.main_container.y+
+            "<br>stage.mouseX"+ this.stage.mouseX +
+            "<br>stage.mouseX="+ this.stage.mouseY
     );
 
     if (this.moving || this.build) { // move object

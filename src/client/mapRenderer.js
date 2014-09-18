@@ -44,10 +44,13 @@ Map.prototype.createMap = function() {
     var background = new createjs.Graphics();
     background.beginBitmapFill ( this.bgImg, repetition='repeat' );
 
+
     var halfMapWidth = this.mapData.width/2;
     var halfMapHeight = this.mapData.height/2;
     var x = this.gameCoord2RenderX(-halfMapWidth,-halfMapHeight);
     var y = this.gameCoord2RenderY(-halfMapWidth,-halfMapHeight);
+   // background.drawEllipse(x,y,this.mapData.width,this.mapData.height);
+
     background.moveTo(x,y);
     x = this.gameCoord2RenderX(-halfMapWidth,halfMapHeight);
     y = this.gameCoord2RenderY(-halfMapWidth,halfMapHeight);
@@ -59,6 +62,8 @@ Map.prototype.createMap = function() {
     y = this.gameCoord2RenderY(halfMapWidth,-halfMapHeight);
     background.lineTo(x,y);
     background.closePath();
+
+
     var backgroundShape = new createjs.Shape(background);
     backgroundShape.x = 0;
     backgroundShape.y = 0;
@@ -82,7 +87,7 @@ Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
         var isalreadyRendered  = false;
         var shouldbeRendered = false;
 
-        if(DistanceX >= (-this.canvas_size[1]*(1/zoomfac))  &&  DistanceX <= (2*this.canvas_size[1]*(1/zoomfac)) && DistanceY >= (-this.canvas_size[0]*(1/zoomfac))  &&  DistanceY <= (2*this.canvas_size[0])*(1/zoomfac)) {
+        if(DistanceX >= (-this.canvas_size[1]*(1/zoomfac*1.5))  &&  DistanceX <= (2*this.canvas_size[1]*(1/zoomfac*1.5)) && DistanceY >= (-this.canvas_size[0]*(1/zoomfac*1.5))  &&  DistanceY <= (2*this.canvas_size[0])*(1/zoomfac*1.5)) {
             shouldbeRendered = true;
         }
 
@@ -94,7 +99,7 @@ Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
             this.obj_container.removeChild(childToRemove);
         }
         else if (!isalreadyRendered && shouldbeRendered) {   // add to rendering container
-            //this.mapData.mapObjects.add(objectList[mapObjectId]);
+            this.mapData.mapObjects.add(objectList[mapObjectId]);
             this.renderObj(objectList[mapObjectId]);
         }
 

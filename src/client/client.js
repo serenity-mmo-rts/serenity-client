@@ -100,7 +100,7 @@ Client.prototype.onInitGameData = function(initGameData) {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function() {
         self.layer.tick();
-        self.stage.update();
+       self.stage.update();
 
         self.timeoffset = ntp.offset(); // time offset from the server in ms
         $("#clientDebug").html(
