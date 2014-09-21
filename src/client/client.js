@@ -14,6 +14,7 @@ Client.prototype.init = function() {
     var self = this;
 
 	// initialize stage and main containers
+    createjs.MotionGuidePlugin.install(createjs.Tween);
     this.stage = new createjs.Stage("canvas");
     createjs.Touch.enable(this.stage);
     this.stage.mouseMoveOutside = true;
@@ -65,7 +66,8 @@ Client.prototype.init = function() {
     socket.on('buildHouse', (function(data){
         var newObject = new MapObject(this.gameData,data[1]);
         if (self.layer.mapId == data[0]) {
-            self.layer.map.addObject(newObject);
+            //self.layer.map.addObject(newObject);        // what is the difference between the two ?
+            self.gameData.maps.get(data[0]).mapObjects.add(newObject);
         }
         else {
             self.gameData.maps.get(data[0]).mapObjects.add(newObject);

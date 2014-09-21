@@ -106,7 +106,6 @@ Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
     }
 }
 
-
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
     var objType = this.gameData.objectTypes.get(mapObject.objTypeId);

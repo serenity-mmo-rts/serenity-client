@@ -1,11 +1,15 @@
-var Minimap = function (stage,main_container,menu_container,canvas_size,eventRender){
+var Minimap = function (stage,main_container,menu_container,gameData,mapId,canvas_size,eventRender){
 
      var self = this;
      this.stage = stage;
      this.main_container = main_container;
      this.menu_container = menu_container;
+     this.gameData = gameData;
+     this.mapId = mapId;
      this.canvas_size = canvas_size;
      this.eventRender = eventRender;
+
+     this.mapsize = this.gameData.maps.get(this.mapId).width;
 
      this.mini_container = new createjs.Container();
 
@@ -47,14 +51,36 @@ var Minimap = function (stage,main_container,menu_container,canvas_size,eventRen
     this.dot.setStrokeStyle(3);
     this.dot.beginFill("#ff0000").drawCircle(x2,halfMapHeight,3);
 
+    var button_img1 = new Image();
+    button_img1.src = "resources/icons/arrow_top_right.png";
+    this.button1 = new createjs.Bitmap(button_img1);
+    this.button1.x = x;
+    this.button1.y = (w/2)-45;
+    this.button1.name = "close";
+
+    var button_img2 = new Image();
+    button_img2.src = "resources/icons/arrow_bottom_left.png";
+    this.button2 = new createjs.Bitmap(button_img2);
+    this.button2.x =this.canvas_size[1] -(this.canvas_size[1]*(1/5))-48;
+    this.button2.y =  +(this.canvas_size[1]*(1/10));
+    this.button2.name = "open";
+    this.button2.visible = false;
+
     this.map = new createjs.Shape(this.diamond);
     this.background= new createjs.Shape(this.frame);
     this.location = new createjs.Shape(this.dot);
 
-    this.mini_container.addChild(this.background,this.map,this.location);
+    this.mini_container.addChild(this.background,this.map,this.location,this.button1,this.button2);
     this.mini_container.name = "miniM";
 
     this.menu_container.addChild(this.mini_container);
+
+    this.button1.addEventListener("mousedown", (function (evt) {
+        self.closeMinimap(evt)
+    }));
+    this.button2.addEventListener("mousedown", (function (evt) {
+        self.openMinimap(evt)
+    }));
 
     this.map.addEventListener("mousedown", (function (evt) {
         self.moveOnMinimap(evt)
@@ -62,15 +88,35 @@ var Minimap = function (stage,main_container,menu_container,canvas_size,eventRen
 
 };
 
+
+Minimap.prototype.closeMinimap = function(tween) {
+
+        var moveButton = createjs.Tween.get(this.mini_container, {loop:false}, true)
+            .to({x:+this.canvas_size[1]*(1/5),y:-this.canvas_size[1]*(1/10)}, 500)
+            .set({visible:false},this.button1)
+            .set({visible:true},this.button2);
+
+       // var remChild = this.mini_container.getChildByName("close");
+       //this.mini_container.removeChild(remChild);
+}
+
+Minimap.prototype.openMinimap = function(tween) {
+
+    var moveButton2 = createjs.Tween.get(this.mini_container, {loop:false}, true)
+        .to({x:0,y:0}, 500)
+        .set({visible:false},this.button2)
+        .set({visible:true},this.button1);
+
+}
+
+
 Minimap.prototype.moveOnMinimap = function(evt){
 
     var self = this;
     var mouseInMainCoord = this.stage.globalToLocal(this.stage.mouseX, this.stage.mouseY);
     var xpos= mouseInMainCoord.x;
     var ypos= mouseInMainCoord.y;
-
     var minimapCenter = this.stage.globalToLocal(this.canvas_size[1]*(9/10),this.canvas_size[1]*(1/10)/2);
-
     var DistanceX = xpos-minimapCenter.x;
     var DistanceY = ypos-minimapCenter.y;
     this.location.x = DistanceX;
@@ -89,7 +135,7 @@ Minimap.prototype.moveOnMinimap = function(evt){
 Minimap.prototype.mini2RenderCoords = function(miniX,miniY) {
 
     var MinimapWidth  = this.canvas_size[1]*(1/5);
-    var MapWidth = 30000*4;  // in px
+    var MapWidth = this.mapsize*4;  // in px
     var Factor = Math.round(MapWidth/MinimapWidth);
 
     var mapX = - this.canvas_size[1]/2 + Math.round(miniX*Factor);
@@ -101,7 +147,7 @@ Minimap.prototype.mini2RenderCoords = function(miniX,miniY) {
 Minimap.prototype.render2MiniCoords = function(renderX,renderY) {
 
     var MinimapWidth  = this.canvas_size[1]*(1/5);
-    var MapWidth = 30000*4;     // in px
+    var MapWidth = this.mapsize*4;     // in px
     var Factor = Math.round(MapWidth/MinimapWidth);
 
     var miniX =  (renderX/Factor) + (this.canvas_size[1]/2/Factor);

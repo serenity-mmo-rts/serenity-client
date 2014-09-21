@@ -73,7 +73,7 @@ var Layer = function (client, stage,gameData, mapId) {
         self.moveObject()
     }), this.canvas_size, this.gameData, this.mapId);
     //this.headMenu = new HeaderMenu(this.menu_container, this.canvas_size);
-    this.minimap = new Minimap(this.stage,this.main_container,this.menu_container,this.canvas_size,(function (x,y,list,zoom) {
+    this.minimap = new Minimap(this.stage,this.main_container,this.menu_container,this.gameData,this.mapId,this.canvas_size,(function (x,y,list,zoom) {
         self.RenderObjects(self.main_container.x, self.main_container.y,self.gameData.maps.get(self.mapId).mapObjects.hashList,self.zoom)
     }));
 
@@ -224,8 +224,10 @@ Layer.prototype.initializeObject = function (objectTypeId) {  // ObjectID missin
         this.move = false;
         this.move_count = 1;
 
-        this.currBuildingObj = new MapObject(this.gameData, {_id: 'tempObject', x: 0, y: 0, objTypeId: objectTypeId, userId: this.client.userId});
-        this.map.addObject(this.currBuildingObj);
+        this.currBuildingObj = new MapObject(this.gameData, {_id: 'tempObject', x: this.main_container.x, y: this.main_container.y, objTypeId: objectTypeId, userId: this.client.userId});
+        this.gameData.maps.get(this.mapId).mapObjects.add(this.currBuildingObj);
+        this.map.renderObj(this.currBuildingObj);
+
         this.currBuildingObj.objectBitmap.mouseMoveOutside = true;
         this.currBuildingObj.objectBitmap.alpha = 1;
 
