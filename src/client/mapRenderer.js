@@ -1,22 +1,31 @@
 // loading layers
-var Map = function(map_container,obj_container,canvas_size, gameData,mapId) {
+var Map = function(stage,main_container,mapId) {
 
     var self = this;
 
-    this.canvas_size = canvas_size;
-    this.gameData = gameData;
+    this.stage = stage;
+    this.main_container = main_container;
     this.mapId = mapId;
-    this.map_container = map_container;
-    this.obj_container = obj_container;
+
+    this.map_container = new createjs.Container();
+    this.obj_container = new createjs.Container();
+    this.map_container.mouseMoveOutside = true;
+    this.obj_container.mouseMoveOutside = true;
+    this.main_container.addChild(this.map_container,this.obj_container);
+
+    this.canvas_size = [window.innerHeight,window.innerWidth];
+    this.current_object;
+    this.hit_object = false;
+
     this.spritesheets = {};
     this.bgImg;
-    this.mapData = this.gameData.maps.get(this.mapId);
-    this.mapType = this.gameData.mapTypes.get(this.mapData.mapTypeId);
+    this.mapData = game.maps.get(this.mapId);
+    this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
 
     // create unique list of images to load:
     var imagesToLoadHashList = {}, imagesToLoad = [];
-    for (var spritesheetId in gameData.spritesheets.hashList) {
-        var spritesheet = gameData.spritesheets.hashList[spritesheetId];
+    for (var spritesheetId in game.spritesheets.hashList) {
+        var spritesheet = game.spritesheets.hashList[spritesheetId];
         for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
             if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
                 imagesToLoad.push(spritesheet.images[i]);
@@ -70,8 +79,8 @@ Map.prototype.createMap = function() {
     this.map_container.addChild(backgroundShape);
 
     // load spritesheets
-    for (var spritesheetId in this.gameData.spritesheets.hashList) {
-        this.spritesheets[spritesheetId] = new createjs.SpriteSheet(this.gameData.spritesheets.hashList[spritesheetId]);
+    for (var spritesheetId in game.spritesheets.hashList) {
+        this.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
     }
 
     this.checkRendering(this.mapData.mapObjects.hashList,this.canvas_size[1]/2,this.canvas_size[0]/2,1);
@@ -79,7 +88,12 @@ Map.prototype.createMap = function() {
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 };
 
-Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
+Map.prototype.checkRendering = function(){
+
+    var objectList = game.maps.get(uc.layer.mapId).mapObjects.hashList;
+    var xoff = this.main_container.x;
+    var yoff = this.main_container.y;
+    var zoomfac =  uc.layer.mapContainer.zoom;
 
     for (mapObjectId in objectList) {
         var DistanceX = this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff;
@@ -108,7 +122,7 @@ Map.prototype.checkRendering = function(objectList,xoff,yoff,zoomfac){
 
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
-    var objType = this.gameData.objectTypes.get(mapObject.objTypeId);
+    var objType = game.objectTypes.get(mapObject.objTypeId);
     var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
     objectBitmap.gotoAndStop(objType.spriteFrame);
     objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
@@ -121,7 +135,7 @@ Map.prototype.renderObj = function(mapObject) {
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
 
-    return objectBitmap;
+    //return objectBitmap;
 }
 
 Map.prototype.moveObjectToGameCoord = function(objId, x, y) {
@@ -161,3 +175,29 @@ Map.prototype.renderCoord2GameY = function(renderX,renderY) {
     var gameY = (renderY - renderX / this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameY;
 }
+
+
+// move object
+Map.prototype.moveCurrentObject = function () {
+    var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+    this.moveObjectToRenderCoord(this.currBuildingObj._id, pt.x, pt.y);
+};
+
+
+
+
+// get object under mouse position
+Map.prototype.getCurrentObject = function () {
+    var l = this.obj_container.getNumChildren(); // Number of Objects
+    this.hit_object = false;
+    for (var i = 0; i < l; i++) { // loop through all objects
+        var child = this.obj_container.getChildAt(i);
+        var pt = child.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+        if (child.hitTest(pt.x, pt.y)) {
+            this.hit_object = true;
+            this.current_object = child;
+            this.currentlyBuildingBitmap = child;
+        }
+    }
+    return(this.hit_object);
+};

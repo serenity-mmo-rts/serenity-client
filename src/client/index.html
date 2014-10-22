@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/BuildMenu.css">
     <link rel="stylesheet" href="css/uiMenus.css">
 
+
+
     <script type="text/javascript" src="lib/easeljs-0.6.1.min.js"></script>
     <script type="text/javascript" src="lib/tweenjs-0.5.0.min.js"></script>
     <script type="text/javascript" src="lib/preloadjs-0.3.1.min.js"></script>
@@ -35,13 +37,16 @@
     <script type="text/javascript" src="ui/Button.js"></script>
     <script type="text/javascript" src="ui/buttonMenu.js"></script>
     <script type="text/javascript" src="mapRenderer.js"></script>
-    <script type="text/javascript" src="LayerRenderer.js"></script>
     <script type="text/javascript" src="ui/buildMenuRenderer.js"></script>
     <script type="text/javascript" src="minimapRenderer.js"></script>
     <script type="text/javascript" src="ui/headerRenderer.js"></script>
     <script type="text/javascript" src="ui/sidebarRenderer.js"></script>
     <script type="text/javascript" src="ui/chatRenderer.js"></script>
+    <script type="text/javascript" src="Layer.js"></script>
+    <script type="text/javascript" src="MapContainer.js"></script>
+    <script type="text/javascript" src="MapControl.js"></script>
 
+    <script type="text/javascript" src="client.js"></script>
     <script type="text/javascript" src="game/GameList.js"></script>
     <script type="text/javascript" src="game/GameData.js"></script>
     <script type="text/javascript" src="game/mapData.js"></script>
@@ -51,13 +56,12 @@
     <script type="text/javascript" src="game/Spritesheet.js"></script>
     <script type="text/javascript" src="game/User.js"></script>
 
-    <script type="text/javascript" src="client.js"></script>
 
     <script type="text/javascript">
-         var gameClient = new Client();
-
-
+        var uc = new Client();
+        var game = new GameData();
     </script>
+
 
 
 
@@ -98,13 +102,21 @@
 
 
 </head>
-<body bgcolor="black" onLoad="gameClient.init();">
+<body bgcolor="black" onLoad="uc.init();">
 <div class="contain" style="width:0px; 
                              height: 0px; 							
                              position: absolute; left: 0px; top: 0px;
                              border: none">
     <canvas style="position: relative" id="canvas"  width="1200" height="600"> Canvas not supported. Please update your browser. </canvas>
 </div>
+
+<div class="mini" style="width:0px;
+                             height: 0px;
+                             position: absolute; left: 600px; top: 0px;
+                             border: none">
+    <canvas style="position: relative" id="minimap"  width="400" height="200"> Canvas not supported. Please update your browser. </canvas>
+</div>
+
 
 <div id="login-form" title="Login" style="display: none;">
     <p class="validateTips">All form fields are required.</p>

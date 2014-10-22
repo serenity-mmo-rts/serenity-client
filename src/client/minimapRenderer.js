@@ -1,16 +1,18 @@
-var Minimap = function (stage,main_container,menu_container,gameData,mapId,canvas_size,eventRender){
+var Minimap = function (stage,main_container,menu_container,mapId,eventRender){
 
      var self = this;
+
      this.stage = stage;
      this.main_container = main_container;
      this.menu_container = menu_container;
-     this.gameData = gameData;
      this.mapId = mapId;
-     this.canvas_size = canvas_size;
      this.eventRender = eventRender;
 
-     this.mapsize = this.gameData.maps.get(this.mapId).width;
+     this.main_container = this.stage.getChildAt(0).getChildAt(0);
+     this.menu_container = this.stage.getChildAt(1);
+     this.canvas_size = [window.innerHeight,window.innerWidth] ;
 
+     this.mapsize = game.maps.get(this.mapId).width;
      this.mini_container = new createjs.Container();
 
      var x = this.canvas_size[1]*(4/5);
