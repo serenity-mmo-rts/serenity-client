@@ -1,19 +1,16 @@
 // make button and add it to button container
 
-var BuildMenu = function initMenu(mapId){
+var BuildMenu = function initMenu(mapId,MapControl){
 
     // canvas size and reference
     var self = this;
    // game = gameData;
     this.mapId = mapId;
+    this.mapControl = MapControl;
+
+
     this.canvas_height = window.innerHeight;
     this.canvas_width = window.innerWidth;
-    // callbacks
-//    this.eventBuild = eventBuild;
- //   this.eventDelete = eventDelete;
-  //  this.eventMove = eventMove;
-    // upper container reference
-
 
     //this.nr =  this.BuildMenuData.submenus.length;
     var mapTypeId =  game.maps.hashList[this.mapId].mapTypeId;
@@ -52,7 +49,7 @@ var BuildMenu = function initMenu(mapId){
             $("#"+buildMenuItemId).click(function()  {
                 //$("#buildMenu").hide();
                 //self.clickcount = 0;
-                self.eventBuild(this.name);
+                self.initializeObject(this.name);
             });
         }
     }
@@ -60,25 +57,11 @@ var BuildMenu = function initMenu(mapId){
 };
 
 
-
 BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID missing
 
     $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
 
-    // if deleting or moving was still on switch it off
-    this.destroy = false;
-    this.del_count = 1;
-    this.move = false;
-    this.move_count = 1;
+    this.mapControl.setStateBuild(objectTypeId);
 
-    this.currBuildingObj = new MapObject(game, {_id: 'tempObject', x: this.main_container.x, y: this.main_container.y, objTypeId: objectTypeId, userId: this.client.userId});
-    game.maps.get(this.mapId).mapObjects.add(this.currBuildingObj);
-    this.map.renderObj(this.currBuildingObj);
 
-    this.currBuildingObj.objectBitmap.mouseMoveOutside = true;
-    this.currBuildingObj.objectBitmap.alpha = 1;
-
-    //this.current_object = this.currentlyBuildingBitmap;
-    this.build = true;
-    //   }
 };

@@ -1,159 +1,132 @@
-var Minimap = function (stage,main_container,menu_container,mapId,eventRender){
+var Minimap = function (minimap,mapControl){
 
-     var self = this;
+    var self = this;
 
-     this.stage = stage;
-     this.main_container = main_container;
-     this.menu_container = menu_container;
-     this.mapId = mapId;
-     this.eventRender = eventRender;
+    this.stage= minimap;
+    this.mapControl = mapControl;
 
-     this.main_container = this.stage.getChildAt(0).getChildAt(0);
-     this.menu_container = this.stage.getChildAt(1);
-     this.canvas_size = [window.innerHeight,window.innerWidth] ;
+    this.size = 4;
 
-     this.mapsize = game.maps.get(this.mapId).width;
-     this.mini_container = new createjs.Container();
 
-     var x = this.canvas_size[1]*(4/5);
-     var y = 0;
-     var w = this.canvas_size[1]*(1/5);
-     var h = w/2;
+    this.draw(this.stage,this.mapControl);
+    this.addEvents();
+};
 
-     this.frame = new createjs.Graphics();
-     this.frame.setStrokeStyle(3);
-     this.frame.beginFill("#F5F7C4").drawRect(x,y,w,h) ;
 
+Minimap.prototype.draw= function(stage,mapControl) {
+
+    this.stage = stage;
+    this.mapControl = mapControl;
+    this.main_container = this.mapControl.main_container;
+    this.mapId  = this.mapControl.map.mapId;
+    this.mini_container = new createjs.Container();
+
+
+    var currsize = window.innerWidth/this.size;
+    var maxwidth = 1600;//screen.width;
+    var broswersize =  maxwidth / window.innerWidth;
+    var error =(currsize/this.size);
+
+
+    this.x = 0;
+    this.y = 0;
+    this.w = currsize;
+    this.h = this.w/2;
+
+    $(function() {
+        $("#minimap").width(currsize).height(currsize/2);
+    });
+
+     var MapWidth = (game.maps.get(this.mapId).width)* this.size;
+
+   this.factor =(MapWidth/currsize);
+   this.mini_container.scaleX = 1/this.factor;
+   this.mini_container.scaleY = 1/this.factor;
+
+
+    this.frame = new createjs.Graphics();
+    this.frame.setStrokeStyle(3);
+    this.frame.beginFill("#F5F7C4").drawRect(this.x,this.y,(this.w-error)*broswersize*this.factor,this.h*broswersize*this.factor) ;
 
     this.diamond = new createjs.Graphics();
     this.diamond.setStrokeStyle(1);
     this.diamond.beginFill("#C0C0C0") ;
 
-    var x2 = this.canvas_size[1]*(9/10);
+
+    this.halfMapWidth = ((this.w-error)*broswersize*this.factor)/2;
+    this.halfMapHeight = this.halfMapWidth/2;
+    var x2 = this.halfMapWidth;
     var y2 = 0;
-    var halfMapWidth = this.canvas_size[1]*(1/10);
-    var halfMapHeight = halfMapWidth/2;
 
     this.diamond .moveTo(x2,y2);
-    var x2 = x2 - halfMapWidth;
-    var y2 = y2 + halfMapHeight;
+    var x2 = x2 - this.halfMapWidth;
+    var y2 = y2 + this.halfMapHeight;
     this.diamond .lineTo(x2,y2);
-    var x2 = x2 + halfMapWidth;
-    var y2 = y2 + halfMapHeight;
+    var x2 = x2 + this.halfMapWidth;
+    var y2 = y2 + this.halfMapHeight;
     this.diamond.lineTo(x2,y2);
-    var x2 = x2 + halfMapWidth;
-    var y2 = y2 - halfMapHeight;
+    var x2 = x2 + this.halfMapWidth;
+    var y2 = y2 - this.halfMapHeight;
     this.diamond .lineTo(x2,y2);
-    var x2 = x2 - halfMapWidth;
-    var y2 = y2 - halfMapHeight;
+    var x2 = x2 - this.halfMapWidth;
+    var y2 = y2 - this.halfMapHeight;
     this.diamond .lineTo(x2,y2);
-
 
     this.dot = new createjs.Graphics();
     this.dot.setStrokeStyle(3);
-    this.dot.beginFill("#ff0000").drawCircle(x2,halfMapHeight,3);
-
-    var button_img1 = new Image();
-    button_img1.src = "resources/icons/arrow_top_right.png";
-    this.button1 = new createjs.Bitmap(button_img1);
-    this.button1.x = x;
-    this.button1.y = (w/2)-45;
-    this.button1.name = "close";
-
-    var button_img2 = new Image();
-    button_img2.src = "resources/icons/arrow_bottom_left.png";
-    this.button2 = new createjs.Bitmap(button_img2);
-    this.button2.x =this.canvas_size[1] -(this.canvas_size[1]*(1/5))-48;
-    this.button2.y =  +(this.canvas_size[1]*(1/10));
-    this.button2.name = "open";
-    this.button2.visible = false;
+    this.dot.beginFill("#ff0000").drawCircle(this.halfMapWidth,this.halfMapHeight,3*this.factor);
 
     this.map = new createjs.Shape(this.diamond);
     this.background= new createjs.Shape(this.frame);
     this.location = new createjs.Shape(this.dot);
 
-    this.mini_container.addChild(this.background,this.map,this.location,this.button1,this.button2);
+    this.mini_container.addChild(this.background,this.map,this.location);
     this.mini_container.name = "miniM";
+    this.stage.addChild(this.mini_container);
+}
 
-    this.menu_container.addChild(this.mini_container);
+Minimap.prototype.removeEvents = function(){
+    this.map.removeAllEventListeners(["mousedown"]);
+}
 
-    this.button1.addEventListener("mousedown", (function (evt) {
-        self.closeMinimap(evt)
-    }));
-    this.button2.addEventListener("mousedown", (function (evt) {
-        self.openMinimap(evt)
-    }));
 
+Minimap.prototype.addEvents= function(){
+    var self = this;
     this.map.addEventListener("mousedown", (function (evt) {
         self.moveOnMinimap(evt)
     }));
 
-};
-
-
-Minimap.prototype.closeMinimap = function(tween) {
-
-        var moveButton = createjs.Tween.get(this.mini_container, {loop:false}, true)
-            .to({x:+this.canvas_size[1]*(1/5),y:-this.canvas_size[1]*(1/10)}, 500)
-            .set({visible:false},this.button1)
-            .set({visible:true},this.button2);
-
-       // var remChild = this.mini_container.getChildByName("close");
-       //this.mini_container.removeChild(remChild);
 }
 
-Minimap.prototype.openMinimap = function(tween) {
+Minimap.prototype.tick= function(evt) {
 
-    var moveButton2 = createjs.Tween.get(this.mini_container, {loop:false}, true)
-        .to({x:0,y:0}, 500)
-        .set({visible:false},this.button2)
-        .set({visible:true},this.button1);
+    this.stage.update();
 
 }
+
 
 
 Minimap.prototype.moveOnMinimap = function(evt){
 
     var self = this;
-    var mouseInMainCoord = this.stage.globalToLocal(this.stage.mouseX, this.stage.mouseY);
-    var xpos= mouseInMainCoord.x;
-    var ypos= mouseInMainCoord.y;
-    var minimapCenter = this.stage.globalToLocal(this.canvas_size[1]*(9/10),this.canvas_size[1]*(1/10)/2);
+    var mouseInMiniCoord = this.mini_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+    var xpos= mouseInMiniCoord.x;
+    var ypos= mouseInMiniCoord.y;
+    var minimapCenter = this.stage.globalToLocal(this.halfMapWidth,this.halfMapHeight);
     var DistanceX = xpos-minimapCenter.x;
     var DistanceY = ypos-minimapCenter.y;
     this.location.x = DistanceX;
     this.location.y = DistanceY;
+    this.mapControl.main_container.x = -DistanceX;
+    this.mapControl.main_container.y = -DistanceY;
+    this.mapControl.map.checkRendering()
+    //var offset = this.mini2RenderCoords(DistanceX,DistanceY);
 
-    var offset = this.mini2RenderCoords(DistanceX,DistanceY);
 
-    this.main_container.x = -offset[0];
-    this.main_container.y = -offset[1];
 
-   self.eventRender();
+    ;
 }
 
 
 
-Minimap.prototype.mini2RenderCoords = function(miniX,miniY) {
 
-    var MinimapWidth  = this.canvas_size[1]*(1/5);
-    var MapWidth = this.mapsize*4;  // in px
-    var Factor = Math.round(MapWidth/MinimapWidth);
-
-    var mapX = - this.canvas_size[1]/2 + Math.round(miniX*Factor);
-    var mapY = - this.canvas_size[0]/2 + Math.round(miniY*Factor);
-
-    return [mapX,mapY];
-}
-
-Minimap.prototype.render2MiniCoords = function(renderX,renderY) {
-
-    var MinimapWidth  = this.canvas_size[1]*(1/5);
-    var MapWidth = this.mapsize*4;     // in px
-    var Factor = Math.round(MapWidth/MinimapWidth);
-
-    var miniX =  (renderX/Factor) + (this.canvas_size[1]/2/Factor);
-    var miniY =  (renderY/Factor) + (this.canvas_size[0]/2/Factor);
-
-    return [miniX,miniY];
-}

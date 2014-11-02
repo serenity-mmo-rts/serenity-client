@@ -15,6 +15,7 @@ var Map = function(stage,main_container,mapId) {
 
     this.canvas_size = [window.innerHeight,window.innerWidth];
     this.current_object;
+    this.tempObj;
     this.hit_object = false;
 
     this.spritesheets = {};
@@ -84,8 +85,6 @@ Map.prototype.createMap = function() {
     }
 
     this.checkRendering(this.mapData.mapObjects.hashList,this.canvas_size[1]/2,this.canvas_size[0]/2,1);
-
-    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 };
 
 Map.prototype.checkRendering = function(){
@@ -95,7 +94,7 @@ Map.prototype.checkRendering = function(){
     var yoff = this.main_container.y;
     var zoomfac =  uc.layer.mapContainer.zoom;
 
-    for (mapObjectId in objectList) {
+    for (var mapObjectId in objectList) {
         var DistanceX = this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff;
         var DistanceY = this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff;
         var isalreadyRendered  = false;
@@ -116,8 +115,9 @@ Map.prototype.checkRendering = function(){
             this.mapData.mapObjects.add(objectList[mapObjectId]);
             this.renderObj(objectList[mapObjectId]);
         }
-
     }
+
+    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 }
 
 Map.prototype.renderObj = function(mapObject) {
@@ -130,16 +130,16 @@ Map.prototype.renderObj = function(mapObject) {
 
     //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
-    objectBitmap.mapObjectId = mapObjectId;
-    objectBitmap.name = mapObjectId;
+    objectBitmap.mapObjectId = mapObject._id;
+    objectBitmap.name = mapObject._id;
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
 
     //return objectBitmap;
 }
 
-Map.prototype.moveObjectToGameCoord = function(objId, x, y) {
-    var mapObject = this.mapData.mapObjects.hashList[objId];
+Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
+  //  var mapObject = this.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     mapObject.x = x;
     mapObject.y = y;
@@ -147,8 +147,8 @@ Map.prototype.moveObjectToGameCoord = function(objId, x, y) {
     objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
 }
 
-Map.prototype.moveObjectToRenderCoord = function(objId, x, y) {
-    var mapObject = this.mapData.mapObjects.hashList[objId];
+Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
+  //  var mapObject = this.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     objectBitmap.x = x;
     objectBitmap.y = y;
@@ -178,9 +178,10 @@ Map.prototype.renderCoord2GameY = function(renderX,renderY) {
 
 
 // move object
-Map.prototype.moveCurrentObject = function () {
+Map.prototype.moveTempObject = function () {
     var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
-    this.moveObjectToRenderCoord(this.currBuildingObj._id, pt.x, pt.y);
+    this.moveObjectToRenderCoord(this.tempObj, pt.x, pt.y);
+    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 };
 
 
@@ -200,4 +201,35 @@ Map.prototype.getCurrentObject = function () {
         }
     }
     return(this.hit_object);
+};
+
+
+
+Map.prototype.addTempObj= function (tempObj) {
+
+    this.tempObj = tempObj;
+
+    this.renderObj(this.tempObj);
+    this.tempObj.mouseMoveOutside = true;
+    this.tempObj.alpha = 1;
+
+};
+
+
+Map.prototype.deleteTempObj= function () {
+
+    if (this.tempObj != undefined) { // move object
+        this.tempObj = null;
+        var child =  this.obj_container.getChildByName('tempObject');
+        this.obj_container.removeChild(child);
+    }
+
+};
+
+
+Map.prototype.tick = function(evt) {
+    this.stage.update();
+     if (this.tempObj != undefined) { // move object
+       this.moveTempObject();
+    }
 };

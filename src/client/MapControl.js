@@ -1,8 +1,8 @@
-var MapControl = function(map,minimap){
+var MapControl = function(map){
 
     var self = this;
     this.map = map;
-    this.minimap = minimap;
+   // this.minimap = minimap;
     this.stage = map.stage;
     this.main_container = map.main_container;
 
@@ -66,9 +66,11 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 
             break;
 
-        case "initializeObj":
-            /** Build new Object */
+        case "buildObj":
 
+            // create event Obj
+                // client.addEvent(new BuildObjectEvent(this.map.tempObj))
+            this.cancelState();
 
             break;
 
@@ -86,6 +88,23 @@ MapControl.prototype.handleMousedownMain = function (evt) {
     }
 
 }
+
+MapControl.prototype.cancelState = function(){
+    this.state = "default";
+    this.map.deleteTempObj();
+
+}
+
+
+MapControl.prototype.setStateBuild = function(objTypeId){
+
+    this.cancelState();
+    this.state = "buildObj";
+    this.map.addTempObj(new MapObject(game, {_id: 'tempObject', x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId}));
+
+}
+
+
 
 /**
 MapControl.prototype.handleMousedownMain = function (evt) {
