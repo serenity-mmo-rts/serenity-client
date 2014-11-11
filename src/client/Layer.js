@@ -14,18 +14,19 @@ var Layer = function(mapID){
         this.mapContainer =  new MapContainer(this.mapId);
         this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
 
-    this.resize();
+       //this.resize();
 
 
         // other J-query objects ....
 
     // resize
-    window.addEventListener('resize',function(){self.resize()}, false);
+     window.addEventListener('resize',function(){self.resize()}, false);
 }
 
 // if browser is resized draw menu again
 Layer.prototype.resize = function () {
-//    this.buildMenu.resize();
+
+
     this.mapContainer.resize();
 };
 

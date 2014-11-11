@@ -9,9 +9,9 @@ var MapContainer = function(mapId){
     // initialize stage and minimap
     createjs.MotionGuidePlugin.install(createjs.Tween);
     this.stage = new createjs.Stage("canvas");
-    this.minimap = new createjs.Stage("minimap");
+    this.minimapStage = new createjs.Stage("minimap");
     createjs.Touch.enable(this.stage);
-    createjs.Touch.enable(this.minimap);
+    createjs.Touch.enable(this.minimapStage);
 
 
     // Containers
@@ -23,19 +23,24 @@ var MapContainer = function(mapId){
     // registration  points
     this.stage.regX = window.innerWidth / 2;
     this.stage.regY = window.innerHeight / 2;
+    this.minimapStage.regX = window.innerWidth / 2;
+    this.minimapStage.regY = window.innerWidth / 2;
     this.zoom_container.regX = window.innerWidth / 2;
     this.zoom_container.regY = window.innerHeight/ 2;
 
     // x and y coords
     this.stage.x = window.innerWidth / 2;
     this.stage.y = window.innerHeight / 2;
+    this.minimapStage.y = window.innerWidth / 2;
+    this.minimapStage.x = window.innerWidth / 2;
+
     this.zoom_container.x = window.innerWidth / 2;
     this.zoom_container.y = window.innerHeight / 2;
     this.main_container.x = window.innerWidth / 2;
     this.main_container.y = window.innerHeight / 2;
 
     // movement outside
-    this.minimap.mouseMoveOutside = true;
+    this.minimapStage.mouseMoveOutside = true;
     this.stage.mouseMoveOutside = true;
     this.main_container.mouseMoveOutside = true;
     this.menu_container.mouseMoveOutside = true;
@@ -54,16 +59,18 @@ var MapContainer = function(mapId){
     // Initialize Map
     this.map = new Map(this.stage,this.main_container,this.mapId);
 
-
-     //**Initialize Minimap
-    // this.minimap = new Minimap(this.stage,this.main_container,this.menu_container,this.mapId,(function (x,y,list,zoom) {
-    //    self.map.checkRendering(game.maps.get(self.mapId).mapObjects.hashList,self.main_container.x, self.main_container.y,self.zoom)
-    // }));
-
-
     // Initialize map control
-       this.mapControl = new MapControl(this.map,this.minimap);
+    this.mapControl = new MapControl(this.map);
+
+    //**Initialize Minimap
+    this.minimap = new Minimap(this.minimapStage,this.mapControl);
+
+
+
+
     // Render stages once
+
+
 
 
     // mouse zoom
@@ -83,38 +90,21 @@ var MapContainer = function(mapId){
     // set FPS and setup tick
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function (evt) {self.stageTick(evt)});
-    createjs.Ticker.addEventListener("tick", function (evt) {self.minimapTick(evt)});
+    //createjs.Ticker.addEventListener("tick", this.stage);
+    //createjs.Ticker.addEventListener("tick", this.minimapStage);
+    //createjs.Ticker.addEventListener("tick", function (evt) {self.minimapTick(evt)});
+
+    this.stage.canvas.height = window.innerHeight;
+    this.stage.canvas.width = window.innerWidth;
 
 }
 
 
 MapContainer.prototype.stageTick = function(evt) {
    // var self = this;
-    this.stage.update();
 
-
-    /**var mouseInMainCoord = self.main_container.globalToLocal(self.stage.mouseX, self.stage.mouseY);
-    $("#layerDebug").html(
-        "self.zoom="+self.mapControl.zoom +
-            "<br>window.innerWidth=" + window.innerWidth +
-            "<br>window.innerHeight=" + window.innerHeight +
-            "<br>mouseInMainCoord.x="+mouseInMainCoord.x +
-            "<br>mouseInMainCoord.y="+mouseInMainCoord.y +
-            "<br>main_container.x="+ -self.main_container.x +
-            "<br>main_container.y="+ -self.main_container.y+
-            "<br>stage.mouseX"+ self.stage.mouseX +
-            "<br>stage.mouseX="+ self.stage.mouseY
-    );
-
-
-    if (self.moving || self.build) { // move object
-        self.map.moveCurrentObject();
-    }   **/
-};
-
-MapContainer.prototype.minimapTick = function(evt) {
-    //var self = this;
-    this.minimap.update();
+    this.map.tick();
+    this.minimap.tick();
 };
 
 
@@ -146,4 +136,13 @@ MapContainer.prototype.minimapTick = function(evt) {
  MapContainer.prototype.resize = function () {
      this.stage.canvas.height = window.innerHeight;
      this.stage.canvas.width = window.innerWidth;
+
+     var currsize = window.innerWidth/this.minimap.size;
+     var mapWidth = (game.maps.get(this.mapId).width)/this.minimap.size;
+     this.minimap.factor = Math.round(mapWidth/currsize);
+
+     $(function() {
+         $("#minimap").width(currsize).height(currsize/2);
+     });
+
  };

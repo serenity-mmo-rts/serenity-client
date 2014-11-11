@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="lib/development-bundle/themes/cupertino/jquery.ui.all.css">
     <link rel="stylesheet" href="css/BuildMenu.css">
     <link rel="stylesheet" href="css/uiMenus.css">
-
+    <link rel="stylesheet" href="css/Minimap.css">
 
 
     <script type="text/javascript" src="lib/easeljs-0.6.1.min.js"></script>
@@ -103,18 +103,15 @@
 
 </head>
 <body bgcolor="black" onLoad="uc.init();">
-<div class="contain" style="width:0px; 
-                             height: 0px; 							
+<div class="contain" style="width:100%;
+                             height: 100%;
                              position: absolute; left: 0px; top: 0px;
                              border: none">
-    <canvas style="position: relative" id="canvas"  width="1200" height="600"> Canvas not supported. Please update your browser. </canvas>
+    <canvas style="position: relative" id="canvas"> Canvas not supported. Please update your browser. </canvas>
 </div>
 
-<div class="mini" style="width:0px;
-                             height: 0px;
-                             position: absolute; left: 600px; top: 0px;
-                             border: none">
-    <canvas style="position: relative" id="minimap"  width="400" height="200"> Canvas not supported. Please update your browser. </canvas>
+<div class="mini" style=" position: absolute; left:75%; top:0; width:25%; border: none">
+    <canvas style="position: relative" id="minimap" border="none"> Canvas not supported. Please update your browser. </canvas>
 </div>
 
 
