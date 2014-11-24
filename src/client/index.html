@@ -34,6 +34,7 @@
     <script type="text/javascript" src="ui/login.js"></script>
 
 
+    <script type="text/javascript" src="ui/UiSlidingPanel.js"></script>
     <script type="text/javascript" src="ui/Button.js"></script>
     <script type="text/javascript" src="ui/buttonMenu.js"></script>
     <script type="text/javascript" src="mapRenderer.js"></script>
@@ -142,17 +143,6 @@
     </form>
 </div>
 
-<div id="topLeftUi" class="ui-widget-content ui-corner-all visible">
-    <div>
-        <p id="clientDebug">
-            Some Options.
-        </p>
-        <p id="layerDebug">
-            Some Options.
-        </p>
-        <div id="topLeftToggleButton" class="toggleButton ui-corner-all"></div>
-    </div>
-</div>
 
 <div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
     <div>
@@ -164,16 +154,16 @@
 </div>
 
 
-
+<div id="allUiPanels" style="width:0px;
+                             height: 0px;
+                             position: absolute; left: 0px; top: 0px;
+                             border: none"></div>
 
 
 </body>
 
 
 <script>
-    $( "#topLeftToggleButton" ).click(function() {
-        $( "#topLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
-    });
     $( "#bottomLeftToggleButton" ).click(function() {
         $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
     });

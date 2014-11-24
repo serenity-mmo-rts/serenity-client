@@ -1,32 +1,3 @@
-#topLeftUi {
-    position: absolute;
-    margin: 0px;
-    padding: 0px;
-    width: 200px;
-    height: 300px;
-}
-#topLeftUi.visible {
-    left: 0px;
-    top: 0px;
-}
-#topLeftUi.hidden {
-    left: -200px;
-    top: -300px;
-}
-#topLeftToggleButton {
-    background-color:#b0c4de;
-    background-image: url('../resources/icons/Globe.png');
-    background-size:30px 30px;
-    background-repeat:no-repeat;
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    right: -20px;
-    bottom: -20px;
-}
-
-
-
 #bottomLeftUi {
     position: absolute;
     width: 280px;
@@ -51,3 +22,13 @@
      right: -20px;
      top: -20px;
  }
+
+
+.toggleButton {
+    background-color:#b0c4de;
+    background-image: url('../resources/icons/Globe.png');
+    background-size:30px 30px;
+    background-repeat:no-repeat;
+    width: 30px;
+    height: 30px;
+}
