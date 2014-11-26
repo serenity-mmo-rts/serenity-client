@@ -8,7 +8,7 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
 
     this.panelDiv = document.createElement('div');
     this.panelDiv.style.position="absolute";
-    this.panelDiv.style.top = topPosition;
+    this.panelDiv.style.top = topPosition+"px";
     this.panelDiv.style.left = "0px";
     this.panelDiv.style.width = "auto";
     this.panelDiv.style.zIndex = zIndex;
@@ -32,7 +32,8 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
 
     this.panelDiv.appendChild(this.innerDiv);
     this.innerDiv.appendChild(this.buttonDiv);
-    $('#allUiPanels').append(this.panelDiv);
+    //$('#allUiPanels').append(this.panelDiv);
+    $('body').append(this.panelDiv);
 
 };
 

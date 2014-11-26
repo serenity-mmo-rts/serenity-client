@@ -24,7 +24,7 @@ var MapContainer = function(mapId){
     this.stage.regX = window.innerWidth / 2;
     this.stage.regY = window.innerHeight / 2;
     this.minimapStage.regX = window.innerWidth / 2;
-    this.minimapStage.regY = window.innerWidth / 2;
+    this.minimapStage.regY = window.innerWidth / 2; // !!!!!!! Why use width for Y coordinates?
     this.zoom_container.regX = window.innerWidth / 2;
     this.zoom_container.regY = window.innerHeight/ 2;
 
@@ -36,8 +36,8 @@ var MapContainer = function(mapId){
 
     this.zoom_container.x = window.innerWidth / 2;
     this.zoom_container.y = window.innerHeight / 2;
-    this.main_container.x = window.innerWidth / 2;
-    this.main_container.y = window.innerHeight / 2;
+    this.main_container.regX = -window.innerWidth / 2;
+    this.main_container.regY = -window.innerHeight / 2;
 
     // movement outside
     this.minimapStage.mouseMoveOutside = true;

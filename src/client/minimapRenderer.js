@@ -2,6 +2,8 @@ var Minimap = function (minimap,mapControl){
 
     var self = this;
 
+
+
     this.stage= minimap;
     this.mapControl = mapControl;
 

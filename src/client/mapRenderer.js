@@ -9,9 +9,11 @@ var Map = function(stage,main_container,mapId) {
 
     this.map_container = new createjs.Container();
     this.obj_container = new createjs.Container();
+    this.res_container = new createjs.Container();
     this.map_container.mouseMoveOutside = true;
     this.obj_container.mouseMoveOutside = true;
-    this.main_container.addChild(this.map_container,this.obj_container);
+    this.res_container.mouseMoveOutside = true;
+    this.main_container.addChild(this.map_container,this.obj_container,this.res_container);
 
     this.canvas_size = [window.innerHeight,window.innerWidth];
     this.current_object;
@@ -22,6 +24,9 @@ var Map = function(stage,main_container,mapId) {
     this.bgImg;
     this.mapData = game.maps.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
+
+    this.ressourceMap = new RessourceMap(this,main_container,mapId,this.res_container);
+    this.ressourceMap.genRes();
 
     // create unique list of images to load:
     var imagesToLoadHashList = {}, imagesToLoad = [];
@@ -84,7 +89,10 @@ Map.prototype.createMap = function() {
         this.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
     }
 
-    this.checkRendering(this.mapData.mapObjects.hashList,this.canvas_size[1]/2,this.canvas_size[0]/2,1);
+    this.checkRendering();
+
+
+
 };
 
 Map.prototype.checkRendering = function(){
@@ -95,12 +103,12 @@ Map.prototype.checkRendering = function(){
     var zoomfac =  uc.layer.mapContainer.zoom;
 
     for (var mapObjectId in objectList) {
-        var DistanceX = this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff;
-        var DistanceY = this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff;
+        var DistanceX = Math.abs(this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff);
+        var DistanceY = Math.abs(this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff);
         var isalreadyRendered  = false;
         var shouldbeRendered = false;
 
-        if(DistanceX >= (-this.canvas_size[1]*(1/zoomfac*1.5))  &&  DistanceX <= (2*this.canvas_size[1]*(1/zoomfac*1.5)) && DistanceY >= (-this.canvas_size[0]*(1/zoomfac*1.5))  &&  DistanceY <= (2*this.canvas_size[0])*(1/zoomfac*1.5)) {
+        if(DistanceX <= 1.5*this.canvas_size[1]/zoomfac && DistanceY <= 1.5*this.canvas_size[0]/zoomfac) {
             shouldbeRendered = true;
         }
 
@@ -118,6 +126,8 @@ Map.prototype.checkRendering = function(){
     }
 
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+
+    this.ressourceMap.checkRendering();
 }
 
 Map.prototype.renderObj = function(mapObject) {
@@ -167,12 +177,12 @@ Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
 }
 
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
-    var gameX = (renderX / this.mapType.ratioWidthHeight + renderY) / (2*this.mapType.scale);
+    var gameX = (renderY + renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
-    var gameY = (renderY - renderX / this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    var gameY = (renderY - renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameY;
 }
 
