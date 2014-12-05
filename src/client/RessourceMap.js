@@ -43,13 +43,15 @@ RessourceMap.prototype.genRes = function () {
     this.sources.r = [];
     this.sources.v = [];
 
+    this.sourcesQuadTree.clear();
+
     var minR = Math.min(this.mapWidth, this.mapHeight) / 20;
     var maxR = Math.min(this.mapWidth, this.mapHeight) / 5;
     var minV = 0.1;
     var maxV = 0.2;
     for (var i = 0; i < numRessources; i++) {
-        var x = this.mapWidth * (Math.random() - 0.5);
-        var y = this.mapHeight * (Math.random() - 0.5);
+        var x = 0.5*this.mapWidth * (Math.random() - 0.5);
+        var y = 0.5*this.mapHeight * (Math.random() - 0.5);
         var r = minR + (maxR - minR) * Math.random();
         var v = minV + (maxV - minV) * Math.random();
         this.sources.x.push(x);
@@ -115,7 +117,7 @@ RessourceMap.prototype.checkRendering = function () {
                     bmpObj.name = bmpName;
                     bmpObj.x = this.bmpRenderSizeX * bmpX;
                     bmpObj.y = this.bmpRenderSizeY * bmpY;
-                    console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
+                    //console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
                     bmpObj.regX = this.bmpResolutionX / 2;
                     bmpObj.regY = this.bmpResolutionY / 2;
                     this.res_container.addChild(bmpObj);
@@ -168,9 +170,11 @@ RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin,
         //TODO: add for loop to add periodic boundaries: i.e use this.mapRenderer.gameCoord2RenderX(this.sources.x[i]+this.mapWidth,this.sources.y[i]+this.mapHeight)
 
 
-        var x = ressourceItems[i].x;
-        var y = ressourceItems[i].y;
-        var r = ressourceItems[i].rGame;
+        //var x = ressourceItems[i].x;
+        //var y = ressourceItems[i].y;
+        var x = this.mapRenderer.gameCoord2RenderX(ressourceItems[i].xGame, ressourceItems[i].yGame);
+        var y = this.mapRenderer.gameCoord2RenderY(ressourceItems[i].xGame, ressourceItems[i].yGame);
+        var r = ressourceItems[i].rGame * this.mapType.scale;
         var v = ressourceItems[i].v;
         //var x = this.mapRenderer.gameCoord2RenderX(this.sources.x[i], this.sources.y[i]);
         //var y = this.mapRenderer.gameCoord2RenderY(this.sources.x[i], this.sources.y[i]);
@@ -199,7 +203,7 @@ RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin,
                 var xDist = Math.abs(this.mapRenderer.renderCoord2GameX(bmpXcoord - x, bmpYcoord - y));
                 var yDist = Math.abs(this.mapRenderer.renderCoord2GameY(bmpXcoord - x, bmpYcoord - y));
                 var distSq = xDist*xDist + yDist*yDist;
-                if (distSq < r * r) {
+                if (distSq <= r * r) {
                     var startOfColumn = startOfRow + bmpXpixel;
                     resData[startOfColumn] = resData[startOfColumn] + v * Math.exp(- distSq / sigmaSqr2);
                 }
