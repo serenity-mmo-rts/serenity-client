@@ -38,54 +38,54 @@ var UiSlidingPanelRight = function(topPosition,zIndex,content){
     this.panelDiv.style.right = this.innerDiv.offsetWidth+"px";
 };
 
-UiSlidingPanelRight.prototype.setPos = function(right,top) {
+UiSlidingPanelRight.prototype.setPos = function(right,top,time) {
     var rect = this.innerDiv.getBoundingClientRect();
     if(right != rect.right || top != rect.top ) {
         $( this.panelDiv ).animate({
             right: right,
             top: top
-        }, 300, function() {
+        }, time, function() {
             // Animation complete.
         });
         if (this.nextPanel !== null) {
             this.nextPanel.topPosition = this.getTopPosOfNextPanel();
-            this.nextPanel.update();
+            this.nextPanel.update(time);
         }
     }
 };
 
-UiSlidingPanelRight.prototype.update = function() {
+UiSlidingPanelRight.prototype.update = function(time) {
    if (this.isVisible) {
-       this.show();
+       this.show(time);
    }
    else {
-       this.hide();
+       this.hide(time);
    }
 };
 
-UiSlidingPanelRight.prototype.show = function() {
+UiSlidingPanelRight.prototype.show = function(time) {
     this.isVisible = true;
-    this.setPos(this.innerDiv.offsetWidth,this.topPosition);
+    this.setPos(this.innerDiv.offsetWidth,this.topPosition,time);
 };
 
-UiSlidingPanelRight.prototype.hide = function() {
+UiSlidingPanelRight.prototype.hide = function(time) {
     this.isVisible = false;
-    this.setPos(0, this.topPosition-this.innerDiv.offsetHeight+30);
+    this.setPos(0, this.topPosition-this.innerDiv.offsetHeight+30,time);
 };
 
 UiSlidingPanelRight.prototype.toggle = function() {
     if(this.isVisible) {
-         this.hide();
+         this.hide(300);
     }
     else {
-         this.show();
+         this.show(300);
     }
 };
 
 UiSlidingPanelRight.prototype.addNextPanel = function(panel) {
     this.nextPanel = panel;
     this.nextPanel.topPosition = this.getTopPosOfNextPanel();
-    this.nextPanel.update();
+    this.nextPanel.update(0);
 };
 
 UiSlidingPanelRight.prototype.getTopPosOfNextPanel = function() {

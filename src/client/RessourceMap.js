@@ -1,22 +1,53 @@
-var RessourceMap = function (mapRenderer, main_container, mapId, res_container) {
+var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeId) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
-    this.main_container = main_container;
+    this.resMap = resMap;
     this.res_container = res_container;
-    this.canvas_size = [window.innerHeight, window.innerWidth];
+    this.resTypeId = resTypeId;
 
     this.mapData = game.maps.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
 
     this.mapWidth = this.mapData.width;
     this.mapHeight = this.mapData.height;
+
+    this.debugTiles = false;
+
+    this.finishedLoadingCallback  = null;
+    this.finishedScreenLoadingCallback  = null;
+    this.updatingDisabled = false;
+
+    this.bmpResolutionToPixelScaling = 4;  // this variable can be increased to reduce cpu strain
+    this.numTilesOnScreen = 4; // this variable controls the number of tiles
+
+    this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
+    this.bmpResolutionX = Math.ceil(window.innerWidth / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
+    this.bmpResolutionY = Math.ceil(window.innerHeight / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
+    this.bmpRenderSizeX = this.bmpResolutionX * this.bmpToRenderScaling;
+    this.bmpRenderSizeY = this.bmpResolutionY * this.bmpToRenderScaling;
+
+    this.sourcesQuadTree = null;
+    this.initQuadtree(this.resTypeId);
+
+
+    this.progressBar = null;
+}
+
+RessourceMap.prototype.enableProgressBar = function () {
+    this.progressBar = new ProgressBar();
+}
+
+RessourceMap.prototype.disableProgressBar = function () {
+    if (this.progressBar != null) {
+        this.progressBar.destroy();
+        this.progressBar = null;
+    }
+}
+
+RessourceMap.prototype.initQuadtree = function (resTypeId) {
     var renderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
     var renderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
-
-    this.bmpToRenderScaling = 4;
-
-    this.sources = {x: [], y: [], r: [], v: []};
 
     var bounds = {
         x: -renderWidth/2,
@@ -24,117 +55,177 @@ var RessourceMap = function (mapRenderer, main_container, mapId, res_container) 
         width: renderWidth,
         height: renderHeight
     }
+
     this.sourcesQuadTree = new QuadTree(bounds);
 
-    this.numTilesOnScreen = 2;
-    this.bmpResolutionX = Math.ceil(window.innerWidth / (this.numTilesOnScreen * this.bmpToRenderScaling));
-    this.bmpResolutionY = Math.ceil(window.innerHeight / (this.numTilesOnScreen * this.bmpToRenderScaling));
-    this.bmpRenderSizeX = this.bmpResolutionX * this.bmpToRenderScaling;
-    this.bmpRenderSizeY = this.bmpResolutionY * this.bmpToRenderScaling;
-}
+    for (var i = this.resMap.sources.length-1; i >= 0; i--) {
+        if (this.resMap.sources[i].type == resTypeId) {
+            var xRender = this.mapRenderer.gameCoord2RenderX(this.resMap.sources[i].x,this.resMap.sources[i].y);
+            var yRender = this.mapRenderer.gameCoord2RenderY(this.resMap.sources[i].x,this.resMap.sources[i].y);
+            var widthRender = 2 * this.mapRenderer.gameCoord2RenderX(this.resMap.sources[i].r,-this.resMap.sources[i].r);
+            var heightRender = 2 * this.mapRenderer.gameCoord2RenderY(this.resMap.sources[i].r,this.resMap.sources[i].r);
 
-
-RessourceMap.prototype.genRes = function () {
-    var numRessources = 100;
-
-    this.sources = {x: [], y: [], r: [], v: []};
-    this.sources.x = [];
-    this.sources.y = [];
-    this.sources.r = [];
-    this.sources.v = [];
-
-    this.sourcesQuadTree.clear();
-
-    var minR = Math.min(this.mapWidth, this.mapHeight) / 20;
-    var maxR = Math.min(this.mapWidth, this.mapHeight) / 5;
-    var minV = 0.1;
-    var maxV = 0.2;
-    for (var i = 0; i < numRessources; i++) {
-        var x = 0.5*this.mapWidth * (Math.random() - 0.5);
-        var y = 0.5*this.mapHeight * (Math.random() - 0.5);
-        var r = minR + (maxR - minR) * Math.random();
-        var v = minV + (maxV - minV) * Math.random();
-        this.sources.x.push(x);
-        this.sources.y.push(y);
-        this.sources.r.push(r);
-        this.sources.v.push(v);
-
-        var xRender = this.mapRenderer.gameCoord2RenderX(x,y);
-        var yRender = this.mapRenderer.gameCoord2RenderY(x,y);
-        var widthRender = 2 * r * this.mapType.scale * this.mapType.ratioWidthHeight;
-        var heightRender = 2 * r * this.mapType.scale;
-
-        this.sourcesQuadTree.insert({
-            x: xRender-widthRender/2,
-            y: yRender-heightRender/2,
-            height: heightRender,
-            width: widthRender,
-            xGame: x,
-            yGame: y,
-            rGame: r,
-            v: v});
+            this.sourcesQuadTree.insert({
+                i: i,
+                x: xRender-widthRender/2,
+                y: yRender-heightRender/2,
+                height: heightRender,
+                width: widthRender,
+                xGame: this.resMap.sources[i].x,
+                yGame: this.resMap.sources[i].y,
+                rGame: this.resMap.sources[i].r,
+                v: this.resMap.sources[i].v});
+        }
     }
 }
-
 
 RessourceMap.prototype.checkRendering = function () {
 
     var self = this;
 
-    var zoomfac = uc.layer.mapContainer.zoom;
-
-    var xoff = this.main_container.x;
-    var yoff = this.main_container.y;
-
-    var centerBmpX = Math.round(-xoff / this.bmpRenderSizeX);
-    var centerBmpY = Math.round(-yoff / this.bmpRenderSizeY);
-
-    var numTilesPerSide = 3 * this.numTilesOnScreen / 2;
-
-    for (var i = this.res_container.children.length - 1; i >= 0; i--) {
-        var bmpObj = this.res_container.children[i];
-        var DistanceX = Math.abs(bmpObj.x + xoff);
-        var DistanceY = Math.abs(bmpObj.y + yoff);
-
-        if (DistanceX <= (numTilesPerSide + 0.5) * this.bmpRenderSizeX && DistanceY <= (numTilesPerSide + 0.5) * this.bmpRenderSizeY) {
-            //console.log("keep bmp with name="+bmpObj.name)
-        }
-        else {
-            //console.log("remove bmp with name=" + bmpObj.name)
-            this.res_container.removeChildAt(i);
-        }
+    if (this.updatingDisabled) {
+        this.disableProgressBar();
     }
+    else {
+        var xoff = this.mapRenderer.main_container.x;
+        var yoff = this.mapRenderer.main_container.y;
 
-    var numTilesInRing = 1;
-    for (var radFromCenter = 0; radFromCenter <= numTilesPerSide; radFromCenter++) {
-        for (var bmpX = centerBmpX - radFromCenter; bmpX <= centerBmpX + radFromCenter; bmpX++) {
-            var isFirstOrLast = (Math.abs(bmpX - centerBmpX) == radFromCenter);
-            for (var bmpY = centerBmpY - radFromCenter; bmpY <= centerBmpY + radFromCenter; bmpY=isFirstOrLast?(bmpY+1):(bmpY+2*radFromCenter)) {
-                var bmpName = "x" + bmpX + "y" + bmpY;
-                var existObj = this.res_container.getChildByName(bmpName);
-                if (existObj == null) {
-                    var bmpObj = this.getResBitmap(100, (bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
-                    bmpObj.name = bmpName;
-                    bmpObj.x = this.bmpRenderSizeX * bmpX;
-                    bmpObj.y = this.bmpRenderSizeY * bmpY;
-                    //console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
-                    bmpObj.regX = this.bmpResolutionX / 2;
-                    bmpObj.regY = this.bmpResolutionY / 2;
-                    this.res_container.addChild(bmpObj);
+        var centerBmpX = Math.round(-xoff / this.bmpRenderSizeX);
+        var centerBmpY = Math.round(-yoff / this.bmpRenderSizeY);
 
-                    //do non-blocking recall of this function using setInterval:
-                    setTimeout(function () {
-                        self.checkRendering();
-                    }, 10);
-                    return;
-                }
+        var numTilesPerSide = 3 * this.numTilesOnScreen / 2;
+
+        for (var i = this.res_container.children.length - 1; i >= 0; i--) {
+            var bmpObj = this.res_container.children[i];
+            var DistanceX = Math.abs(bmpObj.x + xoff);
+            var DistanceY = Math.abs(bmpObj.y + yoff);
+
+            if (DistanceX <= (numTilesPerSide + 0.5) * this.bmpRenderSizeX && DistanceY <= (numTilesPerSide + 0.5) * this.bmpRenderSizeY) {
+                //console.log("keep bmp with name="+bmpObj.name)
+            }
+            else {
+                //console.log("remove bmp with name=" + bmpObj.name)
+                this.res_container.removeChildAt(i);
             }
         }
+
+        var counter = 0;
+        var numTilesInRing = 1;
+        for (var radFromCenter = 0; radFromCenter <= numTilesPerSide; radFromCenter++) {
+            for (var bmpX = centerBmpX - radFromCenter; bmpX <= centerBmpX + radFromCenter; bmpX++) {
+                var isFirstOrLast = (Math.abs(bmpX - centerBmpX) == radFromCenter);
+                for (var bmpY = centerBmpY - radFromCenter; bmpY <= centerBmpY + radFromCenter; bmpY=isFirstOrLast?(bmpY+1):(bmpY+2*radFromCenter)) {
+                    counter++;
+                    var bmpName = "x" + bmpX + "y" + bmpY;
+                    var existObj = this.res_container.getChildByName(bmpName);
+                    if (existObj == null) {
+                        //console.log("start adding bmpObj with name=" + bmpName);
+                        var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
+                        var bmpObj = this.genBitmapFromResData(100, resData, "jet");
+                        bmpObj.name = bmpName;
+                        bmpObj.x = this.bmpRenderSizeX * bmpX;
+                        bmpObj.y = this.bmpRenderSizeY * bmpY;
+                        //console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
+                        bmpObj.regX = this.bmpResolutionX / 2;
+                        bmpObj.regY = this.bmpResolutionY / 2;
+                        this.res_container.addChild(bmpObj);
+
+                        //update progress bar:
+                        if (this.progressBar != null) {
+                            this.progressBar.progress(Math.round(100*counter/(4*numTilesPerSide*numTilesPerSide)));
+                        }
+
+                        //do non-blocking recall of this function using setInterval:
+                        setTimeout(function () {
+                            self.checkRendering();
+                        }, 10);
+                        return;
+                    }
+                }
+            }
+
+            //check if screen is fully loaded:
+            if (this.finishedScreenLoadingCallback != null && radFromCenter > this.numTilesOnScreen / 2) {
+                this.finishedScreenLoadingCallback(this);
+            }
+
+        }
+
+        console.log("all tiles loaded");
+
+        this.disableProgressBar();
+
+        if ( this.finishedLoadingCallback != null) {
+            this.finishedLoadingCallback(this);
+        }
+
     }
+
+
+
 }
 
 
-RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin, bmpymax) {
+RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax) {
+
+    var resData = this.newFilledArray(this.bmpResolutionX*this.bmpResolutionY, 0.0);
+    resData = Object(resData);
+
+    var renderHeight = bmpymax-bmpymin;
+    var renderWidth = bmpxmax-bmpxmin;
+    var ressourceItems = this.sourcesQuadTree.retrieve({x: bmpxmin, y: bmpymin, height: renderHeight, width: renderWidth});
+    ressourceItems = _.uniq(ressourceItems);
+    //console.log("num ressource Items retrieved for bitmap"+ressourceItems.length)
+
+    for (var i = 0; i < ressourceItems.length; i++) {
+        //TODO: add for loop to add periodic boundaries: i.e use this.mapRenderer.gameCoord2RenderX(this.sources.x[i]+this.mapWidth,this.sources.y[i]+this.mapHeight)
+
+        var x = this.mapRenderer.gameCoord2RenderX(ressourceItems[i].xGame, ressourceItems[i].yGame);
+        var y = this.mapRenderer.gameCoord2RenderY(ressourceItems[i].xGame, ressourceItems[i].yGame);
+        var r = ressourceItems[i].rGame;
+        var v = ressourceItems[i].v;
+
+        var xminRenderCoord = ressourceItems[i].x;
+        var xmaxRenderCoord = ressourceItems[i].x + ressourceItems[i].width;
+        var yminRenderCoord = ressourceItems[i].y;
+        var ymaxRenderCoord = ressourceItems[i].y + ressourceItems[i].height;
+
+        var xminBmpPixel = Math.floor(Math.max(-4000+(xminRenderCoord - bmpxmin) / this.bmpToRenderScaling, 0));
+        var xmaxBmpPixel = Math.ceil(Math.min(+4000+(xmaxRenderCoord - bmpxmin) / this.bmpToRenderScaling, this.bmpResolutionX));
+        var yminBmpPixel = Math.floor(Math.max(-4000+(yminRenderCoord - bmpymin) / this.bmpToRenderScaling, 0));
+        var ymaxBmpPixel = Math.ceil(Math.min(+4000+(ymaxRenderCoord - bmpymin) / this.bmpToRenderScaling, this.bmpResolutionY));
+
+        //create Gaussian with constants:
+        var sigma = r / 5;
+        var sigmaSqr2 = 2 * sigma * sigma;
+
+        var rsq = (r)*(r);
+        if (xmaxBmpPixel > xminBmpPixel && ymaxBmpPixel > yminBmpPixel) {
+            for (var bmpYpixel = yminBmpPixel; bmpYpixel < ymaxBmpPixel; bmpYpixel++) {
+                var bmpYcoord = bmpYpixel * this.bmpToRenderScaling + bmpymin;
+                var startOfRow = this.bmpResolutionX * bmpYpixel;
+                for (var bmpXpixel = xminBmpPixel; bmpXpixel < xmaxBmpPixel; bmpXpixel++) {
+                    var bmpXcoord = bmpXpixel * this.bmpToRenderScaling + bmpxmin;
+                    var xDist = Math.abs(this.mapRenderer.renderCoord2GameX(bmpXcoord - x, bmpYcoord - y));
+                    var yDist = Math.abs(this.mapRenderer.renderCoord2GameY(bmpXcoord - x, bmpYcoord - y));
+                    var distSq = xDist*xDist + yDist*yDist;
+                    if (distSq <= rsq) {
+                        var startOfColumn = startOfRow + bmpXpixel;
+                        resData[startOfColumn] = resData[startOfColumn] + v * Math.exp(- distSq / sigmaSqr2);
+                        //resData.resData[startOfColumn] = resData.resData[startOfColumn] + v * (rsq - distSq)/rsq;
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    return resData;
+
+};
+
+RessourceMap.prototype.genBitmapFromResData = function (time, resData, method) {
     var noiseLevel = 0;
     var time = Math.max(time - 1, 0);
 
@@ -157,60 +248,6 @@ RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin,
     landscape.push({maxV: landscape[landscape.length - 1].maxV + mountainSize / sumSize, c1: {r: 153, g: 76, b: 0}, c2: {r: 102, g: 51, b: 0}, name: "mountain"});
     landscape.push({maxV: landscape[landscape.length - 1].maxV + iceSize / sumSize, c1: {r: 102, g: 51, b: 0}, c2: {r: 255, g: 255, b: 255}, name: "ice"});
 
-    var resData = this.newFilledArray(this.bmpResolutionX * this.bmpResolutionY, 0.0);
-    var numRessources = this.sources.x.length;
-
-    var renderHeight = bmpymax-bmpymin;
-    var renderWidth = bmpxmax-bmpxmin;
-    var ressourceItems = this.sourcesQuadTree.retrieve({x: bmpxmin, y: bmpymin, height: renderHeight, width: renderWidth});
-    console.log("num ressource Items retrieved for bitmap"+ressourceItems.length)
-
-    //for (var i = 0; i < numRessources; i++) {
-    for (var i in ressourceItems) {
-        //TODO: add for loop to add periodic boundaries: i.e use this.mapRenderer.gameCoord2RenderX(this.sources.x[i]+this.mapWidth,this.sources.y[i]+this.mapHeight)
-
-
-        //var x = ressourceItems[i].x;
-        //var y = ressourceItems[i].y;
-        var x = this.mapRenderer.gameCoord2RenderX(ressourceItems[i].xGame, ressourceItems[i].yGame);
-        var y = this.mapRenderer.gameCoord2RenderY(ressourceItems[i].xGame, ressourceItems[i].yGame);
-        var r = ressourceItems[i].rGame * this.mapType.scale;
-        var v = ressourceItems[i].v;
-        //var x = this.mapRenderer.gameCoord2RenderX(this.sources.x[i], this.sources.y[i]);
-        //var y = this.mapRenderer.gameCoord2RenderY(this.sources.x[i], this.sources.y[i]);
-        //var r = this.sources.r[i] * this.mapType.scale;
-        //var v = this.sources.v[i];
-
-        var xminRenderCoord = Math.floor(x - 2 * r * this.mapType.ratioWidthHeight);
-        var xmaxRenderCoord = Math.ceil(x + 2 * r * this.mapType.ratioWidthHeight);
-        var yminRenderCoord = Math.floor(y - 2 * r);
-        var ymaxRenderCoord = Math.ceil(y + 2 * r);
-
-        var xminBmpPixel = Math.max((xminRenderCoord - bmpxmin) / this.bmpToRenderScaling, 0);
-        var xmaxBmpPixel = Math.min((xmaxRenderCoord - bmpxmax) / this.bmpToRenderScaling, this.bmpResolutionX);
-        var yminBmpPixel = Math.max((yminRenderCoord - bmpymin) / this.bmpToRenderScaling, 0);
-        var ymaxBmpPixel = Math.min((ymaxRenderCoord - bmpymax) / this.bmpToRenderScaling, this.bmpResolutionY);
-
-        //create Gaussian with constants:
-        var sigma = r / 5;
-        var sigmaSqr2 = 2 * sigma * sigma;
-
-        for (var bmpYpixel = yminBmpPixel; bmpYpixel < ymaxBmpPixel; bmpYpixel++) {
-            var bmpYcoord = bmpYpixel * this.bmpToRenderScaling + bmpymin;
-            var startOfRow = this.bmpResolutionX * bmpYpixel;
-            for (var bmpXpixel = xminBmpPixel; bmpXpixel < xmaxBmpPixel; bmpXpixel++) {
-                var bmpXcoord = bmpXpixel * this.bmpToRenderScaling + bmpxmin;
-                var xDist = Math.abs(this.mapRenderer.renderCoord2GameX(bmpXcoord - x, bmpYcoord - y));
-                var yDist = Math.abs(this.mapRenderer.renderCoord2GameY(bmpXcoord - x, bmpYcoord - y));
-                var distSq = xDist*xDist + yDist*yDist;
-                if (distSq <= r * r) {
-                    var startOfColumn = startOfRow + bmpXpixel;
-                    resData[startOfColumn] = resData[startOfColumn] + v * Math.exp(- distSq / sigmaSqr2);
-                }
-            }
-
-        }
-    }
 
     //var mycanvas = document.getElementById('display');
     var mycanvas = document.createElement("canvas");
@@ -226,13 +263,13 @@ RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin,
             var startOfPixel = (startOfRow + xx) * 4;
             var resDataScaled = resData[startOfRow + xx];
 
-            if (false) {
+            if (method=="gray") {
                 var resDataScaled = Math.round(255 * resDataScaled);
                 imgData.data[startOfPixel] = resDataScaled; //r
                 imgData.data[startOfPixel + 1] = 0; //g
                 imgData.data[startOfPixel + 2] = 255 - resDataScaled; //b
             }
-            else if (false) {
+            else if (method=="jet") {
                 var resDataColors = this.GetColour(resDataScaled, 0, 1);
                 imgData.data[startOfPixel] = resDataColors.r * 255; //r
                 imgData.data[startOfPixel + 1] = resDataColors.g * 255; //g
@@ -263,12 +300,17 @@ RessourceMap.prototype.getResBitmap = function (time, bmpxmin, bmpxmax, bmpymin,
     ctx.putImageData(imgData, 0, 0);
 
     var bmp = new createjs.Bitmap(mycanvas);
-    bmp.scaleX = this.bmpToRenderScaling;
-    bmp.scaleY = this.bmpToRenderScaling;
+    if (this.debugTiles) {
+        bmp.scaleX = this.bmpToRenderScaling*0.99;
+        bmp.scaleY = this.bmpToRenderScaling*0.99;
+    }
+    else {
+        bmp.scaleX = this.bmpToRenderScaling;
+        bmp.scaleY = this.bmpToRenderScaling;
+    }
     bmp.alpha = 0.5;
     return bmp;
-
-};
+}
 
 RessourceMap.prototype.newFilledArray = function (len, val) {
     var rv = new Array(len);
@@ -307,3 +349,11 @@ RessourceMap.prototype.GetColour = function (v, vmin, vmax) {
 RessourceMap.prototype.wrapIndex = function (i, i_max) {
     return ((i % i_max) + i_max) % i_max;
 }
+
+RessourceMap.prototype.addFinishedLoadingCallback = function (fcn) {
+    this.finishedLoadingCallback  = fcn;
+};
+
+RessourceMap.prototype.addFinishedScreenLoadingCallback = function (fcn) {
+    this.finishedScreenLoadingCallback  = fcn;
+};

@@ -1,6 +1,6 @@
 // make button and add it to button container
 
-var BuildMenu = function initMenu(mapId,MapControl){
+var BuildMenu = function(mapId,MapControl){
 
     // canvas size and reference
     var self = this;
