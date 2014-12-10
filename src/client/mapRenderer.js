@@ -305,7 +305,7 @@ Map.prototype.loadRessourceOverlay = function() {
                 self.res_containerBackgroundLoading = null;
                 self.ressourceMap = self.ressourceMapBackgroundLoading;
                 self.ressourceMapBackgroundLoading = null;
-                self.main_container.addChild(self.res_container);
+                self.main_container.addChildAt(self.res_container,2);
                 self.res_container.mouseMoveOutside = true;
                 resMap.disableProgressBar();
             }
