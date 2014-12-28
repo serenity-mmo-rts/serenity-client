@@ -18,17 +18,18 @@ var UiRessourceMap = function(mapRenderer,resTypes){
         $('<option />', {value: resTypes[i].id, text: resTypes[i].name}).appendTo(this.s);
     }
 
-    this.clicknum = 0;
-    $(this.s).click(function(){
-        self.clicknum++;
-        if(self.clicknum == 2){
+    //this.clicknum = 0;
+    $(this.s).change(function(){
+        //self.clicknum++;
+        //console.log("self.clicknum="+self.clicknum);
+        //if(self.clicknum == 2){
             if ($(this).val()=='off') {
                 self.mapRenderer.removeRessourceOverlay();
             }
             else {
                 self.mapRenderer.addRessourceOverlay($(this).val());
             }
-            self.clicknum = 0;
-        }
+            //self.clicknum = 0;
+        //}
     });
 }

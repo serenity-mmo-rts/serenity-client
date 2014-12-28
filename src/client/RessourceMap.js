@@ -13,6 +13,7 @@ var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeI
     this.mapHeight = this.mapData.height;
 
     this.debugTiles = false;
+    this.debugLog = false;
 
     this.finishedLoadingCallback  = null;
     this.finishedScreenLoadingCallback  = null;
@@ -46,6 +47,8 @@ RessourceMap.prototype.disableProgressBar = function () {
 }
 
 RessourceMap.prototype.initQuadtree = function (resTypeId) {
+    if (this.debugLog) console.log("generate quadtree");
+
     var renderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
     var renderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
 
@@ -119,7 +122,7 @@ RessourceMap.prototype.checkRendering = function () {
                     var bmpName = "x" + bmpX + "y" + bmpY;
                     var existObj = this.res_container.getChildByName(bmpName);
                     if (existObj == null) {
-                        //console.log("start adding bmpObj with name=" + bmpName);
+                        if (this.debugLog) console.log("start adding bmpObj with name=" + bmpName);
                         var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
                         var bmpObj = this.genBitmapFromResData(100, resData, "jet");
                         bmpObj.name = bmpName;
