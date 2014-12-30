@@ -1,19 +1,21 @@
 // loading layers
-var Map = function(stage,main_container,mapId) {
+var Map = function(mapContainer, stage,mapId) {
 
     var self = this;
 
     this.stage = stage;
-    this.main_container = main_container;
+    this.mapContainer = mapContainer;
+    this.main_container = mapContainer.main_container;
     this.mapId = mapId;
 
     this.map_container = new createjs.Container();
     this.obj_container = new createjs.Container();
+    this.res_container = null;
+    this.res_containerBackgroundLoading = new createjs.Container();
     this.map_container.mouseMoveOutside = true;
     this.obj_container.mouseMoveOutside = true;
     this.main_container.addChild(this.map_container,this.obj_container);
 
-    this.canvas_size = [window.innerHeight,window.innerWidth];
     this.current_object;
     this.tempObj;
     this.hit_object = false;
@@ -22,6 +24,11 @@ var Map = function(stage,main_container,mapId) {
     this.bgImg;
     this.mapData = game.maps.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
+
+    this.resMap = new MapGenerator('3',this.mapData.width,this.mapData.height);
+    this.resTypeId = null;
+    this.ressourceMap = null;
+    this.ressourceMapBackgroundLoading = null;
 
     // create unique list of images to load:
     var imagesToLoadHashList = {}, imagesToLoad = [];
@@ -84,7 +91,10 @@ Map.prototype.createMap = function() {
         this.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
     }
 
-    this.checkRendering(this.mapData.mapObjects.hashList,this.canvas_size[1]/2,this.canvas_size[0]/2,1);
+    this.checkRendering();
+
+
+
 };
 
 Map.prototype.checkRendering = function(){
@@ -92,15 +102,15 @@ Map.prototype.checkRendering = function(){
     var objectList = game.maps.get(uc.layer.mapId).mapObjects.hashList;
     var xoff = this.main_container.x;
     var yoff = this.main_container.y;
-    var zoomfac =  uc.layer.mapContainer.zoom;
+    var zoomfac =  this.mapContainer.zoom;
 
     for (var mapObjectId in objectList) {
-        var DistanceX = this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff;
-        var DistanceY = this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff;
+        var DistanceX = Math.abs(this.gameCoord2RenderX(objectList[mapObjectId].x,objectList[mapObjectId].y) +xoff);
+        var DistanceY = Math.abs(this.gameCoord2RenderY(objectList[mapObjectId].x,objectList[mapObjectId].y) +yoff);
         var isalreadyRendered  = false;
         var shouldbeRendered = false;
 
-        if(DistanceX >= (-this.canvas_size[1]*(1/zoomfac*1.5))  &&  DistanceX <= (2*this.canvas_size[1]*(1/zoomfac*1.5)) && DistanceY >= (-this.canvas_size[0]*(1/zoomfac*1.5))  &&  DistanceY <= (2*this.canvas_size[0])*(1/zoomfac*1.5)) {
+        if(DistanceX <= 1.5*window.innerWidth/zoomfac && DistanceY <= 1.5*window.innerHeight/zoomfac) {
             shouldbeRendered = true;
         }
 
@@ -118,7 +128,12 @@ Map.prototype.checkRendering = function(){
     }
 
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+
+    if (this.ressourceMap != null) {
+        this.ressourceMap.checkRendering();
+    }
 }
+
 
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
@@ -167,12 +182,12 @@ Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
 }
 
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
-    var gameX = (renderX / this.mapType.ratioWidthHeight + renderY) / (2*this.mapType.scale);
+    var gameX = (renderY + renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
-    var gameY = (renderY - renderX / this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    var gameY = (renderY - renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameY;
 }
 
@@ -232,4 +247,72 @@ Map.prototype.tick = function(evt) {
      if (this.tempObj != undefined) { // move object
        this.moveTempObject();
     }
+};
+
+Map.prototype.removeRessourceOverlay = function() {
+    this.resTypeId = null;
+
+    if (this.ressourceMap != null) {
+        this.ressourceMap.updatingDisabled = true;
+        this.ressourceMap = null;
+        this.main_container.removeChild(this.res_container);
+        this.res_container = null;
+    }
+
+    this.cancelRessourceOverlayLoading();
+
+}
+
+Map.prototype.addRessourceOverlay = function(resTypeId) {
+    this.removeRessourceOverlay();
+    this.resTypeId = resTypeId;
+    this.loadRessourceOverlay();
+}
+
+Map.prototype.cancelRessourceOverlayLoading = function() {
+    if (this.ressourceMapBackgroundLoading != null) {
+        this.ressourceMapBackgroundLoading.updatingDisabled = true;
+        this.ressourceMapBackgroundLoading = null;
+        this.res_containerBackgroundLoading = null;
+    }
+}
+
+Map.prototype.loadRessourceOverlay = function() {
+    var self = this;
+
+    this.cancelRessourceOverlayLoading();
+
+    if (this.resTypeId != null) {
+        console.log("start to generate new ressource map overlay in background...")
+
+        this.res_containerBackgroundLoading = new createjs.Container();
+        this.ressourceMapBackgroundLoading = new RessourceMap(this,this.resMap,this.mapId,this.res_containerBackgroundLoading, this.resTypeId);
+        this.ressourceMapBackgroundLoading.enableProgressBar();
+        this.ressourceMapBackgroundLoading.checkRendering();
+        this.ressourceMapBackgroundLoading.addFinishedScreenLoadingCallback(function(resMap) {
+            if (resMap.updatingDisabled) {
+                console.log("canceled loading new map")
+            }
+            else {
+                console.log("finished background-loading of ressource overlay. now add it to main_container.");
+                resMap.finishedLoadingCallback = null;
+                resMap.finishedScreenLoadingCallback = null;
+                if (self.res_container != null) {
+                    self.main_container.removeChild(self.res_container);
+                }
+                self.res_container = self.res_containerBackgroundLoading;
+                self.res_container.name = 'ressources';
+                self.res_containerBackgroundLoading = null;
+                self.ressourceMap = self.ressourceMapBackgroundLoading;
+                self.ressourceMapBackgroundLoading = null;
+                self.main_container.addChildAt(self.res_container,2);
+                self.res_container.mouseMoveOutside = true;
+                resMap.disableProgressBar();
+            }
+        });
+    }
+}
+
+Map.prototype.resize = function () {
+    this.loadRessourceOverlay();
 };

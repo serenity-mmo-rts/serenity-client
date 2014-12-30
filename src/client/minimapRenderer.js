@@ -1,23 +1,37 @@
-var Minimap = function (minimap,mapControl){
+var Minimap = function(mapControl){
 
     var self = this;
 
-    this.stage= minimap;
-    this.mapControl = mapControl;
+    this.canvas = document.createElement('canvas');
+    this.canvas.style.width = (window.innerWidth/4) + "px";
+    this.canvas.id = "minimap";
+    this.canvas.border = "none";
 
     this.size = 4;
 
+    this.mapControl = mapControl;
 
-    this.draw(this.stage,this.mapControl);
-    this.addEvents();
 };
 
 
-Minimap.prototype.draw= function(stage,mapControl) {
+Minimap.prototype.init = function() {
 
-    this.stage = stage;
-    this.mapControl = mapControl;
-    this.main_container = this.mapControl.main_container;
+    this.stage = new createjs.Stage("minimap");
+    createjs.Touch.enable(this.stage);
+    this.stage.regX = window.innerWidth / 2;
+    this.stage.regY = window.innerWidth / 2; // !!!!!!! Why use width for Y coordinates?
+    this.stage.y = window.innerWidth / 2;
+    this.stage.x = window.innerWidth / 2;
+    this.stage.mouseMoveOutside = true;
+
+    this.draw();
+    this.addEvents();
+}
+
+
+Minimap.prototype.draw= function() {
+
+    var main_container = this.mapControl.main_container;
     this.mapId  = this.mapControl.map.mapId;
     this.mini_container = new createjs.Container();
 
@@ -128,5 +142,12 @@ Minimap.prototype.moveOnMinimap = function(evt){
 }
 
 
+Minimap.prototype.resize = function () {
 
+    var currsize = window.innerWidth/this.size;
+    var mapWidth = (game.maps.get(this.mapId).width)/this.size;
+    this.factor = Math.round(mapWidth/currsize);
+    $(this.canvas).width(currsize).height(currsize/2);
+
+};
 

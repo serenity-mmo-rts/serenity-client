@@ -1,5 +1,5 @@
 
-var UiSlidingPanel = function(topPosition,zIndex,content){
+var UiSlidingPanelRight = function(topPosition,zIndex,content){
     var self = this;
 
     this.isVisible = true;
@@ -9,7 +9,7 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.panelDiv = document.createElement('div');
     this.panelDiv.style.position="absolute";
     this.panelDiv.style.top = topPosition+"px";
-    this.panelDiv.style.left = "0px";
+    //... moved to end
     this.panelDiv.style.width = "auto";
     this.panelDiv.style.zIndex = zIndex;
 
@@ -18,12 +18,12 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.innerDiv.className="ui-widget-content ui-corner-all visible";
     //this.innerDiv.style.minWidth="100px";
     this.innerDiv.style.minHeight="30px";
-    var content = $.parseHTML( content );
+    //var content = $.parseHTML( content );
     $( this.innerDiv ).append( $( content ) );
 
     this.buttonDiv = document.createElement('div');
     this.buttonDiv.style.position = "absolute";
-    this.buttonDiv.style.right = "-30px";
+    this.buttonDiv.style.left = "-30px";
     this.buttonDiv.style.bottom = "0px";
     this.buttonDiv.className = "toggleButton ui-corner-all";
     this.buttonDiv.onclick = function() {
@@ -35,61 +35,60 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     //$('#allUiPanels').append(this.panelDiv);
     $('body').append(this.panelDiv);
 
+    this.panelDiv.style.right = this.innerDiv.offsetWidth+"px";
 };
 
-UiSlidingPanel.prototype.setPos = function(left,top) {
+UiSlidingPanelRight.prototype.setPos = function(right,top,time) {
     var rect = this.innerDiv.getBoundingClientRect();
-    if(left != rect.left || top != rect.top ) {
+    if(right != rect.right || top != rect.top ) {
         $( this.panelDiv ).animate({
-            left: left,
+            right: right,
             top: top
-        }, 300, function() {
+        }, time, function() {
             // Animation complete.
         });
         if (this.nextPanel !== null) {
             this.nextPanel.topPosition = this.getTopPosOfNextPanel();
-            this.nextPanel.update();
+            this.nextPanel.update(time);
         }
     }
 };
 
-UiSlidingPanel.prototype.update = function() {
+UiSlidingPanelRight.prototype.update = function(time) {
    if (this.isVisible) {
-       this.show();
+       this.show(time);
    }
    else {
-       this.hide();
+       this.hide(time);
    }
 };
 
-UiSlidingPanel.prototype.show = function() {
+UiSlidingPanelRight.prototype.show = function(time) {
     this.isVisible = true;
-    this.setPos(0,this.topPosition);
-
+    this.setPos(this.innerDiv.offsetWidth,this.topPosition,time);
 };
 
-UiSlidingPanel.prototype.hide = function() {
+UiSlidingPanelRight.prototype.hide = function(time) {
     this.isVisible = false;
-        this.setPos(-this.innerDiv.offsetWidth, this.topPosition-this.innerDiv.offsetHeight+30);
-
+    this.setPos(0, this.topPosition-this.innerDiv.offsetHeight+30,time);
 };
 
-UiSlidingPanel.prototype.toggle = function() {
+UiSlidingPanelRight.prototype.toggle = function() {
     if(this.isVisible) {
-         this.hide();
+         this.hide(300);
     }
     else {
-         this.show();
+         this.show(300);
     }
 };
 
-UiSlidingPanel.prototype.addNextPanel = function(panel) {
+UiSlidingPanelRight.prototype.addNextPanel = function(panel) {
     this.nextPanel = panel;
     this.nextPanel.topPosition = this.getTopPosOfNextPanel();
-    this.nextPanel.update();
+    this.nextPanel.update(0);
 };
 
-UiSlidingPanel.prototype.getTopPosOfNextPanel = function() {
+UiSlidingPanelRight.prototype.getTopPosOfNextPanel = function() {
     if(this.isVisible) {
         return this.innerDiv.offsetHeight + this.topPosition;
     }

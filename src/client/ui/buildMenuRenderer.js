@@ -1,6 +1,6 @@
 // make button and add it to button container
 
-var BuildMenu = function initMenu(mapId,MapControl){
+var BuildMenu = function(mapId,MapControl){
 
     // canvas size and reference
     var self = this;
@@ -15,7 +15,7 @@ var BuildMenu = function initMenu(mapId,MapControl){
     //this.nr =  this.BuildMenuData.submenus.length;
     var mapTypeId =  game.maps.hashList[this.mapId].mapTypeId;
     this.BuildMenuData = game.mapTypes.hashList[mapTypeId].buildCategories;
-    this.nr =  this.BuildMenuData.length;
+    this.nr = this.BuildMenuData.length;
 
     // buildMenu   with J-Query
     // weather to show menu or not
