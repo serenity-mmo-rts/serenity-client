@@ -69,8 +69,10 @@ MapControl.prototype.handleMousedownMain = function (evt) {
         case "buildObj":
 
             // create event Obj
-                // client.addEvent(new BuildObjectEvent(this.map.tempObj))
-            this.cancelState();
+           var event = new BuildObjectEvent(this.map)
+           uc.addEvent(event) ;
+           this.cancelState();
+
 
             break;
 

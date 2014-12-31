@@ -5,6 +5,8 @@ var Client = function() {
     this.userId;
     this.loginForm;
     this.timeoffset = 0;
+    // vorübergehend
+    this.events = [];
 };
 
 // Init function
@@ -76,6 +78,7 @@ Client.prototype.onInitGameData = function(initGameData) {
     game.spritesheets.load(initGameData.spritesheets);
     game.mapTypes.load(initGameData.mapTypes);
     game.objectTypes.load(initGameData.objectTypes);
+    // game.events.load(initGameData.events);
 
     //init only one map
     game.maps.add(new MapData(game,initGameData.initMap));
@@ -87,6 +90,27 @@ Client.prototype.onInitGameData = function(initGameData) {
 
 
 
+// not yet working
+Client.prototype.addEvent = function(event) {
+
+    this.event = event;
+    // add to event List
+    this.events.push(this.event);
+
+    // iniitalize it
+    switch(this.event.type)     {
+
+        case "buildObject":
+           //U this.event.initialize(this.event);
+            this.event.initialize(function(){}());
+
+    // sent to server
+    socket.emit('buildHouse', [this.layer.mapId, this.currBuildingObj.save()]);
+
+
+    }
+
+}
 
 // not yet working
 Client.prototype.changeLayer = function(initGameData) {

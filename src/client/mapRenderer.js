@@ -122,8 +122,9 @@ Map.prototype.checkRendering = function(){
             this.obj_container.removeChild(childToRemove);
         }
         else if (!isalreadyRendered && shouldbeRendered) {   // add to rendering container
-            this.mapData.mapObjects.add(objectList[mapObjectId]);
-            this.renderObj(objectList[mapObjectId]);
+            var addObject = objectList[mapObjectId];
+            this.addObjToGame(addObject);
+            this.renderObj(addObject);
         }
     }
 
@@ -134,6 +135,12 @@ Map.prototype.checkRendering = function(){
     }
 }
 
+<<<<<<< HEAD
+=======
+Map.prototype.addObjToGame = function(Obj) {
+    this.mapData.mapObjects.add(Obj);
+}
+>>>>>>> EventsAdded
 
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:
