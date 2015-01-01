@@ -135,12 +135,11 @@ Map.prototype.checkRendering = function(){
     }
 }
 
-<<<<<<< HEAD
-=======
+
 Map.prototype.addObjToGame = function(Obj) {
     this.mapData.mapObjects.add(Obj);
 }
->>>>>>> EventsAdded
+
 
 Map.prototype.renderObj = function(mapObject) {
     // create a new Bitmap for the object:

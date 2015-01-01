@@ -53,7 +53,7 @@ Client.prototype.init = function() {
 
     socket.on('initGameData',(function(initGameData){ self.onInitGameData(initGameData);}));
 
-    socket.on('buildHouse', (function(data){
+    socket.on('BuildObjectEvent', (function(data){
         var newObject = new MapObject(game,data[1]);
         if (self.layer.mapId == data[0]) {
             //self.layer.map.addObject(newObject);        // what is the difference between the two ?
@@ -94,21 +94,11 @@ Client.prototype.onInitGameData = function(initGameData) {
 Client.prototype.addEvent = function(event) {
 
     this.event = event;
+    this.event.name =  this.event.constructor.name;
     // add to event List
     this.events.push(this.event);
-
-    // iniitalize it
-    switch(this.event.type)     {
-
-        case "buildObject":
-           //U this.event.initialize(this.event);
-            this.event.initialize(function(){}());
-
-    // sent to server
-    socket.emit('buildHouse', [this.layer.mapId, this.currBuildingObj.save()]);
-
-
-    }
+    this.event.initialize(function(){}());
+    //socket.emit(this.event.name, [this.layer.mapId, this.currBuildingObj.save()]);
 
 }
 
