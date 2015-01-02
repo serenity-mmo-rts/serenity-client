@@ -58,6 +58,7 @@ var MapContainer = function(mapId){
 
 
  MapContainer.prototype.tick = function(evt) {
+     this.mapControl.tick();
      this.map.tick();
  };
 

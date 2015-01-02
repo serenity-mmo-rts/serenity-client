@@ -34,6 +34,7 @@ Client.prototype.init = function() {
 
     socket.on('loggedIn', (function(data){
         self.userId = data.userId;
+        console.log("logged in")
         loginForm.close();
     }));
 
@@ -64,6 +65,12 @@ Client.prototype.init = function() {
         }
     }));
 
+    socket.on('newGameEvent', (function(data){
+        var gameEvent = createGameEvent(game,data[1]);
+        self.events.push(gameEvent);
+        gameEvent.applyToGame();
+    }));
+
     socket.emit('ready');
 }
 
@@ -81,7 +88,10 @@ Client.prototype.onInitGameData = function(initGameData) {
     // game.events.load(initGameData.events);
 
     //init only one map
-    game.maps.add(new MapData(game,initGameData.initMap));
+    var initMap = new MapData(game,initGameData.initMap);
+    initMap.mapObjects.load(initGameData.initMapObjects);
+    initMap.rebuildQuadTree();
+    game.maps.add(initMap);
 
     // Create Layer Object                                            k
     this.layer =  new Layer(initGameData.initMap._id);
@@ -92,13 +102,25 @@ Client.prototype.onInitGameData = function(initGameData) {
 
 // not yet working
 Client.prototype.addEvent = function(event) {
-
-    this.event = event;
-    this.event.name =  this.event.constructor.name;
     // add to event List
-    this.events.push(this.event);
-    this.event.initialize(function(){}());
-    //socket.emit(this.event.name, [this.layer.mapId, this.currBuildingObj.save()]);
+    if(event.isValid()) {
+        event.execute();
+        this.events.push(event);
+        socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
+            if(response.success){
+                console.log("sent event was successfully applied by server.");
+                var updatedEvent = createGameEvent(game,response.updatedEvent);
+                event.updateFromServer(updatedEvent);
+            }
+            else {
+                console.log("sent event was not successful. server returned error!!");
+            }
+        });
+    }
+    else {
+        console.log("invalid event.");
+    }
+
 
 }
 
