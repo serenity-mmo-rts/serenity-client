@@ -16,9 +16,6 @@ var MapContainer = function(mapId){
     this.main_container = new createjs.Container();
     this.menu_container = new createjs.Container();
 
-
-
-
     // movement outside
     this.stage.mouseMoveOutside = true;
     this.main_container.mouseMoveOutside = true;
@@ -30,8 +27,11 @@ var MapContainer = function(mapId){
     this.stage.addChild(this.zoom_container,this.menu_container);
 
     // zoom levels
-    this.zoomFactors = [0.05, 0.1, 0.2, 0.3486784401, 0.387420489, 0.43046721, 0.4782969, 0.531441, 0.59049, 0.6561, 0.729, 0.81, 0.9, 1, 1.1, 1.21, 1.331, 1.4641, 1.61051, 1.771561, 1.9487171, 2.14358881, 2.357947691, 2.5937424601];
-    this.zoom_level = 13;
+    this.zoomFactors = [];
+    for (var i=-11; i<11; i++) {
+        this.zoomFactors.push(Math.pow(1.1,i));
+    }
+    this.zoom_level = 11;
     this.zoom = this.zoomFactors[this.zoom_level];
 
 
@@ -69,7 +69,7 @@ var MapContainer = function(mapId){
      var changedZoom = false;
      if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
-         if (this.zoom_level <20) {
+         if (this.zoom_level < this.zoomFactors.length-1) {
              this.zoom_level+=1;
              this.zoom = this.zoomFactors[this.zoom_level];
              changedZoom = true;
