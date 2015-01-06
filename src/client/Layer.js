@@ -22,11 +22,16 @@ var Layer = function(mapID){
     this.minimap.init();
     this.minimapPanel.hide(0);
 
-    this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map,this.mapContainer.map.resMap.resTypes);
-    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content);
+    this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.ressourceMapWrapper);
+    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
     this.uiRessourceMapPanel.show(0);
 
+    this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMapWrapper);
+    this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
+    this.uiBgMapPanel.show(0);
+
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
+    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
 
 
     window.addEventListener('resize',function(){self.resize()}, false);

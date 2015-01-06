@@ -1,10 +1,11 @@
-var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeId) {
+var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeId, resColorFcn) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.resMap = resMap;
     this.res_container = res_container;
     this.resTypeId = resTypeId;
+    this.resColorFcn = resColorFcn;
 
     this.mapData = game.maps.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
@@ -124,7 +125,7 @@ RessourceMap.prototype.checkRendering = function () {
                     if (existObj == null) {
                         if (this.debugLog) console.log("start adding bmpObj with name=" + bmpName);
                         var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
-                        var bmpObj = this.genBitmapFromResData(100, resData, "jet");
+                        var bmpObj = this.genBitmapFromResData(resData);
                         bmpObj.name = bmpName;
                         bmpObj.x = this.bmpRenderSizeX * bmpX;
                         bmpObj.y = this.bmpRenderSizeY * bmpY;
@@ -228,78 +229,23 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
 
 };
 
-RessourceMap.prototype.genBitmapFromResData = function (time, resData, method) {
-    var noiseLevel = 0;
-    var time = Math.max(time - 1, 0);
-
-    deepwaterSize = 0.01 + Math.max(time - 5, 0) * 3;
-    coastwaterSize = time * 2;
-    beachSize = time * 2;
-    valleySize = Math.max(time - 5, 0) * 5;
-    greenSize = Math.max(time - 10, 0) * 5;
-    mountainSize = 50 - time * 5;
-    iceSize = 50 - Math.min(time, 9) * 5;
-
-    sumSize = deepwaterSize + coastwaterSize + beachSize + valleySize + greenSize + mountainSize + iceSize;
-
-    var landscape = [];
-    landscape.push({maxV: deepwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 0, g: 0, b: 150}, name: "deepwater"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + coastwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 56, g: 200, b: 200}, name: "coastwater"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + beachSize / sumSize, c1: {r: 255, g: 255, b: 153}, c2: {r: 200, g: 120, b: 20}, name: "beach"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + valleySize / sumSize, c1: {r: 200, g: 120, b: 20}, c2: {r: 50, g: 150, b: 50}, name: "valley"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + greenSize / sumSize, c1: {r: 50, g: 150, b: 50}, c2: {r: 153, g: 76, b: 0}, name: "green"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + mountainSize / sumSize, c1: {r: 153, g: 76, b: 0}, c2: {r: 102, g: 51, b: 0}, name: "mountain"});
-    landscape.push({maxV: landscape[landscape.length - 1].maxV + iceSize / sumSize, c1: {r: 102, g: 51, b: 0}, c2: {r: 255, g: 255, b: 255}, name: "ice"});
-
-
-    //var mycanvas = document.getElementById('display');
+RessourceMap.prototype.genBitmapFromResData = function (resData) {
     var mycanvas = document.createElement("canvas");
     mycanvas.width = this.bmpResolutionX;
     mycanvas.height = this.bmpResolutionY;
     var ctx = mycanvas.getContext("2d");
-    //var imgData=ctx.getImageData(0,0,bmpWidth,bmpHeight);
     var imgData = ctx.createImageData(this.bmpResolutionX, this.bmpResolutionY);
-
     for (var yy = 0; yy < this.bmpResolutionY; yy++) {
         var startOfRow = this.bmpResolutionX * yy;
         for (var xx = 0; xx < this.bmpResolutionX; xx++) {
             var startOfPixel = (startOfRow + xx) * 4;
-            var resDataScaled = resData[startOfRow + xx];
-
-            if (method=="gray") {
-                var resDataScaled = Math.round(255 * resDataScaled);
-                imgData.data[startOfPixel] = resDataScaled; //r
-                imgData.data[startOfPixel + 1] = 0; //g
-                imgData.data[startOfPixel + 2] = 255 - resDataScaled; //b
-            }
-            else if (method=="jet") {
-                var resDataColors = this.GetColour(resDataScaled, 0, 1);
-                imgData.data[startOfPixel] = resDataColors.r * 255; //r
-                imgData.data[startOfPixel + 1] = resDataColors.g * 255; //g
-                imgData.data[startOfPixel + 2] = resDataColors.b * 255; //b
-            }
-            else {
-                var i = 0;
-                while (i < landscape.length - 1 && landscape[i].maxV < resDataScaled) {
-                    i++;
-                }
-                var minV = (i == 0 ? 0 : landscape[i - 1].maxV);
-                var a = (resDataScaled - minV) / (landscape[i].maxV - minV);
-                imgData.data[startOfPixel] = landscape[i].c1.r * (1 - a) + landscape[i].c2.r * (a);
-                imgData.data[startOfPixel + 1] = landscape[i].c1.g * (1 - a) + landscape[i].c2.g * (a);
-                imgData.data[startOfPixel + 2] = landscape[i].c1.b * (1 - a) + landscape[i].c2.b * (a);
-
-                //Add Noise
-                imgData.data[startOfPixel] = imgData.data[startOfPixel] + noiseLevel * Math.random(); //r
-                imgData.data[startOfPixel + 1] = imgData.data[startOfPixel + 1] + noiseLevel * Math.random(); //g
-                imgData.data[startOfPixel + 2] = imgData.data[startOfPixel + 2] + noiseLevel * Math.random(); //b
-            }
-
-            //Alpha Channel
+            var colors = this.resColorFcn(resData[startOfRow + xx]);
+            imgData.data[startOfPixel] = colors.r;
+            imgData.data[startOfPixel + 1] = colors.g;
+            imgData.data[startOfPixel + 2] = colors.b;
             imgData.data[startOfPixel + 3] = 255; //alpha
         }
     }
-
     ctx.putImageData(imgData, 0, 0);
 
     var bmp = new createjs.Bitmap(mycanvas);
@@ -311,7 +257,6 @@ RessourceMap.prototype.genBitmapFromResData = function (time, resData, method) {
         bmp.scaleX = this.bmpToRenderScaling;
         bmp.scaleY = this.bmpToRenderScaling;
     }
-    bmp.alpha = 0.5;
     return bmp;
 }
 
@@ -321,32 +266,6 @@ RessourceMap.prototype.newFilledArray = function (len, val) {
         rv[len] = val;
     }
     return rv;
-}
-
-RessourceMap.prototype.GetColour = function (v, vmin, vmax) {
-    var c = {r: 1, g: 1, b: 1};
-
-    if (v < vmin)
-        v = vmin;
-    if (v > vmax)
-        v = vmax;
-    var dv = vmax - vmin;
-
-    if (v < (vmin + 0.25 * dv)) {
-        c.r = 0;
-        c.g = 4 * (v - vmin) / dv;
-    } else if (v < (vmin + 0.5 * dv)) {
-        c.r = 0;
-        c.b = 1 + 4 * (vmin + 0.25 * dv - v) / dv;
-    } else if (v < (vmin + 0.75 * dv)) {
-        c.r = 4 * (v - vmin - 0.5 * dv) / dv;
-        c.b = 0;
-    } else {
-        c.g = 1 + 4 * (vmin + 0.75 * dv - v) / dv;
-        c.b = 0;
-    }
-
-    return c;
 }
 
 RessourceMap.prototype.wrapIndex = function (i, i_max) {

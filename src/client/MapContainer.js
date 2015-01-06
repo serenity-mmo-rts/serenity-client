@@ -87,7 +87,8 @@ var MapContainer = function(mapId){
      if (changedZoom) {
          this.zoom_container.scaleX=this.zoom;
          this.zoom_container.scaleY=this.zoom;
-         this.map.loadRessourceOverlay();
+         this.map.ressourceMapWrapper.loadRessourceOverlay();
+         this.map.bgMapWrapper.loadRessourceOverlay();
          this.map.checkRendering();
          self.stage.update();
      }
