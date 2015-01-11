@@ -7,17 +7,17 @@ var MapControl = function (map) {
     this.stage = map.stage;
     this.main_container = map.main_container;
 
-    /** possible states
-     deleteObj
-     initializeObj
-     selectAttackTarget
-     selectItemTarget
-     Default
-     */
 
-    this.state = "default";
+    this.controlState = {};
+    this.controlState.DEFAULT = 0;
+    this.controlState.INITOBJ = 1;
+    this.controlState.DELOBJ = 2;
+    this.controlState.MOVEOBJ = 3;
+    this.controlState.ITEMTARGET = 4;
+    this.controlState.ATTACKTARGET = 5;
+
     this.hitObj = false;
-
+    this.state = this.controlState.DEFAULT;
 
     // event listener for main container
     this.main_container.addEventListener("mousedown", (function (evt) {
@@ -34,7 +34,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
     switch (this.state) {
 
 
-        case "default":
+        case this.controlState.DEFAULT:
 
             if (this.hitObj) {     // open Object Menu
 
@@ -63,11 +63,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 
             break;
 
-        case "deleteObj":
-
-            break;
-
-        case "buildObj":
+        case this.controlState.INITOBJ:
             if (this.map.tempGameEvent.isValid()) {
                 uc.addEvent(this.map.tempGameEvent);
             }
@@ -76,15 +72,19 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 
             break;
 
-        case "relocateObj" :
+        case this.controlState.DELOBJ:
 
             break;
 
-        case "selectAttackTarget":
+        case this.controlState.MOVEOBJ:
 
             break;
 
-        case "selectItemTarget":
+        case this.controlState.ITEMTARGET:
+
+            break;
+
+        case this.controlState.ATTACKTARGET:
 
             break;
     }
@@ -92,7 +92,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 }
 
 MapControl.prototype.cancelState = function () {
-    this.state = "default";
+    this.state = this.controlState.DEFAULT;
     this.map.deleteTempObj();
 }
 
@@ -100,7 +100,7 @@ MapControl.prototype.cancelState = function () {
 MapControl.prototype.setStateBuild = function (objTypeId) {
 
     this.cancelState();
-    this.state = "buildObj";
+    this.state = this.controlState.INITOBJ;
 
     this.map.addTempObj(new MapObject(game, {_id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: mapObjectStates.TEMP}));
 

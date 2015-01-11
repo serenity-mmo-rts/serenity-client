@@ -201,18 +201,28 @@ Map.prototype.renderObj = function(mapObject) {
     if (checkedObj) {
         this.obj_container.removeChild(checkedObj);
     }
-    // create a new Bitmap for the object:
-    var objType = game.objectTypes.get(mapObject.objTypeId);
-    var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);
-    objectBitmap.gotoAndStop(objType.spriteFrame);
-    objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
-    objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
+
     if (mapObject.state == mapObjectStates.TEMP) {
+        var objType = game.objectTypes.get(mapObject.objTypeId);
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);  // render object from database
+        objectBitmap.gotoAndStop(objType.spriteFrame);
         objectBitmap.alpha = 0.7;
     }
-    if (mapObject.state == mapObjectStates.WORKING) {
-        objectBitmap.alpha = 0.3;
+    else if (mapObject.state == mapObjectStates.WORKING) {
+        var construction = game.objectTypes.get("constructionSite");
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction.spritesheetId]);
+        objectBitmap.gotoAndStop(construction.spriteFrame);
+        objectBitmap.alpha = 1;
     }
+    else {
+        var objType = game.objectTypes.get(mapObject.objTypeId);
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);  // render object from database
+        objectBitmap.gotoAndStop(objType.spriteFrame);
+    }
+
+
+    objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
+    objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
 
     //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
