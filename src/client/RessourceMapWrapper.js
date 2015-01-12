@@ -53,6 +53,9 @@ RessourceMapWrapper.prototype.cancelRessourceOverlayLoading = function() {
         this.ressourceMapBackgroundLoading = null;
         this.res_containerBackgroundLoading = null;
     }
+    if (this.ressourceMap != null) {
+        this.ressourceMap.updatingDisabled = true;
+    }
 }
 
 RessourceMapWrapper.prototype.loadRessourceOverlay = function() {
@@ -64,7 +67,8 @@ RessourceMapWrapper.prototype.loadRessourceOverlay = function() {
         console.log("start to generate new ressource map overlay in background...")
 
         this.res_containerBackgroundLoading = new createjs.Container();
-        this.ressourceMapBackgroundLoading = new RessourceMap(this.mapRenderer, this.resMap, this.mapId, this.res_containerBackgroundLoading, this.resTypeId, this.resColorFcn );
+        this.ressourceMapBackgroundLoading = new RessourceMap(this.mapRenderer, this.resMap, this.mapId, this.res_containerBackgroundLoading, this.resColorFcn );
+        this.ressourceMapBackgroundLoading.initQuadtree(this.resTypeId);
         this.ressourceMapBackgroundLoading.enableProgressBar();
         this.ressourceMapBackgroundLoading.checkRendering();
         this.ressourceMapBackgroundLoading.addFinishedScreenLoadingCallback(function(resMap) {
@@ -72,7 +76,7 @@ RessourceMapWrapper.prototype.loadRessourceOverlay = function() {
                 console.log("canceled loading new map")
             }
             else {
-                console.log("finished background-loading of ressource overlay. now add it to res_container.");
+                console.log("finished background-loading of ressource overlay in screen area. now add it to res_container.");
                 resMap.finishedLoadingCallback = null;
                 resMap.finishedScreenLoadingCallback = null;
                 if (self.res_containerForeground != null) {

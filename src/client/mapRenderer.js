@@ -151,7 +151,6 @@ Map.prototype.createMap = function() {
 
     this.checkRendering();
 
-    this.bgMapWrapper.addRessourceOverlay(14);
 
 };
 
@@ -174,13 +173,17 @@ Map.prototype.checkRendering = function(){
 }
 
 Map.prototype.checkRenderingOfObject = function(mapObject){
+
     var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x,mapObject.y) +this.main_container.x);
     var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x,mapObject.y) +this.main_container.y);
     var isalreadyRendered  = false;
     var shouldbeRendered = false;
 
-    if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
-        shouldbeRendered = true;
+    //check if object is in gameData:
+    if (game.maps.get(uc.layer.mapId).mapObjects.hashList.hasOwnProperty(mapObject._id)) {
+        if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
+            shouldbeRendered = true;
+        }
     }
 
     var checkedObj = this.obj_container.getChildByName(mapObject._id);
@@ -320,7 +323,6 @@ Map.prototype.tick = function() {
              this.tempObjBitmap.alpha = 1;
          }
          else {
-             console.log('invalid');
              this.tempObjBitmap.alpha = 0.3;
          }
     }
