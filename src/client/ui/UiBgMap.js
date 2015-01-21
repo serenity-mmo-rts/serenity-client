@@ -14,7 +14,7 @@ var UiBgMap = function (ressourceMapWrapper) {
     }
 
     // set standard value:
-    $(this.s).val(14);
+    //$(this.s).val(14);
 
     $(this.s).change(function () {
         if ($(this).val() == 'off') {

@@ -12,6 +12,7 @@ var UiSlidingPanelRight = function(topPosition,zIndex,content){
     //... moved to end
     this.panelDiv.style.width = "auto";
     this.panelDiv.style.zIndex = zIndex;
+    //this.panelDiv.style.overflow = "hidden";
 
     this.innerDiv = document.createElement('div');
     this.innerDiv.style.position="absolute";

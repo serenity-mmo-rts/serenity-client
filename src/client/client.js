@@ -113,7 +113,13 @@ Client.prototype.addEvent = function(event) {
                 event.updateFromServer(updatedEvent);
             }
             else {
-                console.log("sent event was not successful. server returned error!!");
+                console.log("sent event was not successful. server returned error! now revert the event...");
+                if(event.revert()) {
+                    console.log("revert successful");
+                }
+                else {
+                    console.log("... please reconnect ...");
+                }
             }
         });
     }

@@ -1,10 +1,9 @@
-var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeId, resColorFcn) {
+var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resColorFcn) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.resMap = resMap;
     this.res_container = res_container;
-    this.resTypeId = resTypeId;
     this.resColorFcn = resColorFcn;
 
     this.mapData = game.maps.get(this.mapId);
@@ -21,17 +20,16 @@ var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resTypeI
     this.updatingDisabled = false;
 
     this.bmpResolutionToPixelScaling = 4;  // this variable can be increased to reduce cpu strain
-    this.numTilesOnScreen = 4; // this variable controls the number of tiles
+    this.numTilesOnScreen = 2; // this variable controls the number of tiles
 
     this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
     this.bmpResolutionX = Math.ceil(window.innerWidth / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
     this.bmpResolutionY = Math.ceil(window.innerHeight / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
     this.bmpRenderSizeX = this.bmpResolutionX * this.bmpToRenderScaling;
     this.bmpRenderSizeY = this.bmpResolutionY * this.bmpToRenderScaling;
+    if (this.debugLog) console.log("new RessourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
 
     this.sourcesQuadTree = null;
-    this.initQuadtree(this.resTypeId);
-
 
     this.progressBar = null;
 }
@@ -88,6 +86,7 @@ RessourceMap.prototype.checkRendering = function () {
     var self = this;
 
     if (this.updatingDisabled) {
+        if (this.debugLog) console.log("disabled update of ressourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
         this.disableProgressBar();
     }
     else {
@@ -123,7 +122,7 @@ RessourceMap.prototype.checkRendering = function () {
                     var bmpName = "x" + bmpX + "y" + bmpY;
                     var existObj = this.res_container.getChildByName(bmpName);
                     if (existObj == null) {
-                        if (this.debugLog) console.log("start adding bmpObj with name=" + bmpName);
+                        if (this.debugLog) console.log("start adding bmpObj at radFromCenter=" +radFromCenter+ " with name=" + bmpName + " to ressourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
                         var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
                         var bmpObj = this.genBitmapFromResData(resData);
                         bmpObj.name = bmpName;
@@ -139,19 +138,21 @@ RessourceMap.prototype.checkRendering = function () {
                             this.progressBar.progress(Math.round(100*counter/(4*numTilesPerSide*numTilesPerSide)));
                         }
 
+                        //check if screen is fully loaded:
+                        if (this.finishedScreenLoadingCallback != null && radFromCenter > this.numTilesOnScreen / 2) {
+                            this.finishedScreenLoadingCallback(this);
+                        }
+
                         //do non-blocking recall of this function using setInterval:
                         setTimeout(function () {
                             self.checkRendering();
-                        }, 10);
+                        }, 100);
                         return;
                     }
                 }
             }
 
-            //check if screen is fully loaded:
-            if (this.finishedScreenLoadingCallback != null && radFromCenter > this.numTilesOnScreen / 2) {
-                this.finishedScreenLoadingCallback(this);
-            }
+
 
         }
 
@@ -181,6 +182,11 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
     ressourceItems = _.uniq(ressourceItems);
     //console.log("num ressource Items retrieved for bitmap"+ressourceItems.length)
 
+    var mapTypeScale = this.mapRenderer.mapType.scale;
+    var mapTypeScaleSq = mapTypeScale*mapTypeScale;
+    var mapTypeRatio = this.mapRenderer.mapType.ratioWidthHeight;
+
+
     for (var i = 0; i < ressourceItems.length; i++) {
         //TODO: add for loop to add periodic boundaries: i.e use this.mapRenderer.gameCoord2RenderX(this.sources.x[i]+this.mapWidth,this.sources.y[i]+this.mapHeight)
 
@@ -206,13 +212,22 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
         var rsq = (r)*(r);
         if (xmaxBmpPixel > xminBmpPixel && ymaxBmpPixel > yminBmpPixel) {
             for (var bmpYpixel = yminBmpPixel; bmpYpixel < ymaxBmpPixel; bmpYpixel++) {
-                var bmpYcoord = bmpYpixel * this.bmpToRenderScaling + bmpymin;
+                var renderDistY = bmpYpixel * this.bmpToRenderScaling + bmpymin - y;
                 var startOfRow = this.bmpResolutionX * bmpYpixel;
                 for (var bmpXpixel = xminBmpPixel; bmpXpixel < xmaxBmpPixel; bmpXpixel++) {
-                    var bmpXcoord = bmpXpixel * this.bmpToRenderScaling + bmpxmin;
-                    var xDist = Math.abs(this.mapRenderer.renderCoord2GameX(bmpXcoord - x, bmpYcoord - y));
-                    var yDist = Math.abs(this.mapRenderer.renderCoord2GameY(bmpXcoord - x, bmpYcoord - y));
-                    var distSq = xDist*xDist + yDist*yDist;
+                    var renderDistX = bmpXpixel * this.bmpToRenderScaling + bmpxmin - x;
+
+                    // THIS code block is replaced by faster code:
+                    //var xDist = Math.abs(this.mapRenderer.renderCoord2GameX(renderDistX, renderDistY));
+                    //var yDist = Math.abs(this.mapRenderer.renderCoord2GameY(renderDistX, renderDistY));
+                    //var distSq = xDist*xDist + yDist*yDist;
+
+                    // THIS code block does the same but inline:
+                    var gameDistXY = renderDistX/mapTypeRatio;
+                    var xDist = (renderDistY + gameDistXY);
+                    var yDist = (renderDistY - gameDistXY);
+                    var distSq = (xDist*xDist + yDist*yDist)/ (4*mapTypeScaleSq);
+
                     if (distSq <= rsq) {
                         var startOfColumn = startOfRow + bmpXpixel;
                         resData[startOfColumn] = resData[startOfColumn] + v * Math.exp(- distSq / sigmaSqr2);
@@ -256,6 +271,11 @@ RessourceMap.prototype.genBitmapFromResData = function (resData) {
     else {
         bmp.scaleX = this.bmpToRenderScaling;
         bmp.scaleY = this.bmpToRenderScaling;
+        var browser=navigator.userAgent.toLowerCase();
+        if(browser.indexOf('firefox') > -1) {
+            bmp.scaleX *= 1.001;
+            bmp.scaleY *= 1.001;
+        }
     }
     return bmp;
 }
