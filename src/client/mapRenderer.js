@@ -23,28 +23,30 @@ var Map = function(mapContainer, stage,mapId) {
 
     var bgMapRenderer = (function(){
         var noiseLevel = 0;
-        var time = 100;
 
-        deepwaterSize = 0.01 + Math.max(time - 5, 0) * 3;
-        coastwaterSize = time * 2;
-        beachSize = time * 2;
-        valleySize = Math.max(time - 5, 0) * 5;
-        greenSize = Math.max(time - 10, 0) * 5;
-        mountainSize = 50 - time * 5;
-        iceSize = 50 - Math.min(time, 9) * 5;
+        var deepwaterSize = 6;
+        var coastwaterSize = 4;
+        var beachSize = 2;
+        var valleySize = 5;
+        var greenSize = 5;
+        var mountainSize = 5;
+        var halficeSize = 5;
+        var iceSize = 20;
 
-        sumSize = deepwaterSize + coastwaterSize + beachSize + valleySize + greenSize + mountainSize + iceSize;
+        var sumSize = deepwaterSize + coastwaterSize + beachSize + valleySize + greenSize + mountainSize + iceSize;
 
         var landscape = [];
-        landscape.push({maxV: deepwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 0, g: 0, b: 150}, name: "deepwater"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + coastwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 56, g: 200, b: 200}, name: "coastwater"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + beachSize / sumSize, c1: {r: 255, g: 255, b: 153}, c2: {r: 200, g: 120, b: 20}, name: "beach"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + valleySize / sumSize, c1: {r: 200, g: 120, b: 20}, c2: {r: 50, g: 150, b: 50}, name: "valley"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + greenSize / sumSize, c1: {r: 50, g: 150, b: 50}, c2: {r: 153, g: 76, b: 0}, name: "green"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + mountainSize / sumSize, c1: {r: 153, g: 76, b: 0}, c2: {r: 102, g: 51, b: 0}, name: "mountain"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + iceSize / sumSize, c1: {r: 102, g: 51, b: 0}, c2: {r: 255, g: 255, b: 255}, name: "ice"});
+        landscape.push({maxV: deepwaterSize / sumSize,                                         c1: {r: 0, g: 0, b: 150}, c2: {r: 0, g: 0, b: 150}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "deepwater"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + coastwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 56, g: 200, b: 200}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "coastwater"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + beachSize / sumSize,      c1: {r: 255, g: 255, b: 153}, c2: {r: 200, g: 120, b: 20}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "beach"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + valleySize / sumSize,     c1: {r: 200, g: 120, b: 20}, c2: {r: 50, g: 150, b: 50}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "valley"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + greenSize / sumSize,      c1: {r: 50, g: 150, b: 50}, c2: {r: 153, g: 76, b: 0}, cnoise: {r: 100, g: 120, b: 25, vol: 0.05}, name: "green"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + mountainSize / sumSize,   c1: {r: 153, g: 76, b: 0}, c2: {r: 102, g: 51, b: 0}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "mountain"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + halficeSize / sumSize,   c1: {r: 102, g: 51, b: 0}, c2: {r: 255, g: 255, b: 255}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "halfice"});
+        landscape.push({maxV: landscape[landscape.length - 1].maxV + iceSize / sumSize,        c1: {r: 255, g: 255, b: 255}, c2: {r: 255, g: 255, b: 255}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "ice"});
 
         var convertToLandscape = function(resDataScaled){
+            var resDataScaled = 1-1/(1+resDataScaled);
             var c = {r: 1, g: 1, b: 1};
 
             var i = 0;
@@ -56,6 +58,14 @@ var Map = function(mapContainer, stage,mapId) {
             c.r = landscape[i].c1.r * (1 - a) + landscape[i].c2.r * (a);
             c.g = landscape[i].c1.g * (1 - a) + landscape[i].c2.g * (a);
             c.b = landscape[i].c1.b * (1 - a) + landscape[i].c2.b * (a);
+
+            if (landscape[i].cnoise.vol != 0) {
+                //Add Noise
+                var curNoiseLevel = Math.min(1,Math.max(0, Math.exp( - Math.random() / landscape[i].cnoise.vol )));
+                c.r = c.r * (1 - curNoiseLevel) + landscape[i].cnoise.r * curNoiseLevel;
+                c.g = c.g * (1 - curNoiseLevel) + landscape[i].cnoise.g * curNoiseLevel;
+                c.b = c.b * (1 - curNoiseLevel) + landscape[i].cnoise.b * curNoiseLevel;
+            }
 
             if (noiseLevel) {
                 //Add Noise

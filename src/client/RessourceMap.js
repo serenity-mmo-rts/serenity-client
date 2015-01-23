@@ -76,6 +76,8 @@ RessourceMap.prototype.initQuadtree = function (resTypeId) {
                 xGame: this.resMap.sources[i].x,
                 yGame: this.resMap.sources[i].y,
                 rGame: this.resMap.sources[i].r,
+                r1Game: this.resMap.sources[i].r1,
+                s: this.resMap.sources[i].s,
                 v: this.resMap.sources[i].v});
         }
     }
@@ -194,6 +196,9 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
         var y = this.mapRenderer.gameCoord2RenderY(ressourceItems[i].xGame, ressourceItems[i].yGame);
         var r = ressourceItems[i].rGame;
         var v = ressourceItems[i].v;
+        var r1 = ressourceItems[i].r1Game;
+        var s = ressourceItems[i].s;
+
 
         var xminRenderCoord = ressourceItems[i].x;
         var xmaxRenderCoord = ressourceItems[i].x + ressourceItems[i].width;
@@ -210,6 +215,7 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
         var sigmaSqr2 = 2 * sigma * sigma;
 
         var rsq = (r)*(r);
+        var r1sq = (r1)*(r1);
         if (xmaxBmpPixel > xminBmpPixel && ymaxBmpPixel > yminBmpPixel) {
             for (var bmpYpixel = yminBmpPixel; bmpYpixel < ymaxBmpPixel; bmpYpixel++) {
                 var renderDistY = bmpYpixel * this.bmpToRenderScaling + bmpymin - y;
@@ -230,8 +236,21 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
 
                     if (distSq <= rsq) {
                         var startOfColumn = startOfRow + bmpXpixel;
-                        resData[startOfColumn] = resData[startOfColumn] + v * Math.exp(- distSq / sigmaSqr2);
-                        //resData.resData[startOfColumn] = resData.resData[startOfColumn] + v * (rsq - distSq)/rsq;
+
+                        // gaussian:
+                        //resData[startOfColumn] += v * Math.exp(- distSq / sigmaSqr2);
+
+                        // linear descent:
+                        //resData.resData[startOfColumn] += v * (rsq - distSq)/rsq;
+
+                        if (distSq < r1sq) {
+                            resData[startOfColumn] += v;
+                        }
+                        else {
+                            var distInDescent = (Math.sqrt(distSq)-r1)/(r-r1);
+                            // interpolation between linear descent and sinus:
+                            resData[startOfColumn] += v * ((1 - distInDescent) + s * Math.sin(distInDescent*2*Math.PI) / (2*Math.PI));
+                        }
                     }
                 }
 
