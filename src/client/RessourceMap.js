@@ -299,6 +299,10 @@ RessourceMap.prototype.genBitmapFromResData = function (resData) {
     return bmp;
 }
 
+
+
+
+
 RessourceMap.prototype.newFilledArray = function (len, val) {
     var rv = new Array(len);
     while (--len >= 0) {
