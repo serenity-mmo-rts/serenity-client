@@ -14,7 +14,7 @@ var BuildMenu = function(mapId,MapControl){
 
     //this.nr =  this.BuildMenuData.submenus.length;
     var mapTypeId =  game.maps.hashList[this.mapId].mapTypeId;
-    this.BuildMenuData = game.mapTypes.hashList[mapTypeId].buildCategories;
+    this.BuildMenuData = game.mapTypes.hashList[mapTypeId]._buildCategories;
     this.nr = this.BuildMenuData.length;
 
     // buildMenu   with J-Query
@@ -37,10 +37,10 @@ var BuildMenu = function(mapId,MapControl){
         for (var k=0; k<this.BuildMenuData[i].objectTypeIds.length; k ++) {
             var objectTypeId = this.BuildMenuData[i].objectTypeIds[k];
             var objectType = game.objectTypes.hashList[objectTypeId];
-            var spritesheet = game.spritesheets.hashList[objectType.spritesheetId];
-            var spriteFrameIcon = spritesheet.frames[objectType.spriteFrameIcon];
+            var spritesheet = game.spritesheets.hashList[objectType._iconSpritesheetId];
+            var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
             var img = spritesheet.images[spriteFrameIcon[4]];
-            var objectname = objectType.name;
+            var objectname = objectType._name;
 
             var buildMenuItemId = 'cat' + i + 'obj' + k;
             $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="Text"></a></li>');

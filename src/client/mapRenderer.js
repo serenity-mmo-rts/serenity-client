@@ -101,7 +101,7 @@ var Map = function(mapContainer, stage,mapId) {
     }
 
     // load background image:
-    var bgFile = this.mapType.groundImage;
+    var bgFile = this.mapType._groundImage;
     imagesToLoad.push(bgFile);
     this.bgImg = new Image();
     this.bgImg.src = bgFile;
@@ -207,27 +207,27 @@ Map.prototype.renderObj = function(mapObject) {
 
     if (mapObject.state == mapObjectStates.TEMP) {
         var objType = game.objectTypes.get(mapObject.objTypeId);
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);  // render object from database
-        objectBitmap.gotoAndStop(objType.spriteFrame);
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
+        objectBitmap.gotoAndStop(objType._spriteFrame);
         objectBitmap.alpha = 0.7;
     }
     else if (mapObject.state == mapObjectStates.WORKING) {
         var construction = game.objectTypes.get("constructionSite");
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction.spritesheetId]);
-        objectBitmap.gotoAndStop(construction.spriteFrame);
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
+        objectBitmap.gotoAndStop(construction._spriteFrame);
         objectBitmap.alpha = 1;
     }
     else {
         var objType = game.objectTypes.get(mapObject.objTypeId);
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType.spritesheetId]);  // render object from database
-        objectBitmap.gotoAndStop(objType.spriteFrame);
+        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
+        objectBitmap.gotoAndStop(objType._spriteFrame);
     }
 
 
     objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
     objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
 
-    //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
+    //TODO: set bitmap scaling proportional to objType._initWidth / mapObject._width
 
     objectBitmap.mapObjectId = mapObject._id;
     objectBitmap.name = mapObject._id;
@@ -256,22 +256,22 @@ Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
 }
 
 Map.prototype.gameCoord2RenderX = function(gameX,gameY) {
-    var renderX = this.mapType.scale * this.mapType.ratioWidthHeight * (gameX - gameY);
+    var renderX = this.mapType._scale * this.mapType._ratioWidthHeight * (gameX - gameY);
     return renderX;
 }
 
 Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
-    var renderY = this.mapType.scale * (gameX + gameY);
+    var renderY = this.mapType._scale * (gameX + gameY);
     return renderY;
 }
 
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
-    var gameX = (renderY + renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    var gameX = (renderY + renderX/this.mapType._ratioWidthHeight) / (2*this.mapType._scale);
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
-    var gameY = (renderY - renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    var gameY = (renderY - renderX/this.mapType._ratioWidthHeight) / (2*this.mapType._scale);
     return gameY;
 }
 
