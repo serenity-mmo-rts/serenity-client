@@ -7,6 +7,8 @@ var Client = function() {
     this.timeoffset = 0;
     // vorübergehend
     this.events = [];
+    this.layer = null;
+
 };
 
 // Init function
@@ -81,10 +83,14 @@ Client.prototype.loadMap = function(mapId) {
 Client.prototype.onInitGameData = function(initGameData) {
 
     //init all global gameData variables:
-    var hans = game;
     game.spritesheets.load(initGameData.spritesheets);
     game.mapTypes.load(initGameData.mapTypes);
     game.objectTypes.load(initGameData.objectTypes);
+    game.ressourceTypes.load(initGameData.ressourceTypes);
+    game.technologyTypes.load(initGameData.technologyTypes);
+    game.unitTypes.load(initGameData.unitTypes);
+    game.itemTypes.load(initGameData.itemTypes);
+    game.upgradeTypes.load(initGameData.upgradeTypes);
     // game.events.load(initGameData.events);
 
     //init only one map
