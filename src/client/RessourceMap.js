@@ -184,9 +184,9 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
     ressourceItems = _.uniq(ressourceItems);
     //console.log("num ressource Items retrieved for bitmap"+ressourceItems.length)
 
-    var mapTypeScale = this.mapRenderer.mapType.scale;
+    var mapTypeScale = this.mapRenderer.mapType._scale;
     var mapTypeScaleSq = mapTypeScale*mapTypeScale;
-    var mapTypeRatio = this.mapRenderer.mapType.ratioWidthHeight;
+    var mapTypeRatio = this.mapRenderer.mapType._ratioWidthHeight;
 
 
     for (var i = 0; i < ressourceItems.length; i++) {
