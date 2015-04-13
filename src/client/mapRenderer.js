@@ -201,9 +201,13 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
 
     if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
         this.obj_container.removeChild(checkedObj);
+        mapObject.onChangeCallback = [];
+        mapObject.objectBitmap = [];
     }
     else if (!isalreadyRendered && shouldbeRendered) {   // add to rendering container
         this.renderObj(mapObject);
+        var self = this;
+        mapObject.onChangeCallback = function() {self.renderObj(mapObject)};
     }
 
 }
@@ -213,6 +217,10 @@ Map.prototype.renderObj = function(mapObject) {
     var checkedObj = this.obj_container.getChildByName(mapObject._id);
     if (checkedObj) {
         this.obj_container.removeChild(checkedObj);
+    }
+
+    if (mapObject.objectBitmap) {
+        this.obj_container.removeChild(mapObject.objectBitmap);
     }
 
     if (mapObject.state == mapObjectStates.TEMP) {

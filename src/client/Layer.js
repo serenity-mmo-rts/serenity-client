@@ -50,4 +50,7 @@ Layer.prototype.resize = function () {
 Layer.prototype.tick = function() {
     this.mapContainer.tick();
     this.minimap.tick();
+
+    var currGameTime = Date.now() - ntp.offset();
+    game.maps.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);
 };
