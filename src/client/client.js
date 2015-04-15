@@ -4,18 +4,14 @@ var Client = function() {
     this.socket;
     this.userId;
     this.loginForm;
-    this.timeoffset = 0;
     // vorübergehend
-    this.events = [];
     this.layer = null;
-
 };
 
 // Init function
 Client.prototype.init = function() {
 
     var self = this;
-
 
     socket = io.connect(window.location.href);
 
@@ -26,6 +22,9 @@ Client.prototype.init = function() {
     socket.on('connect', function (){
         console.info('successfully established a working connection \o/');
         ntp.init(socket);
+        //setInterval(function () {
+        //    console.log("time offset "+ntp.offset());
+        //}, 5000);
     });
 
     loginForm = new Login(socket);
@@ -56,7 +55,7 @@ Client.prototype.init = function() {
 
     socket.on('initGameData',(function(initGameData){ self.onInitGameData(initGameData);}));
 
-    socket.on('BuildObjectEvent', (function(data){
+   /* socket.on('BuildObjectEvent', (function(data){
         var newObject = new MapObject(game,data[1]);
         if (self.layer.mapId == data[0]) {
             //self.layer.map.addObject(newObject);        // what is the difference between the two ?
@@ -65,23 +64,34 @@ Client.prototype.init = function() {
         else {
             game.maps.get(data[0]).mapObjects.add(newObject);
         }
-    }));
+    }));*/
 
     socket.on('newGameEvent', (function(data){
-        var gameEvent = createGameEvent(game,data[1]);
-        self.events.push(gameEvent);
-        gameEvent.applyToGame();
+        var event = EventFactory(game,data[1]);
+        game.maps.get(event._mapId).eventScheduler.addEvent(event);
+        console.log("received a new event from server.");
+        event.applyToGame();
     }));
 
     socket.emit('ready');
 }
 
 Client.prototype.loadMap = function(mapId) {
-    socket.emit('getMap',mapId);
+    var self = this;
+    socket.emit('getMap',{mapId: mapId}, function(mapData) {
+        //init only one map
+        var initMap = new MapData(game,mapData.initMap);
+        game.maps.add(initMap);
+        initMap.mapObjects.load(mapData.initMapObjects);
+        initMap.rebuildQuadTree();
+        initMap.eventScheduler.setEvents(mapData.initMapEvents);
+
+        // Create Layer Object
+        self.layer =  new Layer(initMap._id);
+    });
 }
 
 Client.prototype.onInitGameData = function(initGameData) {
-
     //init all global gameData variables:
     game.spritesheets.load(initGameData.spritesheets);
     game.mapTypes.load(initGameData.mapTypes);
@@ -91,31 +101,27 @@ Client.prototype.onInitGameData = function(initGameData) {
     game.unitTypes.load(initGameData.unitTypes);
     game.itemTypes.load(initGameData.itemTypes);
     game.upgradeTypes.load(initGameData.upgradeTypes);
-    // game.events.load(initGameData.events);
 
-    //init only one map
-    var initMap = new MapData(game,initGameData.initMap);
-    initMap.mapObjects.load(initGameData.initMapObjects);
-    initMap.rebuildQuadTree();
-    game.maps.add(initMap);
-
-    // Create Layer Object                                            k
-    this.layer =  new Layer(initGameData.initMap._id);
-
+    this.loadMap(initGameData.initMapId);
 }
 
 
-
-// not yet working
 Client.prototype.addEvent = function(event) {
-    // add to event List
+
+    // check if event is valid:
     if(event.isValid()) {
+
+        // execute locally:
         event.execute();
-        this.events.push(event);
+
+        // add to event List:
+        game.maps.get(event._mapId).eventScheduler.addEvent(event);
+
+        // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
             if(response.success){
                 console.log("sent event was successfully applied by server.");
-                var updatedEvent = createGameEvent(game,response.updatedEvent);
+                var updatedEvent = EventFactory(game,response.updatedEvent);
                 event.updateFromServer(updatedEvent);
             }
             else {

@@ -43,7 +43,7 @@ var BuildMenu = function(mapId,MapControl){
             var objectname = objectType._name;
 
             var buildMenuItemId = 'cat' + i + 'obj' + k;
-            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="Text"></a></li>');
+            $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="buildTime: '+objectType._buildTime+'"></a></li>');
             $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectname+'</p>');
             $("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />');
             $("#"+buildMenuItemId).click(function()  {
