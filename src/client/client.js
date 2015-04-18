@@ -20,7 +20,7 @@ Client.prototype.init = function() {
     });
 
     socket.on('connect', function (){
-        console.info('successfully established a working connection \o/');
+        console.info('successfully established a working connection with type '+socket.socket.transport.name);
         ntp.init(socket);
         //setInterval(function () {
         //    console.log("time offset "+ntp.offset());
@@ -69,7 +69,7 @@ Client.prototype.init = function() {
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data[1]);
         game.maps.get(event._mapId).eventScheduler.addEvent(event);
-        console.log("received a new event from server.");
+        console.info("received a new event from server via "+socket.socket.transport.name);
         event.applyToGame();
     }));
 
