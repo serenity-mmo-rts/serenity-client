@@ -98,9 +98,7 @@ Client.prototype.onInitGameData = function(initGameData) {
     game.objectTypes.load(initGameData.objectTypes);
     game.ressourceTypes.load(initGameData.ressourceTypes);
     game.technologyTypes.load(initGameData.technologyTypes);
-    game.unitTypes.load(initGameData.unitTypes);
     game.itemTypes.load(initGameData.itemTypes);
-    game.upgradeTypes.load(initGameData.upgradeTypes);
 
     this.loadMap(initGameData.initMapId);
 }
