@@ -21,6 +21,7 @@ var BuildMenu = function(mapId,MapControl){
     // weather to show menu or not
     this.clickcount = 0;
 
+    $("#accordion").html('');
     for (var i = 0; i< this.nr; i++) {
         $("#accordion").append('<h3>Building Category</h3><ol class="build-menu-list"></ol>');
     }
@@ -30,6 +31,8 @@ var BuildMenu = function(mapId,MapControl){
         heightStyle: "fill"
     });
     //$("#buildMenu").hide();
+
+    $( "#accordion" ).accordion( "refresh" );
 
     // fill it
     for (var i = 0; i< this.nr; i++) {

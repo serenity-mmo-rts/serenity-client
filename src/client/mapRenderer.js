@@ -83,11 +83,9 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.ressourceMapWrapper = new RessourceMapWrapper(this,this.res_container,this.mapId);
 
-    this.current_object;
     this.tempObj;
     this.tempObjBitmap;
     this.tempGameEvent;
-    this.hit_object = false;
 
     this.spritesheets = {};
     this.bgImg;
@@ -307,17 +305,14 @@ Map.prototype.moveTempObject = function () {
 // get object under mouse position
 Map.prototype.getCurrentObject = function () {
     var l = this.obj_container.getNumChildren(); // Number of Objects
-    this.hit_object = false;
     for (var i = 0; i < l; i++) { // loop through all objects
         var child = this.obj_container.getChildAt(i);
         var pt = child.globalToLocal(this.stage.mouseX, this.stage.mouseY);
         if (child.hitTest(pt.x, pt.y)) {
-            this.hit_object = true;
-            this.current_object = child;
-            this.currentlyBuildingBitmap = child;
+            return child.mapObjectId;
         }
     }
-    return(this.hit_object);
+    return false;
 };
 
 

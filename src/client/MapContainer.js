@@ -6,6 +6,7 @@ var MapContainer = function(mapId){
 
     this.mapId = mapId;
 
+
     // initialize stage and minimap
     createjs.MotionGuidePlugin.install(createjs.Tween);
     this.stage = new createjs.Stage("canvas");
@@ -35,11 +36,13 @@ var MapContainer = function(mapId){
     this.zoom = this.zoomFactors[this.zoom_level];
 
 
+
     // Initialize Map
     this.map = new Map(this, this.stage,this.mapId);
 
     // Initialize map control
     this.mapControl = new MapControl(this.map);
+
 
     // mouse zoom
     var canvas = document.getElementById("canvas");

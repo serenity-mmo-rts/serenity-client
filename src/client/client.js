@@ -5,7 +5,7 @@ var Client = function() {
     this.userId;
     this.loginForm;
     // vorübergehend
-    this.layer = null;
+    this.layer = new Layer();
 };
 
 // Init function
@@ -80,14 +80,14 @@ Client.prototype.loadMap = function(mapId) {
     var self = this;
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
-        var initMap = new MapData(game,mapData.initMap);
-        game.maps.add(initMap);
-        initMap.mapObjects.load(mapData.initMapObjects);
-        initMap.rebuildQuadTree();
-        initMap.eventScheduler.setEvents(mapData.initMapEvents);
+        var myNewMap = new MapData(game,mapData.initMap);
+        game.maps.add(myNewMap);
+        myNewMap.mapObjects.load(mapData.initMapObjects);
+        myNewMap.rebuildQuadTree();
+        myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
 
         // Create Layer Object
-        self.layer =  new Layer(initMap._id);
+        self.layer.loadMap(myNewMap._id);
     });
 }
 

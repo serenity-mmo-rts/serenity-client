@@ -16,7 +16,6 @@ var MapControl = function (map) {
     this.controlState.ITEMTARGET = 4;
     this.controlState.ATTACKTARGET = 5;
 
-    this.hitObj = false;
     this.state = this.controlState.DEFAULT;
 
     // event listener for main container
@@ -29,16 +28,15 @@ var MapControl = function (map) {
 
 MapControl.prototype.handleMousedownMain = function (evt) {
     var self = this;
-    this.hitObj = this.map.getCurrentObject();
+
 
     switch (this.state) {
 
 
         case this.controlState.DEFAULT:
-
-            if (this.hitObj) {     // open Object Menu
-
-
+            var hitObjId = this.map.getCurrentObject();
+            if (hitObjId) {     // open Object Menu
+                uc.layer.uiObjectContext.loadObjectId(hitObjId);
             }
 
             else { // drag main container
