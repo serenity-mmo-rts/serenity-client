@@ -23,29 +23,40 @@ Layer.prototype.loadMap = function (mapId) {
 
     this.mapContainer =  new MapContainer(this.mapId);
 
-    this.testPanel = new UiSlidingPanel(0,3,"<p>TestTestTestTestTestTestTest TestTest Test asdfsdf asddf asdaf sd</p>");
-    this.testPanel.hide(0);
-    this.testPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
-    this.testPanel2.hide(0);
+
+    if (this.uiGlobalMenuPanel) this.uiGlobalMenuPanel.remove();
+    this.uiGlobalMenu = new UiGlobalMenu();
+    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
+    this.uiGlobalMenuPanel.show(0);
+
+    if (this.uiGlobalMenuPanel2) this.uiGlobalMenuPanel2.remove();
+    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
+    this.uiGlobalMenuPanel2.hide(0);
+
+    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
 
     this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
 
-    this.testPanel.addNextPanel(this.testPanel2);
+
 
     this.minimap = new Minimap(this.mapContainer.mapControl);
+    if (this.minimapPanel) this.minimapPanel.remove();
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
     this.minimap.init();
     this.minimapPanel.hide(0);
 
     this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.ressourceMapWrapper);
+    if (this.uiRessourceMapPanel) this.uiRessourceMapPanel.remove();
     this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
     this.uiRessourceMapPanel.show(0);
 
     this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMapWrapper);
+    if (this.uiBgMapPanel) this.uiBgMapPanel.remove();
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
 
     this.uiObjectContext = new UiObjectContext();
+    if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();
     this.uiObjectContextPanel = new UiSlidingPanelRight(150,2,this.uiObjectContext.content );
     this.uiObjectContextPanel.show(0);
 

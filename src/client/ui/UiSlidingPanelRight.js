@@ -74,6 +74,10 @@ UiSlidingPanelRight.prototype.hide = function(time) {
     this.setPos(0, this.topPosition-this.innerDiv.offsetHeight+30,time);
 };
 
+UiSlidingPanelRight.prototype.remove = function() {
+    this.panelDiv.remove();
+};
+
 UiSlidingPanelRight.prototype.toggle = function() {
     if(this.isVisible) {
          this.hide(300);

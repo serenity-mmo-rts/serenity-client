@@ -18,7 +18,7 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.innerDiv.className="ui-widget-content ui-corner-all visible";
     //this.innerDiv.style.minWidth="100px";
     this.innerDiv.style.minHeight="30px";
-    var content = $.parseHTML( content );
+    //var content = $.parseHTML( content );
     $( this.innerDiv ).append( $( content ) );
 
     this.buttonDiv = document.createElement('div');
@@ -72,6 +72,10 @@ UiSlidingPanel.prototype.hide = function() {
     this.isVisible = false;
         this.setPos(-this.innerDiv.offsetWidth, this.topPosition-this.innerDiv.offsetHeight+30);
 
+};
+
+UiSlidingPanel.prototype.remove = function() {
+    this.panelDiv.remove();
 };
 
 UiSlidingPanel.prototype.toggle = function() {
