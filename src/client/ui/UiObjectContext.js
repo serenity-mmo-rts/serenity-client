@@ -24,8 +24,9 @@ var UiObjectContext = function () {
 }
 
 UiObjectContext.prototype.loadObjectId = function(mapObjId) {
-    this.mapObjId = mapObjId;
-    this.mapObj = game.maps.get(uc.layer.mapId).mapObjects.get(mapObjId);
+   // this.mapObjId = mapObjId;
+    this.map = game.maps.get(uc.layer.mapId);
+    this.mapObj = this.map.mapObjects.get(mapObjId);
 
     this.infos.html('<span style="white-space:nowrap;">ObjectId: ' + mapObjId + '</span><br><span style="white-space:nowrap;">TypeId: ' + this.mapObj.objTypeId + '</span><br>');
 
@@ -40,12 +41,33 @@ UiObjectContext.prototype.loadObjectId = function(mapObjId) {
         });
     }
 
+
+
     this.tabsHeaders = $('<ul></ul>');
     $('<li><a href="#ressourcesTab">Ressources</a></li>').appendTo(this.tabsHeaders);
     $('<li><a href="#itemsTab">Items</a></li>').appendTo(this.tabsHeaders);
     this.tabs.html(this.tabsHeaders);
     $('<div id="ressourcesTab">afsd fasldf asdf afdsgsdfgh sdg </div>').appendTo(this.tabs);
-    $('<div id="itemsTab">asd fasd fasdfasdf as dfjkas hdfh asdjkfh kjasdh fjklasdh fjkasd h</div>').appendTo(this.tabs);
+    var itemTab = $('<div id="itemsTab"></div>');
+    itemTab.appendTo(this.tabs);
+
+    var allowedItemIds= game.objectTypes.get(this.mapObj.objTypeId)._initProperties._itemIds;
+
+   // for (var i = 0; i<allowedItemIds; i++){
+        var itemId = allowedItemIds[0];
+        var self = this;
+        var createItemButton = $('<input id="itemId" type="button" value="itemId"/>').appendTo(itemTab);
+        createItemButton.click(function (e) {
+            //e.stopImmediatePropagation();
+           // e.preventDefault();
+            var item = new ItemModel(game,{_id: "tempID",_objectId:mapObjId,_itemTypeId:itemId,_mapId:uc.layer.mapId})
+            var evt = new BuildItemEvent(game);
+            evt.setItem(item);
+            uc.addEvent(evt);
+        });
+
+   // }
+
 
     this.tabs.tabs( "refresh" );
 

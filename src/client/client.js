@@ -108,6 +108,7 @@ Client.prototype.addEvent = function(event) {
 
     // check if event is valid:
     if(event.isValid()) {
+        event.setValid();
 
         // execute locally:
         event.execute();
