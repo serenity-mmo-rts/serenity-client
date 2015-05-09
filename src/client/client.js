@@ -85,6 +85,9 @@ Client.prototype.loadMap = function(mapId) {
         myNewMap.mapObjects.load(mapData.initMapObjects);
         myNewMap.rebuildQuadTree();
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
+        myNewMap.mapObjects.each(function(mapObject){
+            mapObject.setPointers();
+        });
 
         // Create Layer Object
         self.layer.loadMap(myNewMap._id);

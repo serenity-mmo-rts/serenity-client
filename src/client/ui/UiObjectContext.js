@@ -46,8 +46,11 @@ UiObjectContext.prototype.loadObjectId = function(mapObjId) {
     this.tabsHeaders = $('<ul></ul>');
     $('<li><a href="#ressourcesTab">Ressources</a></li>').appendTo(this.tabsHeaders);
     $('<li><a href="#itemsTab">Items</a></li>').appendTo(this.tabsHeaders);
+    $('<li><a href="#existingItemsTab">Existing Items</a></li>').appendTo(this.tabsHeaders);
     this.tabs.html(this.tabsHeaders);
-    $('<div id="ressourcesTab">afsd fasldf asdf afdsgsdfgh sdg </div>').appendTo(this.tabs);
+    $('<div id="ressourcesTab">Ressources</div>').appendTo(this.tabs);
+    $('<div id="existingItemsTab">Existing Items</div>').appendTo(this.tabs);
+
     var itemTab = $('<div id="itemsTab"></div>');
     itemTab.appendTo(this.tabs);
 
@@ -56,17 +59,22 @@ UiObjectContext.prototype.loadObjectId = function(mapObjId) {
    // for (var i = 0; i<allowedItemIds; i++){
         var itemId = allowedItemIds[0];
         var self = this;
-        var createItemButton = $('<input id="itemId" type="button" value="itemId"/>').appendTo(itemTab);
+        var createItemButton = $('<input id="itemId" type="button" value="build Item"/>').appendTo(itemTab);
         createItemButton.click(function (e) {
             //e.stopImmediatePropagation();
            // e.preventDefault();
-            var item = new ItemModel(game,{_id: "tempID",_objectId:mapObjId,_itemTypeId:itemId,_mapId:uc.layer.mapId})
+            var tempId = "tempID"+Math.random();
+            var item = new ItemModel(game,{_id: tempId,_objectId:mapObjId,_itemTypeId:itemId,_mapId:uc.layer.mapId})
             var evt = new BuildItemEvent(game);
             evt.setItem(item);
             uc.addEvent(evt);
         });
 
    // }
+   this.progressbar = $('<div id="progressbar"></div>').appendTo(itemTab);
+        this.progressbar.progressbar({
+            value: 0
+        });
 
 
     this.tabs.tabs( "refresh" );
@@ -78,6 +86,21 @@ UiObjectContext.prototype.getRessourceContextMenu = function() {
 
 };
 
+UiObjectContext.prototype.updateProgress = function(val) {
+    this.progressbar.progressbar("value", val);
+};
+
 UiObjectContext.prototype.getItemsContextMenu = function() {
 
+};
+
+UiObjectContext.prototype.tick = function() {
+    if (this.mapObj){
+        if (this.mapObj.buildQueue.length>0) {
+           this.updateProgress(this.mapObj.buildQueue[0].progress());
+        }
+        else {
+            this.updateProgress(0);
+        }
+    }
 };

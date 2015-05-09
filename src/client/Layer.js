@@ -60,6 +60,7 @@ Layer.prototype.loadMap = function (mapId) {
     this.uiObjectContextPanel = new UiSlidingPanelRight(150,2,this.uiObjectContext.content );
     this.uiObjectContextPanel.show(0);
 
+
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
     this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
@@ -75,6 +76,7 @@ Layer.prototype.resize = function () {
 Layer.prototype.tick = function() {
     if(this.mapContainer) this.mapContainer.tick();
     if(this.minimap) this.minimap.tick();
+    if(this.uiObjectContext) this.uiObjectContext.tick();
 
     var currGameTime = Date.now() - ntp.offset();
     if (this.mapId) game.maps.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);
