@@ -146,12 +146,16 @@ Client.prototype.changeLayer = function(initGameData) {
     this.stage.update();
     var self = this;
 
+    var oldMapId = this.layer.mapId;
+
     game.maps.add(new MapData(game,initGameData.initMap));
 
     // Create Layer Object                                            k
 
     this.layer =  new Layer(this,this.stage,game,initGameData.initMap._id);
-    // Render it once
+
+
+    game.maps.deleteById(oldMapId);
 
 }
 
