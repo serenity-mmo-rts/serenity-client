@@ -7,6 +7,7 @@ var Map = function(mapContainer, stage,mapId) {
     this.mapContainer = mapContainer;
     this.main_container = mapContainer.main_container;
     this.mapId = mapId;
+    this.callbackFinishedLoading = null;
 
     this.map_container = new createjs.Container();
     this.bg_container = new createjs.Container();
@@ -159,12 +160,12 @@ Map.prototype.createMap = function() {
 
     this.checkRendering();
 
-
+    if (this.callbackFinishedLoading) this.callbackFinishedLoading();
 };
 
 Map.prototype.checkRendering = function(){
 
-    var objectList = game.maps.get(uc.layer.mapId).mapObjects.hashList;
+    var objectList = game.maps.get(this.mapId).mapObjects.hashList;
 
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
@@ -188,7 +189,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (game.maps.get(uc.layer.mapId).mapObjects.hashList.hasOwnProperty(mapObject._id)) {
+    if (game.maps.get(this.mapId).mapObjects.hashList.hasOwnProperty(mapObject._id)) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
             shouldbeRendered = true;
         }

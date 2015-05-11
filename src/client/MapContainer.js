@@ -118,3 +118,10 @@ var MapContainer = function(mapId){
 
      this.map.resize();
  };
+
+ MapContainer.prototype.removeFromCanvas = function () {
+     //this.stage.enableEvents(false);
+     this.stage.autoClear = true; // This must be true to clear the stage.
+     this.stage.removeAllChildren();
+     this.stage.update();
+ }
