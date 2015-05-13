@@ -68,9 +68,9 @@ Client.prototype.init = function() {
 
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data[1]);
-        game.maps.get(event._mapId).eventScheduler.addEvent(event);
+        //game.maps.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
-        event.applyToGame();
+        event.executeOnOthers();
     }));
 
     socket.emit('ready');
@@ -113,7 +113,7 @@ Client.prototype.addEvent = function(event) {
         event.execute();
 
         // add to event List:
-        game.maps.get(event._mapId).eventScheduler.addEvent(event);
+        //game.maps.get(event._mapId).eventScheduler.addEvent(event);
 
         // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
