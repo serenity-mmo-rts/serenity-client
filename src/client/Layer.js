@@ -4,10 +4,7 @@ var Layer = function(){
     var self = this;
 
     this.mapContainer = null;
-
-
-
-
+    this.mapContainerTempLoading = null;
 
     window.addEventListener('resize',function(){self.resize()}, false);
 
@@ -18,11 +15,24 @@ var Layer = function(){
 
 Layer.prototype.loadMap = function (mapId) {
     var self = this;
+    this.mapContainerTempLoading =  new MapContainer(mapId);
+    this.mapContainerTempLoading.map.callbackFinishedLoading = function (){
+        self.finishedLoadingMap();
+    };
 
-    this.mapId = mapId;
+};
 
-    this.mapContainer =  new MapContainer(this.mapId);
+Layer.prototype.finishedLoadingMap = function () {
 
+    if (this.mapContainer) {
+        var oldMapContainer = this.mapContainer;
+        oldMapContainer.removeFromCanvas();
+    }
+
+    this.mapContainer = this.mapContainerTempLoading;
+    this.mapContainerTempLoading = null;
+
+    this.mapId = this.mapContainer.mapId;
 
     if (this.uiGlobalMenuPanel) this.uiGlobalMenuPanel.remove();
     this.uiGlobalMenu = new UiGlobalMenu();
@@ -64,8 +74,7 @@ Layer.prototype.loadMap = function (mapId) {
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
     this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
-
-};
+}
 
 Layer.prototype.resize = function () {
     if(this.mapContainer) this.mapContainer.resize();
