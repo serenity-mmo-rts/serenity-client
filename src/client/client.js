@@ -84,6 +84,10 @@ Client.prototype.loadMap = function(mapId) {
         game.maps.add(myNewMap);
         myNewMap.mapObjects.load(mapData.initMapObjects);
         myNewMap.rebuildQuadTree();
+        myNewMap.items.load(mapData.initItems);
+        myNewMap.items.each(function(item){
+            item._mapObj.items.push(item); // set link from mapObj to item
+        });
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
         myNewMap.mapObjects.each(function(mapObject){
             mapObject.setPointers();
