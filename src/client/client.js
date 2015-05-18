@@ -89,6 +89,7 @@ Client.prototype.loadMap = function(mapId) {
             item._mapObj.items.push(item); // set link from mapObj to item
         });
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
+
         myNewMap.mapObjects.each(function(mapObject){
             mapObject.setPointers();
         });
