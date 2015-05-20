@@ -9,7 +9,7 @@ var UiObjectContext = function () {
         "min-width": "200px"
     });
 
-    this.infos = $('<div id="objInfos"></div>').appendTo(this.content);
+    this.header = $('<div id="objHeader"></div>').appendTo(this.content);
     this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').appendTo(this.content);
 
     this.tabs.tabs();
@@ -23,66 +23,84 @@ var UiObjectContext = function () {
     $( ".tabs-bottom .ui-tabs-nav" ).appendTo( ".tabs-bottom" );
 }
 
-UiObjectContext.prototype.loadObjectId = function(mapObjId) {
+UiObjectContext.prototype.loadObjectById = function(mapObjId) {
    // this.mapObjId = mapObjId;
+    this.mapObjId = mapObjId;
     this.map = game.maps.get(uc.layer.mapId);
     this.mapObj = this.map.mapObjects.get(mapObjId);
-
-    this.infos.html('<span style="white-space:nowrap;">ObjectId: ' + mapObjId + '</span><br><span style="white-space:nowrap;">TypeId: ' + this.mapObj.objTypeId + '</span><br>');
-
-    var objType = game.objectTypes.get(this.mapObj.objTypeId);
-    if (objType._className == "Sublayer") {
-        var openSublayerBtn = $('<input id="openSublayer" type="button" value="openSublayer"/>').appendTo(this.infos);
-        var sublayerMapId = this.mapObj.sublayerMapId;
-        openSublayerBtn.click(function (e) {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            uc.loadMap(sublayerMapId);
-        });
+     var self= this;
+    $(this.header).empty();
+    $(this.tabs).empty();
+    this.createHeader(this.mapObj);
+    this.mapObj.addCallback("renderUI", function(){self.loadObjectById(mapObjId);});
+    if (this.mapObj.hasOwnProperty("userId")){
+        this.createTabs(this.mapObj);
     }
+};
 
 
+UiObjectContext.prototype.createHeader = function(mapObj) {
+
+    this.headerContent = $('<div></div>');
+    if (this.mapObj.hasOwnProperty("healthPoints")){
+        var percentHP = this.mapObj.getHealthPointsPercent();
+        this.healthPoints = $('<div id="healthPoints"></div>').appendTo(this.headerContent);
+        this.healthPoints.progressbar({
+            value: percentHP
+        })
+    }
+    var objectType =  game.objectTypes.get(this.mapObj.objTypeId);
+    var spritesheet = game.spritesheets.get(objectType._iconSpritesheetId);
+    var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
+    var img = spritesheet.images[spriteFrameIcon[4]];
+    //$('<img src='+img+'>').appendTo(this.headerContent);
+    var image = $('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />').appendTo(this.headerContent);
+    var points = this.mapObj.getPoints();
+    var level = this.mapObj.getLevel(points);
+    var title = $('<span style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</span><br>')
+       // title.style.textAlign = "center";
+        title.appendTo(this.headerContent);
+
+    this.progressbar = $('<div id="progressbar"></div>').appendTo(this.headerContent);
+    this.progressbar.progressbar({
+        value: 0
+    });
+
+    this.header.html(this.headerContent)
+};
+
+UiObjectContext.prototype.createTabs = function(mapObj) {
 
     this.tabsHeaders = $('<ul></ul>');
-    $('<li><a href="#ressourcesTab">Ressources</a></li>').appendTo(this.tabsHeaders);
     $('<li><a href="#itemsTab">Items</a></li>').appendTo(this.tabsHeaders);
-    $('<li><a href="#existingItemsTab">Existing Items</a></li>').appendTo(this.tabsHeaders);
+    $('<li><a href="#sublayerTab">Sublayer</a></li>').appendTo(this.tabsHeaders);
     this.tabs.html(this.tabsHeaders);
-    $('<div id="ressourcesTab">Ressources</div>').appendTo(this.tabs);
-    $('<div id="existingItemsTab">Existing Items</div>').appendTo(this.tabs);
+   switch(game.objectTypes.get(this.mapObj.objTypeId)._className) {
+        case "Factory":
+            this.maintab =  new FactoryTab(this.mapObj);
+        case "Hub":
+            this.maintab =  new HubTab(this.mapObj);
+        case "UnitFactory":
+            this.maintab =  new UnitFactoryTab(this.mapObj);
+        case "ScienceCenter":
+            this.maintab = new ScienceCenterTab(this.mapObj);
+        case "Sublayer":
+            this.maintab = new SublayerTab(this.mapObj);
+        }
+    this.maintab.content.appendTo(this.tabs)
 
-    var itemTab = $('<div id="itemsTab"></div>');
-    itemTab.appendTo(this.tabs);
+    this.itemtab = new ItemTab(mapObj);
+    this.itemtab.content.appendTo(this.tabs);
+    //this.resourcetab = new ResourceTab();
+    //this.unittab = new UnitTab();
+    //this.upgradetab = new UpgradeTab();
+    //this.defensetab = new DefenseTab();
+    //this.offensetab = new OffenseTab();
 
-    var allowedItemIds= game.objectTypes.get(this.mapObj.objTypeId)._initProperties._itemIds;
-
-   // for (var i = 0; i<allowedItemIds; i++){
-        var itemId = allowedItemIds[0];
-        var self = this;
-        var createItemButton = $('<input id="itemId" type="button" value="build Item"/>').appendTo(itemTab);
-        createItemButton.click(function (e) {
-            //e.stopImmediatePropagation();
-           // e.preventDefault();
-            var tempId = "tempID"+Math.random();
-            var item = new ItemModel(game,{_id: tempId,_objectId:mapObjId,_itemTypeId:itemId,_mapId:uc.layer.mapId})
-            var evt = new BuildItemEvent(game);
-            evt.setItem(item);
-            uc.addEvent(evt);
-        });
-
-   // }
-   this.progressbar = $('<div id="progressbar"></div>').appendTo(itemTab);
-        this.progressbar.progressbar({
-            value: 0
-        });
 
 
     this.tabs.tabs( "refresh" );
-
     uc.layer.uiObjectContextPanel.update(0);
-};
-
-UiObjectContext.prototype.getRessourceContextMenu = function() {
 
 };
 
@@ -90,17 +108,24 @@ UiObjectContext.prototype.updateProgress = function(val) {
     this.progressbar.progressbar("value", val);
 };
 
+UiObjectContext.prototype.getRessourceContextMenu = function() {
+
+};
 UiObjectContext.prototype.getItemsContextMenu = function() {
 
 };
 
 UiObjectContext.prototype.tick = function() {
+
     if (this.mapObj){
-        if (this.mapObj.buildQueue.length>0) {
-           this.updateProgress(this.mapObj.buildQueue[0].progress());
-        }
-        else {
-            this.updateProgress(0);
+        if (this.mapObj.hasOwnProperty("buildQueue")){
+            if (this.mapObj.buildQueue.length>0) {
+               this.updateProgress(this.mapObj.buildQueue[0].progress());
+            }
+            else {
+                this.updateProgress(0);
+            }
         }
     }
 };
+

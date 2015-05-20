@@ -200,13 +200,15 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
 
     if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
         this.obj_container.removeChild(checkedObj);
-        mapObject.onChangeCallback = [];
+        //mapObject.onChangeCallback = [];
+        mapObject.removeCallback("renderObj");
         mapObject.objectBitmap = [];
     }
     else if (!isalreadyRendered && shouldbeRendered) {   // add to rendering container
         this.renderObj(mapObject);
         var self = this;
-        mapObject.onChangeCallback = function() {self.renderObj(mapObject)};
+       // mapObject.onChangeCallback = function() {self.renderObj(mapObject)};
+        mapObject.addCallback("renderObj", function() {self.renderObj(mapObject)})
     }
 
 }
@@ -225,6 +227,7 @@ Map.prototype.renderObj = function(mapObject) {
     if (mapObject.state == mapObjectStates.TEMP) {
         var objType = game.objectTypes.get(mapObject.objTypeId);
         var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
+        // here could come a image cropping
         objectBitmap.gotoAndStop(objType._spriteFrame);
         objectBitmap.alpha = 0.7;
     }
@@ -340,6 +343,9 @@ Map.prototype.deleteTempObj= function () {
 
 
 Map.prototype.tick = function() {
+
+    // update progess of map objects. chance bitmap input
+
     this.stage.update();
      if (this.tempObj != undefined) { // move object
        this.moveTempObject();
