@@ -65,15 +65,17 @@ Layer.prototype.finishedLoadingMap = function () {
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
 
+    var mapObjectMenuX = canvas.width*0.5;
+    var mapObjectMenuY = canvas.height-200;
     this.uiObjectContext = new UiObjectContext();
     if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();
-    this.uiObjectContextPanel = new UiSlidingPanelRight(150,2,this.uiObjectContext.content );
+    this.uiObjectContextPanel = new UiSlidingPanelDown( mapObjectMenuX,mapObjectMenuY,2,this.uiObjectContext.content );
     this.uiObjectContextPanel.show(0);
 
 
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
-    this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
+   // this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
 }
 
 Layer.prototype.resize = function () {

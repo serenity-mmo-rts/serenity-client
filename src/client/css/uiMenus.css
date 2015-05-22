@@ -33,6 +33,18 @@
     height: 30px;
 }
 
+
+.toggleButtonObjectMenu {
+    background-color:#b0c4de;
+    background-image: url('../resources/icons/Globe.png');
+    background-size:30px 30px;
+    background-repeat:no-repeat;
+    width: 30px;
+    height: 30px;
+    right: -30px;
+    top: 0px;
+}
+
 .progress-label {
     position: absolute;
     left: 50%;

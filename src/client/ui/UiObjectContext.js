@@ -9,14 +9,16 @@ var UiObjectContext = function () {
         "min-width": "200px"
     });
 
-    this.header = $('<div id="objHeader"></div>').appendTo(this.content);
-    this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').appendTo(this.content);
+
+    this.container = $('<div id="container"></div>').width(800).height(200).css({'display': 'inline-block'}).appendTo(this.content);
+    this.header = $('<div id="objHeader"></div>').width(200).height(200).css({'display': 'inline-block'}).appendTo(this.container);
+    this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').width(600).height(200).css({'display': 'inline-block','position': 'absolute'}).appendTo(this.container);
 
     this.tabs.tabs();
 
     // fix the classes
     $( ".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *" )
-        .removeClass( "ui-corner-all ui-corner-top" )
+        .removeClass( "ui-corner-all ui-corner-bottom" )
         .addClass( "ui-corner-bottom" );
 
     // move the nav to the bottom
@@ -28,9 +30,9 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
     this.mapObjId = mapObjId;
     this.map = game.maps.get(uc.layer.mapId);
     this.mapObj = this.map.mapObjects.get(mapObjId);
-     var self= this;
-    $(this.header).empty();
-    $(this.tabs).empty();
+    var self= this;
+    this.header.empty();
+    this.tabs.empty();
     this.createHeader(this.mapObj);
     this.mapObj.addCallback("renderUI", function(){self.loadObjectById(mapObjId);});
     if (this.mapObj.hasOwnProperty("userId")){
@@ -41,65 +43,82 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
 UiObjectContext.prototype.createHeader = function(mapObj) {
 
-    this.headerContent = $('<div></div>');
-    if (this.mapObj.hasOwnProperty("healthPoints")){
-        var percentHP = this.mapObj.getHealthPointsPercent();
-        this.healthPoints = $('<div id="healthPoints"></div>').appendTo(this.headerContent);
-        this.healthPoints.progressbar({
-            value: percentHP
-        })
-    }
-    var objectType =  game.objectTypes.get(this.mapObj.objTypeId);
-    var spritesheet = game.spritesheets.get(objectType._iconSpritesheetId);
-    var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
-    var img = spritesheet.images[spriteFrameIcon[4]];
-    //$('<img src='+img+'>').appendTo(this.headerContent);
-    var image = $('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />').appendTo(this.headerContent);
+   var headerContent = $('<div></div>');
     var points = this.mapObj.getPoints();
     var level = this.mapObj.getLevel(points);
     var title = $('<span style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</span><br>')
-       // title.style.textAlign = "center";
-        title.appendTo(this.headerContent);
+    title.appendTo(headerContent);
 
-    this.progressbar = $('<div id="progressbar"></div>').appendTo(this.headerContent);
+    if (this.mapObj.hasOwnProperty("healthPoints")){
+        var percentHP = this.mapObj.getHealthPointsPercent();
+        this.healthPoints = $('<div id="healthPoints"></div>').appendTo(headerContent);
+        this.healthPoints.progressbar({
+            value: percentHP
+        })
+        this.healthPoints.css({'width':'50%','height':'10px','background': 'green'});
+    }
+
+    var objectType =  game.objectTypes.get(this.mapObj.objTypeId);
+    var spritesheet = game.spritesheets.get(objectType._spritesheetId);
+    var spriteFrameIcon = spritesheet.frames[objectType._spriteFrame];
+    var x = spriteFrameIcon[0];
+    var y = spriteFrameIcon[1];
+    var breite = spriteFrameIcon[2];
+    var hoehe = spriteFrameIcon[3];
+    var img = spritesheet.images[spriteFrameIcon[4]];
+
+    //var image = $('<div style="white-space:nowrap"></div>').height(hoehe*0.7).width(breite*0.7);
+    var image = $('<div style="white-space:nowrap"></div>').height(50).width(100);
+    //image.css({'background-image': 'url('+img+')' ,'background-position-x':0 , 'background-position-y':-32,'background-repeat':'no-repeat','width':100,'height': 50,'background-size': 'contain'});
+    image.css({'background-image': 'url('+img+')' ,'background-position-x':-x , 'background-position-y':-y,'background-repeat':'no-repeat','width':100,'height': 50,'background-size': 'auto'});
+    image.appendTo(headerContent);
+
+
+
+    this.progressbar = $('<div id="progressbar"></div>').appendTo(headerContent);
     this.progressbar.progressbar({
         value: 0
     });
+    this.progressbar.css({'top':'100px','left':'0px','position':'relative'});
 
-    this.header.html(this.headerContent)
+    this.header.html(headerContent)
 };
 
 UiObjectContext.prototype.createTabs = function(mapObj) {
 
-    this.tabsHeaders = $('<ul></ul>');
-    $('<li><a href="#itemsTab">Items</a></li>').appendTo(this.tabsHeaders);
-    $('<li><a href="#sublayerTab">Sublayer</a></li>').appendTo(this.tabsHeaders);
-    this.tabs.html(this.tabsHeaders);
-   switch(game.objectTypes.get(this.mapObj.objTypeId)._className) {
-        case "Factory":
-            this.maintab =  new FactoryTab(this.mapObj);
-        case "Hub":
-            this.maintab =  new HubTab(this.mapObj);
-        case "UnitFactory":
-            this.maintab =  new UnitFactoryTab(this.mapObj);
-        case "ScienceCenter":
-            this.maintab = new ScienceCenterTab(this.mapObj);
-        case "Sublayer":
-            this.maintab = new SublayerTab(this.mapObj);
-        }
-    this.maintab.content.appendTo(this.tabs)
+    var tabsHeaders = $('<ul></ul>');
+    $('<li><a href="#mainTab">Main</a></li>').appendTo(tabsHeaders);
+    $('<li><a href="#upgradeTab">Upgrades</a></li>').appendTo(tabsHeaders);
+    $('<li><a href="#storageTab">Storage</a></li>').appendTo(tabsHeaders);
+    $('<li><a href="#delandtransTab">Delivery&Transportation</a></li>').appendTo(tabsHeaders);
+    $('<li><a href="#defenseTab">Defense</a></li>').appendTo(tabsHeaders);
+    $('<li><a href="#offenseTab">Offense</a></li>').appendTo(tabsHeaders);
 
-    this.itemtab = new ItemTab(mapObj);
-    this.itemtab.content.appendTo(this.tabs);
-    //this.resourcetab = new ResourceTab();
-    //this.unittab = new UnitTab();
-    //this.upgradetab = new UpgradeTab();
-    //this.defensetab = new DefenseTab();
-    //this.offensetab = new OffenseTab();
+    this.tabs.html(tabsHeaders);
+    var className = game.objectTypes.get(this.mapObj.objTypeId)._className;
+       if (className=="Factory") var maintab = new FactoryTab(this.mapObj);
+       else if (className=="Hub") var maintab = new HubTab(this.mapObj);
+       else if (className=="UnitFactory")  var maintab = new UnitFactoryTab(this.mapObj);
+       else if (className=="ScienceCenter")  var maintab = new ScienceCenterTab(this.mapObj);
+       else if (className=="Sublayer")  var maintab = new SublayerTab(this.mapObj);
+
+    var upgradetab = new UpgradeTab(this.mapObj);
+    var storagetab = new StorageTab(this.mapObj);
+    var delandtranstab = new DeliveryAndTransportationTab(this.mapObj);
+    var defensetab = new DefenseTab(this.mapObj);
+    var offensetab = new OffenseTab(this.mapObj);
+
+    maintab.content.appendTo(this.tabs);
+    upgradetab.content.appendTo(this.tabs);
+    storagetab.content.appendTo(this.tabs);
+    delandtranstab.content.appendTo(this.tabs);
+    defensetab.content.appendTo(this.tabs);
+    offensetab.content.appendTo(this.tabs);
 
 
 
     this.tabs.tabs( "refresh" );
+    this.tabs.tabs({ active: 0 });
     uc.layer.uiObjectContextPanel.update(0);
 
 };
