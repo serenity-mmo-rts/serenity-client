@@ -46,8 +46,9 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
    var headerContent = $('<div></div>');
     var points = this.mapObj.getPoints();
     var level = this.mapObj.getLevel(points);
-    var title = $('<span style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</span><br>')
+    var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</div>').css({'text-align': 'center'})
     title.appendTo(headerContent);
+    $('<br>').appendTo(headerContent);
 
     if (this.mapObj.hasOwnProperty("healthPoints")){
         var percentHP = this.mapObj.getHealthPointsPercent();
@@ -65,22 +66,21 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
     var y = spriteFrameIcon[1];
     var breite = spriteFrameIcon[2];
     var hoehe = spriteFrameIcon[3];
+    var scale = (100/breite);
     var img = spritesheet.images[spriteFrameIcon[4]];
 
-    //var image = $('<div style="white-space:nowrap"></div>').height(hoehe*0.7).width(breite*0.7);
-    var image = $('<div style="white-space:nowrap"></div>').height(50).width(100);
-    //image.css({'background-image': 'url('+img+')' ,'background-position-x':0 , 'background-position-y':-32,'background-repeat':'no-repeat','width':100,'height': 50,'background-size': 'contain'});
-    image.css({'background-image': 'url('+img+')' ,'background-position-x':-x , 'background-position-y':-y,'background-repeat':'no-repeat','width':100,'height': 50,'background-size': 'auto'});
-    image.appendTo(headerContent);
-
-
+    var container= $('<div style="white-space:nowrap"></div>').css({'width':100, 'height':100,'zoom':scale});
+    var image = $('<div style="white-space:nowrap"></div>');
+    image.css({'background-image': 'url('+img+')' ,'background-position-x':-x , 'background-position-y':-y,'background-repeat':'no-repeat','width':breite+'%','height':hoehe+'%','background-size':'auto'});
+    image.appendTo(container);
+    container.appendTo(headerContent);
 
     this.progressbar = $('<div id="progressbar"></div>').appendTo(headerContent);
     this.progressbar.progressbar({
         value: 0
     });
-    this.progressbar.css({'top':'100px','left':'0px','position':'relative'});
-
+    //this.progressbar.css({'top':'175px','left':'0px','width':'100%','height':'20px','position':'absolute'});
+    this.progressbar.css({'bottom':'-50px','left':'0px','width':'100%','height':'20px','position':'relative'});
     this.header.html(headerContent)
 };
 
