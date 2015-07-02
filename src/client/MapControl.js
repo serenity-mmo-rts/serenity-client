@@ -37,15 +37,18 @@ MapControl.prototype.handleMousedownMain = function (evt) {
             var hitObjId = this.map.getCurrentObject();
             if (hitObjId) {     // open Object Menu
                 uc.layer.uiObjectContext.loadObjectById(hitObjId);
+                uc.layer.uiObjectContextPanel.show(200);
             }
 
             else { // drag main container
 
                 var startDragAt = this.main_container.globalToLocal(evt.stageX, evt.stageY);
+                var mouseMoved = false;
                 evt.addEventListener("mousemove", function (ev) {
                     var mouseAt = self.main_container.globalToLocal(ev.stageX, ev.stageY);
                     self.main_container.x += mouseAt.x - startDragAt.x;
                     self.main_container.y += mouseAt.y - startDragAt.y;
+                    mouseMoved = true;
                 });
 
 
@@ -55,7 +58,11 @@ MapControl.prototype.handleMousedownMain = function (evt) {
                     //                  self.minimap.location.x = minicoords[0];
                     //                  self.minimap.location.y = minicoords[1];
                     self.map.checkRendering();
-                    var mouseAt = self.main_container.globalToLocal(ev.stageX, ev.stageY);
+
+                    if (mouseMoved==false) {
+                        uc.layer.uiObjectContext.loadObjectById(null);
+                        uc.layer.uiObjectContextPanel.hide(200);
+                    }
                 });
             }
 

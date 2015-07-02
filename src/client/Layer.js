@@ -49,6 +49,7 @@ Layer.prototype.finishedLoadingMap = function () {
 
 
 
+
     this.minimap = new Minimap(this.mapContainer.mapControl);
     if (this.minimapPanel) this.minimapPanel.remove();
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
@@ -65,13 +66,10 @@ Layer.prototype.finishedLoadingMap = function () {
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
 
-    var mapObjectMenuX = canvas.width*0.5;
-    var mapObjectMenuY = canvas.height-200;
     this.uiObjectContext = new UiObjectContext();
     if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();
-    this.uiObjectContextPanel = new UiSlidingPanelDown( mapObjectMenuX,mapObjectMenuY,2,this.uiObjectContext.content );
-    this.uiObjectContextPanel.show(0);
-
+    this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
+    this.uiObjectContextPanel.hide(0);
 
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);

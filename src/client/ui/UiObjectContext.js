@@ -26,18 +26,24 @@ var UiObjectContext = function () {
 }
 
 UiObjectContext.prototype.loadObjectById = function(mapObjId) {
-   // this.mapObjId = mapObjId;
-    this.mapObjId = mapObjId;
-    this.map = game.maps.get(uc.layer.mapId);
-    this.mapObj = this.map.mapObjects.get(mapObjId);
-    var self= this;
+
     this.header.empty();
     this.tabs.empty();
-    this.createHeader(this.mapObj);
-    this.mapObj.addCallback("renderUI", function(){self.loadObjectById(mapObjId);});
-    if (this.mapObj.hasOwnProperty("userId")){
-        this.createTabs(this.mapObj);
+    this.mapObj = null;
+
+    if (mapObjId) {
+        this.mapObjId = mapObjId;
+        this.map = game.maps.get(uc.layer.mapId);
+        this.mapObj = this.map.mapObjects.get(mapObjId);
+        var self= this;
+
+        this.createHeader(this.mapObj);
+        this.mapObj.addCallback("renderUI", function(){self.loadObjectById(mapObjId);});
+        if (this.mapObj.hasOwnProperty("userId")){
+            this.createTabs(this.mapObj);
+        }
     }
+
 };
 
 
