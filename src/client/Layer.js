@@ -66,7 +66,7 @@ Layer.prototype.finishedLoadingMap = function () {
     this.uiBgMapPanel.show(0);
 
     var mapObjectMenuX = canvas.width*0.5;
-    var mapObjectMenuY = canvas.height-200;
+    var mapObjectMenuY = canvas.height-(mapObjectMenuX/4);
     this.uiObjectContext = new UiObjectContext();
     if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();
     this.uiObjectContextPanel = new UiSlidingPanelDown( mapObjectMenuX,mapObjectMenuY,2,this.uiObjectContext.content );
