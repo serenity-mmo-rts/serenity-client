@@ -66,6 +66,11 @@ Layer.prototype.finishedLoadingMap = function () {
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
 
+<<<<<<< HEAD
+=======
+    var mapObjectMenuX = canvas.width*0.5;
+    var mapObjectMenuY = canvas.height-(mapObjectMenuX/4);
+>>>>>>> merge
     this.uiObjectContext = new UiObjectContext();
     if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();
     this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );

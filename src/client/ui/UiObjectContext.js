@@ -4,15 +4,20 @@ var UiObjectContext = function () {
     this.mapObjId = null;
     this.mapObj = null;
 
+    var mapObjectMenuX = canvas.width*0.5;
+    var mapObjectMenuY = canvas.height-(mapObjectMenuX/4);
+
     this.content = $('<div>').addClass("ui-widget");
     this.content.css({
         "min-width": "200px"
     });
 
 
-    this.container = $('<div id="container"></div>').width(800).height(200).css({'display': 'inline-block'}).appendTo(this.content);
-    this.header = $('<div id="objHeader"></div>').width(200).height(200).css({'display': 'inline-block'}).appendTo(this.container);
-    this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').width(600).height(200).css({'display': 'inline-block','position': 'absolute'}).appendTo(this.container);
+    this.container = $('<div id="container"></div>').css({'top':mapObjectMenuY, 'left': mapObjectMenuX,'width':mapObjectMenuX,'height':mapObjectMenuX/4,'display': 'inline-block'}).appendTo(this.content);
+    this.header = $('<div id="objHeader"></div>').appendTo(this.container);
+    this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').appendTo(this.container);
+    this.header.css({'width':25+'%','display': 'inline-block'})
+    this.tabs.css({'width':75+'%','display': 'inline-block','position': 'absolute','white-space':'nowrap','overflow':'hidden'})
 
     this.tabs.tabs();
 
@@ -92,15 +97,22 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
 
 UiObjectContext.prototype.createTabs = function(mapObj) {
 
-    var tabsHeaders = $('<ul></ul>');
-    $('<li><a href="#mainTab">Main</a></li>').appendTo(tabsHeaders);
-    $('<li><a href="#upgradeTab">Upgrades</a></li>').appendTo(tabsHeaders);
-    $('<li><a href="#storageTab">Storage</a></li>').appendTo(tabsHeaders);
-    $('<li><a href="#delandtransTab">Delivery&Transportation</a></li>').appendTo(tabsHeaders);
-    $('<li><a href="#defenseTab">Defense</a></li>').appendTo(tabsHeaders);
-    $('<li><a href="#offenseTab">Offense</a></li>').appendTo(tabsHeaders);
+    var tabsHeaders = $('<ul></ul>').css({'width':100+'%'});
+    $('<li><a href="#mainTab">Main</a></li>').css({'width':10+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#upgradeTab">Upgrades</a></li>').css({'width':13+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#storageTab">Storage</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#delandtransTab">Delivery&Transport</a></li>').css({'width':24+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#specialsTab">Specials</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#defenseTab">Defense</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#offenseTab">Offense</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
+
+   // $('<span></span>').css({'width': 100+'%','display': 'inline-block','font-size': 0, 'line-height': 0}).appendTo(tabsHeaders);
+
 
     this.tabs.html(tabsHeaders);
+
+   // tabsHeaders.width()
+
     var className = game.objectTypes.get(this.mapObj.objTypeId)._className;
        if (className=="Factory") var maintab = new FactoryTab(this.mapObj);
        else if (className=="Hub") var maintab = new HubTab(this.mapObj);
@@ -111,15 +123,20 @@ UiObjectContext.prototype.createTabs = function(mapObj) {
     var upgradetab = new UpgradeTab(this.mapObj);
     var storagetab = new StorageTab(this.mapObj);
     var delandtranstab = new DeliveryAndTransportationTab(this.mapObj);
+    var specialtab = new SpecialTab(this.mapObj);
     var defensetab = new DefenseTab(this.mapObj);
     var offensetab = new OffenseTab(this.mapObj);
+
 
     maintab.content.appendTo(this.tabs);
     upgradetab.content.appendTo(this.tabs);
     storagetab.content.appendTo(this.tabs);
     delandtranstab.content.appendTo(this.tabs);
+    specialtab.content.appendTo(this.tabs);
     defensetab.content.appendTo(this.tabs);
     offensetab.content.appendTo(this.tabs);
+
+
 
 
 
