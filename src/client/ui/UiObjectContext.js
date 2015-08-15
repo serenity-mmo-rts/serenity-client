@@ -62,13 +62,21 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
     $('<br>').appendTo(headerContent);
 
     if (this.mapObj.hasOwnProperty("healthPoints")){
-        var percentHP = this.mapObj.getHealthPointsPercent();
-        this.healthPoints = $('<div id="healthPoints"></div>').appendTo(headerContent);
+        var maxHp = this.mapObj.getMaxHealthPoints();
+        var Hp = this.mapObj.getHealthPoints();
+        var percentHP  = (Hp/maxHp) *100;
+
+        this.healthPoints = $('<div  style="white-space:nowrap; id="healthPoints"></div>').appendTo(headerContent);
         this.healthPoints.progressbar({
             value: percentHP
         })
         this.healthPoints.css({'width':'50%','height':'10px','background': 'green'});
     }
+
+    var HealthDisplay = $('<div style="white-space:nowrap;">' + 'Health Points: ' +Hp+ '/'+maxHp+ '</div>').css({'text-align': 'left'})
+    HealthDisplay.appendTo(headerContent);
+    var pointDisplay = $('<div style="white-space:nowrap;">' + 'Points: ' + points+ '</div>').css({'text-align': 'left'})
+    pointDisplay.appendTo(headerContent);
 
     var objectType =  game.objectTypes.get(this.mapObj.objTypeId);
     var spritesheet = game.spritesheets.get(objectType._spritesheetId);
@@ -85,6 +93,9 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
     image.css({'background-image': 'url('+img+')' ,'background-position-x':-x , 'background-position-y':-y,'background-repeat':'no-repeat','width':breite+'%','height':hoehe+'%','background-size':'auto'});
     image.appendTo(container);
     container.appendTo(headerContent);
+
+
+
 
     this.progressbar = $('<div id="progressbar"></div>').appendTo(headerContent);
     this.progressbar.progressbar({
