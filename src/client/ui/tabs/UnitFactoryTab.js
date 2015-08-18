@@ -63,8 +63,7 @@ UnitFactoryTab.prototype.availableUnits = function () {
         var itemId = allItems[i]._itemTypeId;
         var itemType =  game.itemTypes.get(itemId);
         var type =  itemType._type;
-        var position = allItems[i].getPosition();
-        if (type == "Unit" && position == "Base") {
+        if (type == "Unit" ) {
 
             var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
             var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
