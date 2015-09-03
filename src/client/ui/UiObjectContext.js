@@ -16,8 +16,8 @@ var UiObjectContext = function () {
     this.container = $('<div id="container"></div>').css({'top':mapObjectMenuY, 'left': mapObjectMenuX,'width':mapObjectMenuX,'height':mapObjectMenuX/4,'display': 'inline-block'}).appendTo(this.content);
     this.header = $('<div id="objHeader"></div>').appendTo(this.container);
     this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').appendTo(this.container);
-    this.header.css({'width':25+'%','display': 'inline-block'})
-    this.tabs.css({'width':75+'%','display': 'inline-block','position': 'absolute','white-space':'nowrap','overflow':'hidden'})
+    this.header.css({'width':25+'%','display': 'inline-block'});
+    this.tabs.css({'width':75+'%','display': 'inline-block','position': 'absolute','white-space':'nowrap','overflow':'hidden'});
 
     this.tabs.tabs();
 
@@ -57,7 +57,7 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
    var headerContent = $('<div></div>');
     var points = this.mapObj.getPoints();
     var level = this.mapObj.getLevel(points);
-    var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</div>').css({'text-align': 'center'})
+    var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</div>').css({'text-align': 'center'});
     title.appendTo(headerContent);
     $('<br>').appendTo(headerContent);
 
@@ -103,7 +103,7 @@ UiObjectContext.prototype.createHeader = function(mapObj) {
     });
     //this.progressbar.css({'top':'175px','left':'0px','width':'100%','height':'20px','position':'absolute'});
     this.progressbar.css({'bottom':'-50px','left':'0px','width':'100%','height':'20px','position':'relative'});
-    this.header.html(headerContent)
+    this.header.html(headerContent);
 };
 
 UiObjectContext.prototype.createTabs = function(mapObj) {

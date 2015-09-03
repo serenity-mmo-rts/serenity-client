@@ -2,11 +2,8 @@ var MapControl = function (map) {
 
     var self = this;
     this.map = map;
-    this.map.mapControl = this;
+   // this.map.mapControl = this;
     // this.minimap = minimap;
-    this.stage = map.stage;
-    this.main_container = map.main_container;
-
 
     this.controlState = {};
     this.controlState.DEFAULT = 0;
@@ -19,7 +16,7 @@ var MapControl = function (map) {
     this.state = this.controlState.DEFAULT;
 
     // event listener for main container
-    this.main_container.addEventListener("mousedown", (function (evt) {
+    this.map.main_container.addEventListener("mousedown", (function (evt) {
         self.handleMousedownMain(evt)
     }));
 
@@ -42,12 +39,13 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 
             else { // drag main container
 
-                var startDragAt = this.main_container.globalToLocal(evt.stageX, evt.stageY);
+                var startDragAt = this.map.main_container.globalToLocal(evt.stageX, evt.stageY);
                 var mouseMoved = false;
+                var main_container = this.map.main_container;
                 evt.addEventListener("mousemove", function (ev) {
-                    var mouseAt = self.main_container.globalToLocal(ev.stageX, ev.stageY);
-                    self.main_container.x += mouseAt.x - startDragAt.x;
-                    self.main_container.y += mouseAt.y - startDragAt.y;
+                    var mouseAt = main_container.globalToLocal(ev.stageX, ev.stageY);
+                    main_container.x += mouseAt.x - startDragAt.x;
+                    main_container.y += mouseAt.y - startDragAt.y;
                     mouseMoved = true;
                 });
 
