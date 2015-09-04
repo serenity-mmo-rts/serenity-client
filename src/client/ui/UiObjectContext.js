@@ -32,8 +32,10 @@ var UiObjectContext = function () {
 
 UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
-    this.header.empty();
-    this.tabs.empty();
+    if (this.mapObj!=null){
+        this.mapObj.removeCallback("renderUI");
+    }
+
     this.mapObj = null;
 
     if (mapObjId) {
@@ -42,8 +44,24 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
         this.mapObj = this.map.mapObjects.get(mapObjId);
         var self= this;
 
+        this.mapObj.addCallback("renderUI", function(){self.update();});
+
+    }
+
+    this.update();
+
+};
+
+
+
+UiObjectContext.prototype.update = function() {
+
+    this.header.empty();
+    this.tabs.empty();
+
+    if (this.mapObj) {
+
         this.createHeader(this.mapObj);
-        this.mapObj.addCallback("renderUI", function(){self.loadObjectById(mapObjId);});
         if (this.mapObj.hasOwnProperty("userId")){
             this.createTabs(this.mapObj);
         }
