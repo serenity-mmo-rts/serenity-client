@@ -143,11 +143,10 @@ UiObjectContext.prototype.createTabs = function(mapObj) {
    // tabsHeaders.width()
 
     var className = game.objectTypes.get(this.mapObj.objTypeId)._className;
-       if (className=="Factory") var maintab = new FactoryTab(this.mapObj);
-       else if (className=="Hub") var maintab = new HubTab(this.mapObj);
-       else if (className=="UnitFactory")  var maintab = new UnitFactoryTab(this.mapObj);
-       else if (className=="ScienceCenter")  var maintab = new ScienceCenterTab(this.mapObj);
-       else if (className=="Sublayer")  var maintab = new SublayerTab(this.mapObj);
+       if (className=="factory") var maintab = new FactoryTab(this.mapObj);
+       else if (className=="hub") var maintab = new HubTab(this.mapObj);
+       else if (className=="scienceCenter")  var maintab = new ScienceCenterTab(this.mapObj);
+       else if (className=="sublayer")  var maintab = new SublayerTab(this.mapObj);
 
     var upgradetab = new UpgradeTab(this.mapObj);
     var storagetab = new StorageTab(this.mapObj);
