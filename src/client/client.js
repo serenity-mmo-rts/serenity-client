@@ -59,10 +59,10 @@ Client.prototype.init = function() {
         var newObject = new MapObject(game,data[1]);
         if (self.layer.mapId == data[0]) {
             //self.layer.map.addObject(newObject);        // what is the difference between the two ?
-            game.maps.get(data[0]).mapObjects.add(newObject);
+            game.maps.get(data[0]).buildings.add(newObject);
         }
         else {
-            game.maps.get(data[0]).mapObjects.add(newObject);
+            game.maps.get(data[0]).buildings.add(newObject);
         }
     }));*/
 
