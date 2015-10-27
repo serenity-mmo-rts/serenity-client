@@ -258,7 +258,7 @@ Map.prototype.renderObj = function(mapObject) {
 }
 
 Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.buildings.hashList[objId];
+  //  var mapObject = this.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     mapObject.x = x;
     mapObject.y = y;
@@ -267,7 +267,7 @@ Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
 }
 
 Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.buildings.hashList[objId];
+  //  var mapObject = this.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     objectBitmap.x = x;
     objectBitmap.y = y;
