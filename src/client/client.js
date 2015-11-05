@@ -43,7 +43,7 @@ Client.prototype.init = function() {
         game.spritesheets = new GameList(Spritesheet,spritesheets);
     }));
     socket.on('mapTypes', (function(mapTypes){
-        game.mapTypes = new GameList(MapType,mapTypes);
+        game.mapTypes = new GameList(LayerType,mapTypes);
     }));
     socket.on('objectTypes', (function(objectTypes){
         game.objectTypes = new GameList(ObjectType,objectTypes);
@@ -80,7 +80,7 @@ Client.prototype.loadMap = function(mapId) {
     var self = this;
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
-        var myNewMap = new MapData(game,mapData.initMap);
+        var myNewMap = new Layer(game,mapData.initMap);
         game.maps.add(myNewMap);
         myNewMap.mapObjects.load(mapData.initMapObjects);
         myNewMap.rebuildQuadTree();
@@ -157,7 +157,7 @@ Client.prototype.changeLayer = function(initGameData) {
 
     var oldMapId = this.layer.mapId;
 
-    game.maps.add(new MapData(game,initGameData.initMap));
+    game.maps.add(new Layer(game,initGameData.initMap));
 
     // Create Layer Object                                            k
 
