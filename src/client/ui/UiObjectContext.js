@@ -40,8 +40,8 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
     if (mapObjId) {
         this.mapObjId = mapObjId;
-        this.map = game.maps.get(uc.layer.mapId);
-        this.mapObj = this.map.mapObjects.get(mapObjId);
+        this.map = game.layers.get(uc.layer.mapId);
+        this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
         var self= this;
 
         this.mapObj.addCallback("renderUI", function(){self.update();});

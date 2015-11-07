@@ -10,7 +10,7 @@ var RessourceMapWrapper = function(mapRenderer,res_container,mapId,resColorFcn) 
     this.res_containerBackgroundLoading = new createjs.Container();
     this.res_container.addChild(this.res_containerBackgroundLoading);
 
-    this.mapData = game.maps.get(this.mapId);
+    this.mapData = game.layers.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
 
     this.resMap = new MapGenerator('3',this.mapData.width,this.mapData.height);

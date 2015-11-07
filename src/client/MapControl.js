@@ -52,7 +52,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 
                 evt.addEventListener("mouseup", function (ev) {
 
-//                    var minicoords =  self.minimap.render2game.maps.get(uc.layer.mapId).mapObjects.hashListMiniCoords(-self.main_container.x,-self.main_container.y);
+//                    var minicoords =  self.minimap.render2game.layers.get(uc.layer.mapId).mapData.mapObjects.hashListMiniCoords(-self.main_container.x,-self.main_container.y);
                     //                  self.minimap.location.x = minicoords[0];
                     //                  self.minimap.location.y = minicoords[1];
                     self.map.checkRendering();

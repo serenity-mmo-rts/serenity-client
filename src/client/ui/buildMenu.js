@@ -13,7 +13,7 @@ var BuildMenu = function(mapId,MapControl){
     this.canvas_width = window.innerWidth;
 
     //this.nr =  this.BuildMenuData.submenus.length;
-    var mapTypeId =  game.maps.hashList[this.mapId].mapTypeId;
+    var mapTypeId =  game.layers.hashList[this.mapId].mapTypeId;
     this.BuildMenuData = game.mapTypes.hashList[mapTypeId]._buildCategories;
     this.nr = this.BuildMenuData.length;
 

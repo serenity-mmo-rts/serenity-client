@@ -6,7 +6,7 @@ var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resColor
     this.res_container = res_container;
     this.resColorFcn = resColorFcn;
 
-    this.mapData = game.maps.get(this.mapId);
+    this.mapData = game.layers.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
 
     this.mapWidth = this.mapData.width;

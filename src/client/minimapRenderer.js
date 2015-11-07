@@ -51,7 +51,7 @@ Minimap.prototype.draw= function() {
         $("#minimap").width(currsize).height(currsize/2);
     });
 
-     var MapWidth = (game.maps.get(this.mapId).width)* this.size;
+     var MapWidth = (game.layers.get(this.mapId).width)* this.size;
 
    this.factor =(MapWidth/currsize);
    this.mini_container.scaleX = 1/this.factor;
@@ -145,7 +145,7 @@ Minimap.prototype.moveOnMinimap = function(evt){
 Minimap.prototype.resize = function () {
 
     var currsize = window.innerWidth/this.size;
-    var mapWidth = (game.maps.get(this.mapId).width)/this.size;
+    var mapWidth = (game.layers.get(this.mapId).width)/this.size;
     this.factor = Math.round(mapWidth/currsize);
     $(this.canvas).width(currsize).height(currsize/2);
 
