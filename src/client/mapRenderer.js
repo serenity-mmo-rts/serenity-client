@@ -90,7 +90,7 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.spritesheets = {};
     this.bgImg;
-    this.mapData = game.maps.get(this.mapId);
+    this.mapData = game.layers.get(this.mapId);
     this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
     this.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
@@ -165,7 +165,7 @@ Map.prototype.createMap = function() {
 
 Map.prototype.checkRendering = function(){
 
-    var objectList = game.maps.get(this.mapId).mapObjects.hashList;
+    var objectList = game.layers.get(this.mapId).mapData.mapObjects.hashList;
 
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
@@ -189,7 +189,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (game.maps.get(this.mapId).mapObjects.hashList.hasOwnProperty(mapObject._id)) {
+    if (game.layers.get(this.mapId).mapData.mapObjects.hashList.hasOwnProperty(mapObject._id)) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
             shouldbeRendered = true;
         }
@@ -258,7 +258,7 @@ Map.prototype.renderObj = function(mapObject) {
 }
 
 Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.mapObjects.hashList[objId];
+  //  var mapObject = this.mapData.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     mapObject.x = x;
     mapObject.y = y;
@@ -267,7 +267,7 @@ Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
 }
 
 Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.mapObjects.hashList[objId];
+  //  var mapObject = this.mapData.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     objectBitmap.x = x;
     objectBitmap.y = y;

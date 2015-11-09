@@ -59,16 +59,16 @@ Client.prototype.init = function() {
         var newObject = new MapObject(game,data[1]);
         if (self.layer.mapId == data[0]) {
             //self.layer.map.addObject(newObject);        // what is the difference between the two ?
-            game.maps.get(data[0]).mapObjects.add(newObject);
+            game.layers.get(data[0]).mapData.mapObjects.add(newObject);
         }
         else {
-            game.maps.get(data[0]).mapObjects.add(newObject);
+            game.layers.get(data[0]).mapData.mapObjects.add(newObject);
         }
     }));*/
 
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data[1]);
-        //game.maps.get(event._mapId).eventScheduler.addEvent(event);
+        //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
         event.executeOnOthers();
     }));
@@ -81,8 +81,8 @@ Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game,mapData.initMap);
-        game.maps.add(myNewMap);
-        myNewMap.mapObjects.load(mapData.initMapObjects);
+        game.layers.add(myNewMap);
+        myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
         myNewMap.rebuildQuadTree();
         myNewMap.items.load(mapData.initItems);
         myNewMap.items.each(function(item){
@@ -90,7 +90,7 @@ Client.prototype.loadMap = function(mapId) {
         });
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
 
-        myNewMap.mapObjects.each(function(mapObject){
+        myNewMap.mapData.mapObjects.each(function(mapObject){
             mapObject.setPointers();
         });
 
@@ -122,7 +122,7 @@ Client.prototype.addEvent = function(event) {
         event.execute();
 
         // add to event List:
-        //game.maps.get(event._mapId).eventScheduler.addEvent(event);
+        //game.layers.get(event._mapId).eventScheduler.addEvent(event);
 
         // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
@@ -157,14 +157,14 @@ Client.prototype.changeLayer = function(initGameData) {
 
     var oldMapId = this.layer.mapId;
 
-    game.maps.add(new Layer(game,initGameData.initMap));
+    game.layers.add(new Layer(game,initGameData.initMap));
 
     // Create Layer Object                                            k
 
     this.layer =  new Layer(this,this.stage,game,initGameData.initMap._id);
 
 
-    game.maps.deleteById(oldMapId);
+    game.layers.deleteById(oldMapId);
 
 }
 

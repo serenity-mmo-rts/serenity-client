@@ -91,5 +91,5 @@ Layer.prototype.tick = function() {
     if(this.uiObjectContext) this.uiObjectContext.tick();
 
     var currGameTime = Date.now() - ntp.offset();
-    if (this.mapId) game.maps.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);
+    if (this.mapId) game.layers.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);
 };
