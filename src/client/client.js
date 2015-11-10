@@ -5,7 +5,7 @@ var Client = function() {
     this.userId;
     this.loginForm;
     // vorübergehend
-    this.layer = new Layer();
+    this.layerView = new LayerView();
 };
 
 // Init function
@@ -42,14 +42,14 @@ Client.prototype.init = function() {
     socket.on('spritesheets', (function(spritesheets){
         game.spritesheets = new GameList(Spritesheet,spritesheets);
     }));
-    socket.on('mapTypes', (function(mapTypes){
-        game.mapTypes = new GameList(LayerType,mapTypes);
+    socket.on('layerTypes', (function(mapTypes){
+        game.layerTypes = new GameList(LayerType,mapTypes);
     }));
     socket.on('objectTypes', (function(objectTypes){
         game.objectTypes = new GameList(ObjectType,objectTypes);
     }));
     //socket.on('map', (function(mapData){
-    //    self.layer =  new Layer(self.goLayerUp,self.goLayerDown,[],[],self.stage);
+    //    self.layerView =  new Layer(self.goLayerUp,self.goLayerDown,[],[],self.stage);
     //}));
    // socket.on('map', (function(mapData){ self.onMapDataReceived(mapData);}));            // where is the implementation???
 
@@ -57,8 +57,8 @@ Client.prototype.init = function() {
 
    /* socket.on('BuildObjectEvent', (function(data){
         var newObject = new MapObject(game,data[1]);
-        if (self.layer.mapId == data[0]) {
-            //self.layer.map.addObject(newObject);        // what is the difference between the two ?
+        if (self.layerView.mapId == data[0]) {
+            //self.layerView.map.addObject(newObject);        // what is the difference between the two ?
             game.layers.get(data[0]).mapData.mapObjects.add(newObject);
         }
         else {
@@ -83,9 +83,9 @@ Client.prototype.loadMap = function(mapId) {
         var myNewMap = new Layer(game,mapData.initMap);
         game.layers.add(myNewMap);
         myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
-        myNewMap.rebuildQuadTree();
-        myNewMap.items.load(mapData.initItems);
-        myNewMap.items.each(function(item){
+        myNewMap.mapData.rebuildQuadTree();
+        myNewMap.mapData.items.load(mapData.initItems);
+        myNewMap.mapData.items.each(function(item){
             item._mapObj.deployedItems.push(item); // set link from mapObj to item
         });
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
@@ -95,14 +95,14 @@ Client.prototype.loadMap = function(mapId) {
         });
 
         // Create Layer Object
-        self.layer.loadMap(myNewMap._id);
+        self.layerView.loadMap(myNewMap._id);
     });
 }
 
 Client.prototype.onInitGameData = function(initGameData) {
     //init all global gameData variables:
     game.spritesheets.load(initGameData.spritesheets);
-    game.mapTypes.load(initGameData.mapTypes);
+    game.layerTypes.load(initGameData.layerTypes);
     game.objectTypes.load(initGameData.objectTypes);
     game.ressourceTypes.load(initGameData.ressourceTypes);
     game.technologyTypes.load(initGameData.technologyTypes);
@@ -155,13 +155,13 @@ Client.prototype.changeLayer = function(initGameData) {
     this.stage.update();
     var self = this;
 
-    var oldMapId = this.layer.mapId;
+    var oldMapId = this.layerView.mapId;
 
-    game.layers.add(new Layer(game,initGameData.initMap));
+    game.layers.add(new LayerView(game,initGameData.initMap));
 
     // Create Layer Object                                            k
 
-    this.layer =  new Layer(this,this.stage,game,initGameData.initMap._id);
+    this.layerView =  new LayerView(this,this.stage,game,initGameData.initMap._id);
 
 
     game.layers.deleteById(oldMapId);

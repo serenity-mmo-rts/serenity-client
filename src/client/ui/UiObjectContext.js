@@ -40,7 +40,7 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
     if (mapObjId) {
         this.mapObjId = mapObjId;
-        this.map = game.layers.get(uc.layer.mapId);
+        this.map = game.layers.get(uc.layerView.mapId);
         this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
         var self= this;
 
@@ -73,8 +73,8 @@ UiObjectContext.prototype.update = function() {
 UiObjectContext.prototype.createHeader = function(mapObj) {
 
    var headerContent = $('<div></div>');
-    var points = this.mapObj.getPoints();
-    var level = this.mapObj.getLevel(points);
+    var points = this.mapObj._blocks.UserObject.getPoints();
+    var level = this.mapObj._blocks.UserObject.getLevel(points);
     var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</div>').css({'text-align': 'center'});
     title.appendTo(headerContent);
     $('<br>').appendTo(headerContent);
@@ -170,7 +170,7 @@ UiObjectContext.prototype.createTabs = function(mapObj) {
 
     this.tabs.tabs( "refresh" );
     this.tabs.tabs({ active: 0 });
-    uc.layer.uiObjectContextPanel.update(0);
+    uc.layerView.uiObjectContextPanel.update(0);
 
 };
 

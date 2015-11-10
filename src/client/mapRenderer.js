@@ -91,7 +91,7 @@ var Map = function(mapContainer, stage,mapId) {
     this.spritesheets = {};
     this.bgImg;
     this.mapData = game.layers.get(this.mapId);
-    this.mapType = game.mapTypes.get(this.mapData.mapTypeId);
+    this.mapType = game.layerTypes.get(this.mapData.mapTypeId);
     this.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
         self.obj_container.sortChildren(function (a, b){ return a.y - b.y; });

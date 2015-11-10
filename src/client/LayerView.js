@@ -1,6 +1,6 @@
 
 /** Upper Most Layer object. Initiates and handles all Div elements*/
-var Layer = function(){
+var LayerView = function(){
     var self = this;
 
     this.mapContainer = null;
@@ -13,7 +13,7 @@ var Layer = function(){
 
 }
 
-Layer.prototype.loadMap = function (mapId) {
+LayerView.prototype.loadMap = function (mapId) {
     var self = this;
     this.mapContainerTempLoading =  new MapContainer(mapId);
     this.mapContainerTempLoading.map.callbackFinishedLoading = function (){
@@ -22,7 +22,7 @@ Layer.prototype.loadMap = function (mapId) {
 
 };
 
-Layer.prototype.finishedLoadingMap = function () {
+LayerView.prototype.finishedLoadingMap = function () {
 
     if (this.mapContainer) {
         var oldMapContainer = this.mapContainer;
@@ -79,13 +79,13 @@ Layer.prototype.finishedLoadingMap = function () {
    // this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
 }
 
-Layer.prototype.resize = function () {
+LayerView.prototype.resize = function () {
     if(this.mapContainer) this.mapContainer.resize();
     if(this.minimap) this.minimap.resize();
     if(this.minimapPanel) this.minimapPanel.update(0);
 };
 
-Layer.prototype.tick = function() {
+LayerView.prototype.tick = function() {
     if(this.mapContainer) this.mapContainer.tick();
     if(this.minimap) this.minimap.tick();
     if(this.uiObjectContext) this.uiObjectContext.tick();

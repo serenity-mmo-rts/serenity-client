@@ -49,7 +49,7 @@ UnitFactoryTab.prototype.bindClickEvent = function (container,itemId) {
         //e.stopImmediatePropagation();
         // e.preventDefault();
         var tempId = "tempID"+Math.random();
-        var item = new ItemModel(game,{_id: tempId,_objectId:self.mapObj._id,_itemTypeId:itemId,_mapId:uc.layer.mapId})
+        var item = new ItemModel(game,{_id: tempId,_objectId:self.mapObj._id,_itemTypeId:itemId,_mapId:uc.layerView.mapId})
         var evt = new BuildItemEvent(game);
         evt.setItem(item);
         uc.addEvent(evt);

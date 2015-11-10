@@ -14,7 +14,7 @@ var BuildMenu = function(mapId,MapControl){
 
     //this.nr =  this.BuildMenuData.submenus.length;
     var mapTypeId =  game.layers.hashList[this.mapId].mapTypeId;
-    this.BuildMenuData = game.mapTypes.hashList[mapTypeId]._buildCategories;
+    this.BuildMenuData = game.layerTypes.hashList[mapTypeId]._buildCategories;
     this.nr = this.BuildMenuData.length;
 
     // buildMenu   with J-Query

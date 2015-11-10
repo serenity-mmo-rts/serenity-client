@@ -10,7 +10,7 @@ var UiGlobalMenu = function () {
         $('<b>not logged in</b>').appendTo(this.content);
     }
 
-    var parentLayerId = game.layers.get(uc.layer.mapId).parentMapId;
+    var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
     if (parentLayerId) {
         var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.content);
         openParentLayerBtn.click(function (e) {
