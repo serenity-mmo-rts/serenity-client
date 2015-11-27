@@ -46,13 +46,7 @@ UnitFactoryTab.prototype.createUnits = function () {
 UnitFactoryTab.prototype.bindClickEvent = function (container,itemId) {
     var self = this;
     container.click(function (e) {
-        //e.stopImmediatePropagation();
-        // e.preventDefault();
-        var tempId = "tempID"+Math.random();
-        var item = new ItemModel(game,{_id: tempId,_objectId:self.mapObj._id,_itemTypeId:itemId,_mapId:uc.layerView.mapId})
-        var evt = new BuildItemEvent(game);
-        evt.setItem(item);
-        uc.addEvent(evt);
+        self.mapObj._blocks.UpgradeProduction.startUpgrade(itemId);
     });
     container.appendTo(this.creationBox);
     container = null;
