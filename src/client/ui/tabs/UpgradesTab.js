@@ -1,21 +1,22 @@
 
-var UnitFactoryTab = function (mapObj) {
+var UpgradesTab = function (mapObj) {
 
     this.mapObj = mapObj;
     this.content= $('<div id="mainTab"></div>').css({'display': 'inline-block'});
-    this.createUnits();
-    this.availableUnits();
+    if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")){
+        this.listAvailableUpgrades();
+        this.listProducedUpgrades();
+    }
 
-}
+};
 
 
-UnitFactoryTab.prototype.createUnits = function () {
+UpgradesTab.prototype.listAvailableUpgrades = function () {
     var self = this;
     var wrap1 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px'});
-    this.creationTitle =  $('<div>Recruitment</div>').css({});
+    this.creationTitle =  $('<div>Available Upgrades</div>').css({});
     this.creationBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
-    var allowedItemIds= game.objectTypes.get(this.mapObj.objTypeId)._initProperties._itemIds;
-
+    var allowedItemIds = this.mapObj._blocks.UpgradeProduction._itemIds;
 
     for (var i = 0; i<allowedItemIds.length; i++){
         var itemId = allowedItemIds[i];
@@ -34,30 +35,18 @@ UnitFactoryTab.prototype.createUnits = function () {
         image.css({'background-image': 'url('+img+')' ,'background-position-x':-x, 'background-position-y':-y,'background-repeat':'no-repeat','width':breite,'height':hoehe});
         image.appendTo(container);
 
-        this.bindClickEvent(container,itemId)
-
+        this.bindClickEvent(container,itemId);
     }
     this.creationTitle.appendTo(wrap1);
     this.creationBox.appendTo(wrap1);
     wrap1.appendTo(this.content);
 
-}
+};
 
-UnitFactoryTab.prototype.bindClickEvent = function (container,itemId) {
-    var self = this;
-    container.click(function (e) {
-        self.mapObj._blocks.UpgradeProduction.startUpgrade(itemId);
-    });
-    container.appendTo(this.creationBox);
-    container = null;
-
-}
-
-
-UnitFactoryTab.prototype.availableUnits = function () {
+UpgradesTab.prototype.listProducedUpgrades = function () {
     var self = this;
     var wrap2 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px','top':'200','position': 'absolute'});
-    var availableTitle =  $('<div>Available Units</div>').css({});
+    var availableTitle =  $('<div>Produced Upgrades</div>').css({});
     var availableBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
     var allItems= this.mapObj.getItems();
 
@@ -88,12 +77,23 @@ UnitFactoryTab.prototype.availableUnits = function () {
             });
         }
 
-        }
-
+    }
     availableTitle.appendTo(wrap2);
     availableBox.appendTo(wrap2);
     wrap2.appendTo(this.content);
+};
 
-}
+UpgradesTab.prototype.bindClickEvent = function (container,itemId) {
+    var self = this;
+    container.click(function (e) {
+        self.mapObj._blocks.UpgradeProduction.startUpgrade(itemId);
+    });
+    container.appendTo(this.creationBox);
+    container = null;
+
+};
+
+
+
 
 
