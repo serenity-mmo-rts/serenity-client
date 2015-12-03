@@ -2,7 +2,7 @@
 var UpgradesTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.content= $('<div id="mainTab"></div>').css({'display': 'inline-block'});
+    this.content= $('<div id="upgradeTab"></div>').css({'display': 'inline-block'});
     if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")){
         this.listAvailableUpgrades();
         this.listProducedUpgrades();

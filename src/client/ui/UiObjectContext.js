@@ -4,20 +4,19 @@ var UiObjectContext = function () {
     this.mapObjId = null;
     this.mapObj = null;
 
-    var mapObjectMenuX = canvas.width*0.5;
-    var mapObjectMenuY = canvas.height-(mapObjectMenuX/4);
+    var mapObjectMenuX = canvas.width/2;
+    var mapObjectMenuY = canvas.height/3;
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.css({
         "min-width": "200px"
     });
 
-    this.container = $('<div id="container"></div>').css({'top':mapObjectMenuY, 'left': mapObjectMenuX,'width':mapObjectMenuX,'height':mapObjectMenuX/4,'display': 'inline-block'}).appendTo(this.content);
+    this.container = $('<div id="container"></div>').css({'top':mapObjectMenuY, 'left': mapObjectMenuX,'width':mapObjectMenuX,'height':mapObjectMenuY,'display': 'inline-block'}).appendTo(this.content);
     this.header = $('<div id="objHeader"></div>').appendTo(this.container);
     this.tabs = $('<div id="objContextTabs" class="tabs-bottom"></div>').appendTo(this.container);
     this.header.css({'width':25+'%','display': 'inline-block'});
     this.tabs.css({'width':75+'%','display': 'inline-block','position': 'absolute','white-space':'nowrap','overflow':'hidden'});
-
     this.tabs.tabs();
 
     // fix the classes
@@ -129,12 +128,12 @@ UiObjectContext.prototype.createTabs = function() {
 
     // initialize Tabs
     var tabsHeaders = $('<ul></ul>').css({'width':100+'%'});
-    $('<li><a href="#mainTab">Main</a></li>').css({'width':10+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#upgradeTab">Upgrades</a></li>').css({'width':13+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#laborTab">Labor</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#resourceTab">Resources</a></li>').css({'width':24+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#unitsTab">Units</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#defenseTab">Defense</a></li>').css({'width':12+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#mainTab">Main</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#upgradeTab">Upgrades</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#laborTab">Labor</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#resourceTab">Resources</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#unitTab">Units</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#defenseTab">Defense</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     this.tabs.html(tabsHeaders);
 
     // select special Tab

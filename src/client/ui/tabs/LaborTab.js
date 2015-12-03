@@ -1,6 +1,6 @@
 var LaborTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.content= $('<div id="defenseTab">List of Workers</div>');
+    this.content= $('<div id="laborTab">List of Workers</div>');
 
 }
