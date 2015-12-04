@@ -12,8 +12,15 @@ var MapControl = function (map) {
     this.controlState.MOVEOBJ = 3;
     this.controlState.ITEMTARGET = 4;
     this.controlState.ATTACKTARGET = 5;
+    this.controlState.SELECTOBJ = 6;
 
     this.state = this.controlState.DEFAULT;
+
+    // member variable to store a callback function which is executed after selection of object/item on map with the selected object
+    this.callbackOnSelect = null;
+    // member variable to store a callback function which is executed during a selection operation to check whether the object/item below the cursor is a valid selection target
+    this.callbackCheckValidSelection = null;
+
 
     // event listener for main container
     this.map.main_container.addEventListener("mousedown", (function (evt) {
@@ -90,6 +97,16 @@ MapControl.prototype.handleMousedownMain = function (evt) {
         case this.controlState.ATTACKTARGET:
 
             break;
+
+        case this.controlState.SELECTOBJ:
+
+            var hitObjId = this.map.getCurrentObject();
+            if (this.callbackCheckValidSelection(hitObjId)) {
+                document.body.style.cursor='pointer';
+                this.callbackOnSelect(hitObjId);
+            }
+            this.cancelState();
+            break;
     }
 
 }
@@ -97,6 +114,10 @@ MapControl.prototype.handleMousedownMain = function (evt) {
 MapControl.prototype.cancelState = function () {
     this.state = this.controlState.DEFAULT;
     this.map.deleteTempObj();
+
+    document.body.style.cursor='default';
+    this.callbackOnSelect = null;
+    this.callbackCheckValidSelection = null;
 }
 
 
@@ -115,7 +136,29 @@ MapControl.prototype.setStateBuild = function (objTypeId) {
 
 }
 
-MapControl.prototype.tick = function () {
+/**
+ *
+ * @param callbackOnSelect callback(objectId) that is executed after selection of object/item on map with the selected object
+ * @param callbackCheckValidSelection callback(objectId){return bool} which is executed during a selection operation to check whether the object/item below the cursor is a valid selection target
+ */
+MapControl.prototype.setStateSelectObj = function (callbackOnSelect,callbackCheckValidSelection) {
+    this.cancelState();
+    this.state = this.controlState.SELECTOBJ;
 
+    this.callbackOnSelect = callbackOnSelect;
+    this.callbackCheckValidSelection = callbackCheckValidSelection;
+}
+
+MapControl.prototype.tick = function () {
+    if (this.state == this.controlState.SELECTOBJ) {
+        var hitObjId = this.map.getCurrentObject();
+        if (this.callbackCheckValidSelection(hitObjId)) {
+            document.body.style.cursor='pointer';
+        }
+        else {
+            document.body.style.cursor='default';
+        }
+
+    }
 }
 

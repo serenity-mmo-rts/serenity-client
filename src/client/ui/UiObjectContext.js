@@ -140,9 +140,6 @@ UiObjectContext.prototype.createTabs = function() {
     if (this.mapObj._blocks.hasOwnProperty("Gate")) {
         var maintab = new GateTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("HubNode")) {
-        var maintab = new HubTab(this.mapObj);
-    }
     else if (this.mapObj._blocks.hasOwnProperty("ActivityPlace")) {
         var maintab = new LeisureBuildingTab(this.mapObj);
     }
@@ -154,6 +151,9 @@ UiObjectContext.prototype.createTabs = function() {
     }
     else if (this.mapObj._blocks.hasOwnProperty("Sublayer")) {
         var maintab = new SublayerTab(this.mapObj);
+    }
+    else if (this.mapObj._blocks.hasOwnProperty("HubNode")) {
+        var maintab = new HubTab(this.mapObj);
     }
     else if (this.mapObj._blocks.hasOwnProperty("Tower")) {
         var maintab = new TowerTab(this.mapObj);
