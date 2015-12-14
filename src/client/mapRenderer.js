@@ -87,7 +87,6 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.tempObj;
     this.tempObjBitmap;
-    this.tempGameEvent;
 
     this.spritesheets = {};
     this.bgImg;
@@ -301,9 +300,13 @@ Map.prototype.renderCoord2GameY = function(renderX,renderY) {
 Map.prototype.moveTempObject = function () {
     var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
     this.moveObjectToRenderCoord(this.tempObj, pt.x, pt.y);
-    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+    this.resortObjects();
 };
 
+
+Map.prototype.resortObjects = function () {
+    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+}
 
 
 
@@ -348,18 +351,8 @@ Map.prototype.tick = function() {
     // update progess of map objects. chance bitmap input
 
     this.stage.update();
-     if (this.tempObj != undefined) { // move object
-       this.moveTempObject();
-         this.tickCounter += 1;
-         if (this.tickCounter==5) {
-             this.tickCounter = 0;
-             if (this.tempGameEvent && this.tempGameEvent.isValid()) {
-                 this.tempObjBitmap.alpha = 1;
-             }
-             else {
-                 this.tempObjBitmap.alpha = 0.3;
-             }
-         }
+    if (this.tempObj != undefined) { // move object
+
     }
 };
 

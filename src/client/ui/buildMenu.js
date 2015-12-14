@@ -64,7 +64,39 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
 
     $( "#bottomLeftUi" ).toggleClass( "hidden", 500, "easeOutSine" );
 
-    this.mapControl.setStateBuild(objectTypeId);
+    //this.mapControl.setStateBuild(objectTypeId);
+
+    var object = new MapObject(game, {_id: 'tempObject', mapId: this.mapId, x: 0, y: 0, objTypeId: objectTypeId, userId: uc.userId, state: mapObjectStates.TEMP});
+    this.tmpEvent = new BuildObjectEvent(game);
+    this.tmpEvent.setMapObject(object);
+    this.mapControl.map.addTempObj(object);
+    var self = this;
+
+    function callbackOnSelect(gameCoord){
+        uc.addEvent(self.tmpEvent);
+        self.tmpEvent = null;
+    }
+
+    function callbackCheckValidSelection(gameCoord){
+        self.tmpEvent._mapObj.x = gameCoord.x;
+        self.tmpEvent._mapObj.y = gameCoord.y;
+        self.mapControl.map.renderObj(object);
+        var valid = self.tmpEvent.isValid();
+        if (valid) {
+            object.objectBitmap.alpha = 1;
+        }
+        else {
+            object.objectBitmap.alpha = 0.3;
+        }
+        return valid;
+    }
+
+    function callbackCanceled(){
+        self.tmpEvent = null;
+        self.mapControl.map.deleteTempObj();
+    }
+
+    this.mapControl.setStateSelectCoord(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
 
 
 };
