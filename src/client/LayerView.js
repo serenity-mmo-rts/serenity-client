@@ -6,6 +6,9 @@ var LayerView = function(){
     this.mapContainer = null;
     this.mapContainerTempLoading = null;
 
+    this.lastTick = 0;
+    this.tickCounter = 0;
+
     window.addEventListener('resize',function(){self.resize()}, false);
 
     createjs.Ticker.setFPS(60);
@@ -89,6 +92,17 @@ LayerView.prototype.tick = function() {
     if(this.mapContainer) this.mapContainer.tick();
     if(this.minimap) this.minimap.tick();
     if(this.uiObjectContext) this.uiObjectContext.tick();
+
+    this.tickCounter += 1;
+    if (this.tickCounter == 13) {
+        this.tickCounter = 0;
+        var dateDiff = Date.now() - this.lastTick;
+        //console.log("fps: " + dateDiff.toString())
+        if (this.uiGlobalMenu != undefined) {
+            this.uiGlobalMenu.setFPS(Math.round(1000 / dateDiff));
+        }
+    }
+    this.lastTick = Date.now();
 
     var currGameTime = Date.now() - ntp.offset();
     if (this.mapId) game.layers.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);

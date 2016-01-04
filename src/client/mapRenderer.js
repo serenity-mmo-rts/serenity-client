@@ -7,7 +7,8 @@ var Map = function(mapContainer, stage,mapId) {
     this.mapContainer = mapContainer;
     this.main_container = mapContainer.main_container;
     this.mapId = mapId;
-    this.callbackFinishedLoading = null;
+    this.callbackFinishedLoading = null
+    this.tickCounter = 0;
 
     this.map_container = new createjs.Container();
     this.bg_container = new createjs.Container();
@@ -90,9 +91,9 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.spritesheets = {};
     this.bgImg;
-    this.mapData = game.layers.get(this.mapId);
-    this.mapType = game.layerTypes.get(this.mapData.mapTypeId);
-    this.mapData.objectChangedCallback = function(mapObject) {
+    this.layer = game.layers.get(this.mapId);
+    this.mapType = game.layerTypes.get(this.layer.mapTypeId);
+    this.layer.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
         self.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
     };
@@ -129,11 +130,11 @@ Map.prototype.createMap = function() {
     background.beginBitmapFill ( this.bgImg, repetition='repeat' );
 
 
-    var halfMapWidth = this.mapData.width/2;
-    var halfMapHeight = this.mapData.height/2;
+    var halfMapWidth = this.layer.width/2;
+    var halfMapHeight = this.layer.height/2;
     var x = this.gameCoord2RenderX(-halfMapWidth,-halfMapHeight);
     var y = this.gameCoord2RenderY(-halfMapWidth,-halfMapHeight);
-   // background.drawEllipse(x,y,this.mapData.width,this.mapData.height);
+   // background.drawEllipse(x,y,this.layer.width,this.layer.height);
 
     background.moveTo(x,y);
     x = this.gameCoord2RenderX(-halfMapWidth,halfMapHeight);
@@ -165,7 +166,7 @@ Map.prototype.createMap = function() {
 
 Map.prototype.checkRendering = function(){
 
-    var objectList = game.layers.get(this.mapId).mapData.mapObjects.hashList;
+    var objectList = this.layer.mapData.mapObjects.hashList;
 
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
@@ -189,7 +190,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (game.layers.get(this.mapId).mapData.mapObjects.hashList.hasOwnProperty(mapObject._id)) {
+    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id)) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
             shouldbeRendered = true;
         }
@@ -258,7 +259,7 @@ Map.prototype.renderObj = function(mapObject) {
 }
 
 Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.mapData.mapObjects.hashList[objId];
+  //  var mapObject = this.layer.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     mapObject.x = x;
     mapObject.y = y;
@@ -267,7 +268,7 @@ Map.prototype.moveObjectToGameCoord = function(mapObject, x, y) {
 }
 
 Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
-  //  var mapObject = this.mapData.mapData.mapObjects.hashList[objId];
+  //  var mapObject = this.layer.mapData.mapObjects.hashList[objId];
     var objectBitmap = mapObject.objectBitmap;
     objectBitmap.x = x;
     objectBitmap.y = y;
@@ -349,11 +350,15 @@ Map.prototype.tick = function() {
     this.stage.update();
      if (this.tempObj != undefined) { // move object
        this.moveTempObject();
-         if(this.tempGameEvent && this.tempGameEvent.isValid()) {
-             this.tempObjBitmap.alpha = 1;
-         }
-         else {
-             this.tempObjBitmap.alpha = 0.3;
+         this.tickCounter += 1;
+         if (this.tickCounter==5) {
+             this.tickCounter = 0;
+             if (this.tempGameEvent && this.tempGameEvent.isValid()) {
+                 this.tempObjBitmap.alpha = 1;
+             }
+             else {
+                 this.tempObjBitmap.alpha = 0.3;
+             }
          }
     }
 };
