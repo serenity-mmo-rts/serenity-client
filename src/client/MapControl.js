@@ -194,7 +194,7 @@ MapControl.prototype.setStateSelectCoord = function (callbackOnSelect,callbackCh
 
 MapControl.prototype.tick = function () {
 
-    if (this.state == this.controlState.INITOBJ) {
+    /*if (this.state == this.controlState.INITOBJ) {
         this.map.moveTempObject();
         this.tickCounter += 1;
         if (this.tickCounter==5) {
@@ -207,7 +207,7 @@ MapControl.prototype.tick = function () {
             }
         }
 
-    }
+    }*/
 
     if (this.state == this.controlState.SELECTOBJ) {
         var hitObjId = this.map.getCurrentObject();
