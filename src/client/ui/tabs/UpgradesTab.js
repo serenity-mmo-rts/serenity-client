@@ -51,11 +51,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     var allItems= this.mapObj.getItems();
 
     for (var i = 0; i<allItems.length; i++){
-        var itemId = allItems[i]._itemTypeId;
-        var itemType =  game.itemTypes.get(itemId);
-        var type =  itemType._type;
-        if (type == "Unit" ) {
-
+        var itemType =  allItems[i]._itemType;
             var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
             var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
             var x = spriteFrameIcon[0];
@@ -75,8 +71,6 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 //e.stopImmediatePropagation();
                 // e.preventDefault();
             });
-        }
-
     }
     availableTitle.appendTo(wrap2);
     availableBox.appendTo(wrap2);

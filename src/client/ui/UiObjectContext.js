@@ -201,13 +201,11 @@ UiObjectContext.prototype.getItemsContextMenu = function() {
 UiObjectContext.prototype.tick = function() {
 
     if (this.mapObj){
-        if (this.mapObj.hasOwnProperty("buildQueue")){
-            if (this.mapObj.buildQueue.length>0) {
-               this.updateProgress(this.mapObj.buildQueue[0].progress());
-            }
-            else {
-                this.updateProgress(0);
-            }
+        if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length>0) {
+           this.updateProgress(this.mapObj._blocks["UpgradeProduction"].buildQueue[0].progress());
+        }
+        else {
+            this.updateProgress(0);
         }
     }
 };
