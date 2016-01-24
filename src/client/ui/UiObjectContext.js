@@ -158,7 +158,7 @@ UiObjectContext.prototype.createTabs = function() {
     else if (this.mapObj._blocks.hasOwnProperty("Tower")) {
         var maintab = new TowerTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Storage") && this.mapObj._blocks.hasOwnProperty("Unit")) {
+    else if (this.mapObj._blocks.hasOwnProperty("ResourceStorage")) {
         var maintab = new StorageTab(this.mapObj);
     }
     else if (this.mapObj._blocks.hasOwnProperty("Unit"))  {
