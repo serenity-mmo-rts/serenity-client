@@ -10,6 +10,9 @@ var UiGlobalMenu = function () {
         $('<b>not logged in</b>').appendTo(this.content);
     }
 
+    this.fps = $('<div>fps: </div>');
+    this.fps.appendTo(this.content);
+
     var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
     if (parentLayerId) {
         var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.content);
@@ -20,4 +23,8 @@ var UiGlobalMenu = function () {
         });
     }
 
+}
+
+UiGlobalMenu.prototype.setFPS = function(fps) {
+    this.fps.text("fps: " + fps.toString());
 }

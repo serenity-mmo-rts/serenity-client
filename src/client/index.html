@@ -25,48 +25,50 @@
     <script type="text/javascript" src="lib/seedrandom.js"></script>
     <script src="/ntpClient/ntp.js"></script>
 
-
-
-    <script type="text/javascript" src="ui/register.js"></script>
-    <script type="text/javascript" src="ui/login.js"></script>
-
-
+    <script type="text/javascript" src="ui/BuildMenu.js"></script>
+    <script type="text/javascript" src="ui/Button.js"></script>
+    <script type="text/javascript" src="ui/ButtonMenu.js"></script>
+    <script type="text/javascript" src="ui/ChatRenderer.js"></script>
+    <script type="text/javascript" src="ui/HeaderRenderer.js"></script>
+    <script type="text/javascript" src="ui/Icon.js"></script>
+    <script type="text/javascript" src="ui/Login.js"></script>
+    <script type="text/javascript" src="ui/Menu.js"></script>
+    <script type="text/javascript" src="ui/Offense.js"></script>
     <script type="text/javascript" src="ui/ProgressBar.js"></script>
-    <script type="text/javascript" src="ui/UiGlobalMenu.js"></script>
-    <script type="text/javascript" src="ui/UiRessourceMap.js"></script>
+    <script type="text/javascript" src="ui/Register.js"></script>
+    <script type="text/javascript" src="ui/SidebarRenderer.js"></script>
     <script type="text/javascript" src="ui/UiBgMap.js"></script>
+    <script type="text/javascript" src="ui/UiGlobalMenu.js"></script>
     <script type="text/javascript" src="ui/UiObjectContext.js"></script>
+    <script type="text/javascript" src="ui/UiRessourceMap.js"></script>
     <script type="text/javascript" src="ui/UiSlidingPanel.js"></script>
     <script type="text/javascript" src="ui/UiSlidingPanelRight.js"></script>
     <script type="text/javascript" src="ui/UiSlidingPanelRightBottom.js"></script>
-    <script type="text/javascript" src="ui/Button.js"></script>
-    <script type="text/javascript" src="ui/buttonMenu.js"></script>
 
     <script type="text/javascript" src="ui/tabs/DefenseTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/DeliveryAndTransportationTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/FactoryTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/FieldTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/GateTab.js"></script>
     <script type="text/javascript" src="ui/tabs/HubTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/OffenseTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/StorageTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/LaborTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/LeisureBuildingTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/ResourceProducerTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/ResourcesTab.js"></script>
     <script type="text/javascript" src="ui/tabs/ScienceCenterTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/StorageTab.js"></script>
     <script type="text/javascript" src="ui/tabs/SublayerTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/UnitFactoryTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/UpgradeTab.js"></script>
-    <script type="text/javascript" src="ui/tabs/SpecialTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/TowerTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/UnitObjectTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/UnitsTab.js"></script>
+    <script type="text/javascript" src="ui/tabs/UpgradesTab.js"></script>
 
-
-    <script type="text/javascript" src="mapRenderer.js"></script>
-    <script type="text/javascript" src="ui/BuildMenu.js"></script>
-    <script type="text/javascript" src="minimapRenderer.js"></script>
-    <script type="text/javascript" src="ui/headerRenderer.js"></script>
-    <script type="text/javascript" src="ui/sidebarRenderer.js"></script>
-    <script type="text/javascript" src="ui/chatRenderer.js"></script>
     <script type="text/javascript" src="LayerView.js"></script>
     <script type="text/javascript" src="MapContainer.js"></script>
     <script type="text/javascript" src="MapControl.js"></script>
-    <script type="text/javascript" src="RessourceMap.js"></script>
-    <script type="text/javascript" src="RessourceMapWrapper.js"></script>
-
+    <script type="text/javascript" src="MapRenderer.js"></script>
+    <script type="text/javascript" src="MinimapRenderer.js"></script>
+    <script type="text/javascript" src="ResourceMap.js"></script>
+    <script type="text/javascript" src="ResourceMapWrapper.js"></script>
+    <script type="text/javascript" src="UIContainer.js"></script>
 
     <!-- game  -->
 
@@ -79,12 +81,10 @@
     <script type="text/javascript" src="game/Spritesheet.js"></script>
     <script type="text/javascript" src="game/User.js"></script>
 
-
-
-
     <script type="text/javascript" src="game/events/AbstractEvent.js"></script>
     <script type="text/javascript" src="game/events/BuildObjectEvent.js"></script>
-    <script type="text/javascript" src="game/events/BuildItemEvent.js"></script>
+    <script type="text/javascript" src="game/events/BuildConnectionEvent.js"></script>
+    <script type="text/javascript" src="game/events/BuildUpgradeEvent.js"></script>
     <script type="text/javascript" src="game/events/EventFactory.js"></script>
 
     <script type="text/javascript" src="game/items/Combat.js"></script>
@@ -103,7 +103,6 @@
     <script type="text/javascript" src="game/layer/Trade.js"></script>
     <script type="text/javascript" src="game/layer/EventScheduler.js"></script>
 
-
     <script type="text/javascript" src="game/mapObjects/ActivityPlace.js"></script>
     <script type="text/javascript" src="game/mapObjects/EnergyManager.js"></script>
     <script type="text/javascript" src="game/mapObjects/Environment.js"></script>
@@ -111,8 +110,10 @@
     <script type="text/javascript" src="game/mapObjects/Field.js"></script>
     <script type="text/javascript" src="game/mapObjects/Gate.js"></script>
     <script type="text/javascript" src="game/mapObjects/HubNode.js"></script>
+    <script type="text/javascript" src="game/mapObjects/HubConnectivity.js"></script>
     <script type="text/javascript" src="game/mapObjects/ProductivityCalculator.js"></script>
     <script type="text/javascript" src="game/mapObjects/ResourceProduction.js"></script>
+    <script type="text/javascript" src="game/mapObjects/ResourceStorage.js"></script>
     <script type="text/javascript" src="game/mapObjects/SoilProduction.js"></script>
     <script type="text/javascript" src="game/mapObjects/Sublayer.js"></script>
     <script type="text/javascript" src="game/mapObjects/TechProduction.js"></script>
@@ -121,7 +122,7 @@
     <script type="text/javascript" src="game/mapObjects/UpgradeProduction.js"></script>
     <script type="text/javascript" src="game/mapObjects/UserObject.js"></script>
     <script type="text/javascript" src="game/mapObjects/WorkingPlace.js"></script>
-
+    <script type="text/javascript" src="game/mapObjects/ConstructionSite.js"></script>
 
     <script type="text/javascript" src="game/types/AbstractType.js"></script>
     <script type="text/javascript" src="game/types/ItemType.js"></script>
@@ -130,17 +131,12 @@
     <script type="text/javascript" src="game/types/ResourceType.js"></script>
     <script type="text/javascript" src="game/types/TechnologyType.js"></script>
 
-
     <script type="text/javascript" src="game/user/Commander.js"></script>
     <script type="text/javascript" src="game/user/Mails.js"></script>
     <script type="text/javascript" src="game/user/News.js"></script>
     <script type="text/javascript" src="game/user/Technologies.js"></script>
 
-
-
-
-
-    <script type="text/javascript" src="client.js"></script>
+    <script type="text/javascript" src="Client.js"></script>
 
 
     <script type="text/javascript">
