@@ -64,6 +64,13 @@ UiObjectContext.prototype.update = function() {
         if (this.mapObj._blocks.hasOwnProperty("UserObject")) {
             this.mainInfo();
             this.createTabs();
+
+            if (this.mapObj._blocks.hasOwnProperty("FeatureManager")) {
+                if (this.mapObj._blocks.FeatureManager.getState()){
+                    this.mapObj._blocks.FeatureManager.updateObjectProperties();
+                }
+
+            }
         }
     }
 
