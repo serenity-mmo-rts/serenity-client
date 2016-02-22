@@ -62,15 +62,16 @@ UiObjectContext.prototype.update = function() {
     this.tabs.empty();
     if (this.mapObj) {
         if (this.mapObj._blocks.hasOwnProperty("UserObject")) {
-            this.mainInfo();
-            this.createTabs();
-
             if (this.mapObj._blocks.hasOwnProperty("FeatureManager")) {
                 if (this.mapObj._blocks.FeatureManager.getState()){
                     this.mapObj._blocks.FeatureManager.updateObjectProperties();
                 }
 
             }
+            this.mainInfo();
+            this.createTabs();
+
+
         }
     }
 
@@ -207,13 +208,18 @@ UiObjectContext.prototype.getItemsContextMenu = function() {
 
 UiObjectContext.prototype.tick = function() {
 
-    if (this.mapObj){
-        if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length>0) {
-           this.updateProgress(this.mapObj._blocks["UpgradeProduction"].buildQueue[0].progress());
-        }
-        else {
-            this.updateProgress(0);
+    if (this.mapObj!=undefined) {
+
+        if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")) {
+
+            if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length > 0) {
+                this.updateProgress(this.mapObj._blocks["UpgradeProduction"].buildQueue[0].progress());
+            }
+            else {
+                this.updateProgress(0);
+            }
         }
     }
+
 };
 
