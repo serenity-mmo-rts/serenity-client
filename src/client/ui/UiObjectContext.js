@@ -58,12 +58,26 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
 UiObjectContext.prototype.update = function() {
 
+    if (this.tabs!=undefined) {
+        this.activeTab= this.tabs.tabs('option', 'active');
+        if (!this.activeTab){
+            this.activeTab = 0;
+        }
+    }
     this.header.empty();
     this.tabs.empty();
     if (this.mapObj) {
         if (this.mapObj._blocks.hasOwnProperty("UserObject")) {
+            if (this.mapObj._blocks.hasOwnProperty("FeatureManager")) {
+                if (this.mapObj._blocks.FeatureManager.getState()){
+                    this.mapObj._blocks.FeatureManager.updateObjectProperties();
+                }
+
+            }
             this.mainInfo();
             this.createTabs();
+
+
         }
     }
 
@@ -182,7 +196,7 @@ UiObjectContext.prototype.createTabs = function() {
     defensetab.content.appendTo(this.tabs);
 
     this.tabs.tabs( "refresh" );
-    this.tabs.tabs({ active: 0 });
+    this.tabs.tabs({ active: this.activeTab });
     uc.layerView.uiObjectContextPanel.update(0);
 
 };
@@ -200,13 +214,18 @@ UiObjectContext.prototype.getItemsContextMenu = function() {
 
 UiObjectContext.prototype.tick = function() {
 
-    if (this.mapObj){
-        if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length>0) {
-           this.updateProgress(this.mapObj._blocks["UpgradeProduction"].buildQueue[0].progress());
-        }
-        else {
-            this.updateProgress(0);
+    if (this.mapObj!=undefined) {
+
+        if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")) {
+
+            if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length > 0) {
+                this.updateProgress(this.mapObj._blocks["UpgradeProduction"].buildQueue[0].progress());
+            }
+            else {
+                this.updateProgress(0);
+            }
         }
     }
+
 };
 
