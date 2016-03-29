@@ -96,11 +96,27 @@ LayerView.prototype.tick = function() {
     this.tickCounter += 1;
     if (this.tickCounter == 13) {
         this.tickCounter = 0;
-        var dateDiff = Date.now() - this.lastTick;
-        //console.log("fps: " + dateDiff.toString())
+
         if (this.uiGlobalMenu != undefined) {
+
+            // set FPS display:
+            var dateDiff = Date.now() - this.lastTick;
             this.uiGlobalMenu.setFPS(Math.round(1000 / dateDiff));
+
+            // set mouse coordinate display:
+            if(this.mapContainer) {
+                mouseCoord = this.mapContainer.getMouseInGameCoord();
+                this.uiGlobalMenu.setMouseCoord(mouseCoord);
+            }
+
         }
+
+
+
+
+
+
+
     }
     this.lastTick = Date.now();
 

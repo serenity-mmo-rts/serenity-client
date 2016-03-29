@@ -85,9 +85,12 @@ Client.prototype.loadMap = function(mapId) {
         myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
         myNewMap.mapData.rebuildQuadTree();
         myNewMap.mapData.items.load(mapData.initItems);
-        myNewMap.mapData.items.each(function(item){
-            item._mapObj.deployedItems.push(item); // set link from mapObj to item
-        });
+        //myNewMap.mapData.items.each(function(item){
+        //    item._mapObj.deployedItems.push(item); // set link from mapObj to item
+        //});
+
+        myNewMap.mapData.setPointers();
+
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
 
         myNewMap.mapData.mapObjects.each(function(mapObject){

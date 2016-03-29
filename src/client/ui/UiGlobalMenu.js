@@ -13,6 +13,10 @@ var UiGlobalMenu = function () {
     this.fps = $('<div>fps: </div>');
     this.fps.appendTo(this.content);
 
+    this.mouseCoord = $('<div>x: , y: </div>');
+    this.mouseCoord.appendTo(this.content);
+
+
     var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
     if (parentLayerId) {
         var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.content);
@@ -27,4 +31,8 @@ var UiGlobalMenu = function () {
 
 UiGlobalMenu.prototype.setFPS = function(fps) {
     this.fps.text("fps: " + fps.toString());
+}
+
+UiGlobalMenu.prototype.setMouseCoord = function(mouseCoord) {
+    this.mouseCoord.text("x: " + Math.round(mouseCoord.x).toString() + ", y: " + Math.round(mouseCoord.y).toString());
 }

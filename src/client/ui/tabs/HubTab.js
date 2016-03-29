@@ -19,18 +19,26 @@ var HubTab = function (mapObj) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        self.tmpEvent = new BuildConnectionEvent(game);
-        self.tmpEvent.setHubObject(self.mapObj);
+        var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId, x: 0, y: 0, objTypeId: "connection", userId: uc.userId, state: mapObjectStates.TEMP});
+        object._blocks.Connection._connectedFrom = self.mapObj._id;
+
+        self.tmpEvent = new BuildObjectEvent(game);
+        self.tmpEvent.setMapObject(object);
+        uc.layerView.mapContainer.mapControl.map.addTempObj(object);
 
         function callbackOnSelect(objId){
             uc.addEvent(self.tmpEvent);
             self.tmpEvent = null;
         }
         function callbackCheckValidSelection(objId){
-            self.tmpEvent.setMapObjectById(objId);
+            self.tmpEvent._mapObj._blocks.Connection._connectedTo = objId;
             return self.tmpEvent.isValid();
         }
-        uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection);
+        function callbackCanceled(){
+            self.tmpEvent = null;
+            uc.layerView.mapContainer.mapControl.map.deleteTempObj();
+        }
+        uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
 
     });
 

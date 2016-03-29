@@ -65,6 +65,15 @@ var MapContainer = function(mapId){
      this.map.tick();
  };
 
+ MapContainer.prototype.getMouseInGameCoord = function() {
+     var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+     var gameCoord = {
+         x: this.map.renderCoord2GameX(pt.x, pt.y),
+         y: this.map.renderCoord2GameY(pt.x, pt.y)
+     };
+     return gameCoord;
+ }
+
 
 
  MapContainer.prototype.MouseWheelHandler = function (e) {

@@ -51,11 +51,12 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     var availableBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
     var allItems= this.mapObj.getItems();
 
-    for (var i = 0; i<allItems.length; i++){
-            var item = allItems[i];
-            var level = allItems[i].getLevel();
+    for (var itemId in allItems) {
+        if (allItems.hasOwnProperty(itemId)) {
+            var item = allItems[itemId];
+            var level = allItems[itemId].getLevel();
             var maxLevel = item._itemType._maxLevel;
-            var itemType =  allItems[i]._itemType;
+            var itemType = allItems[itemId]._itemType;
             var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
             var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
             var x = spriteFrameIcon[0];
@@ -65,21 +66,49 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
             var img = spritesheet.images[spriteFrameIcon[4]];
             var gap = 10;
 
-            var iconContainer= $('<div style="white-space:nowrap"></div>').css({'width':32, 'height':32, 'position': 'relative','display': 'inline-block','padding-right':gap+'px'});
+            var iconContainer = $('<div style="white-space:nowrap"></div>').css({
+                'width': 32,
+                'height': 32,
+                'position': 'relative',
+                'display': 'inline-block',
+                'padding-right': gap + 'px'
+            });
             var image = $('<div style="white-space:nowrap" ></div>');
-            image.css({'background-image': 'url('+img+')' ,'background-position-x':-x, 'background-position-y':-y,'background-repeat':'no-repeat','width':breite,'height':hoehe});
+            image.css({
+                'background-image': 'url(' + img + ')',
+                'background-position-x': -x,
+                'background-position-y': -y,
+                'background-repeat': 'no-repeat',
+                'width': breite,
+                'height': hoehe
+            });
             image.appendTo(iconContainer);
-            var upgradeContainer= $('<div><b>+</b></div>').css({'width':6, 'height':6, 'position': 'relative','display': 'inline-block','left':32+'px','top':-32+'px'});
+            var upgradeContainer = $('<div><b>+</b></div>').css({
+                'width': 6,
+                'height': 6,
+                'position': 'relative',
+                'display': 'inline-block',
+                'left': 32 + 'px',
+                'top': -32 + 'px'
+            });
 
-            if (level<maxLevel){
-                this.levelUpgrade(upgradeContainer,item);
+            if (level < maxLevel) {
+                this.levelUpgrade(upgradeContainer, item);
                 upgradeContainer.css('cursor', 'pointer');
             }
 
             upgradeContainer.appendTo(iconContainer);
-            var levelShowContainer= $('<div><b>'+level+'</b></div>').css({'width':6, 'height':6, 'position': 'relative','display': 'inline-block','left':27+'px','top':-14+'px'});
+            var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
+                'width': 6,
+                'height': 6,
+                'position': 'relative',
+                'display': 'inline-block',
+                'left': 27 + 'px',
+                'top': -14 + 'px'
+            });
             levelShowContainer.appendTo(iconContainer);
             iconContainer.appendTo(availableBox);
+        }
     }
     availableTitle.appendTo(wrap2);
     availableBox.appendTo(wrap2);
