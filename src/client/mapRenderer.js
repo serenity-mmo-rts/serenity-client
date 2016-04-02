@@ -224,25 +224,59 @@ Map.prototype.renderObj = function(mapObject) {
         this.obj_container.removeChild(mapObject.objectBitmap);
     }
 
-    if (mapObject.state == mapObjectStates.TEMP) {
-        var objType = game.objectTypes.get(mapObject.objTypeId);
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
-        // here could come a image cropping
-        objectBitmap.gotoAndStop(objType._spriteFrame);
-        objectBitmap.alpha = 0.7;
-    }
-    else if (mapObject.state == mapObjectStates.WORKING) {
-        var construction = game.objectTypes.get("constructionSite");
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
-        objectBitmap.gotoAndStop(construction._spriteFrame);
-        objectBitmap.alpha = 1;
+
+    if (mapObject._blocks.hasOwnProperty("Connection")) {
+        var objectBitmap = new createjs.Shape();
+
+        var dx = 0.5 * mapObject.width * Math.cos(-mapObject.ori);
+        var dy = 0.5 * mapObject.width * Math.sin(-mapObject.ori);
+
+        var tmpX = this.gameCoord2RenderX(dx,dy);
+        var tmpY = this.gameCoord2RenderY(dx,dy);
+
+        if (mapObject.state == mapObjectStates.TEMP) {
+        objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+            .beginStroke("rgba(0,0,0,0.5)")
+            .setStrokeStyle(10)
+            .lineTo(tmpX, tmpY)
+            .closePath();
+        }
+        else if (mapObject.state == mapObjectStates.WORKING) {
+            objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                .beginStroke("rgba(130,130,130,1)")
+                .setStrokeStyle(10)
+                .lineTo(tmpX, tmpY)
+                .closePath();
+        }
+        else {
+            objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                .beginStroke("rgba(0,0,0,1)")
+                .setStrokeStyle(10)
+                .lineTo(tmpX, tmpY)
+                .closePath();
+        }
     }
     else {
-        var objType = game.objectTypes.get(mapObject.objTypeId);
-        var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
-        objectBitmap.gotoAndStop(objType._spriteFrame);
-    }
+        if (mapObject.state == mapObjectStates.TEMP) {
+            var objType = game.objectTypes.get(mapObject.objTypeId);
 
+            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
+            // here could come a image cropping
+            objectBitmap.gotoAndStop(objType._spriteFrame);
+            objectBitmap.alpha = 0.7;
+        }
+        else if (mapObject.state == mapObjectStates.WORKING) {
+            var construction = game.objectTypes.get("constructionSite");
+            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
+            objectBitmap.gotoAndStop(construction._spriteFrame);
+            objectBitmap.alpha = 1;
+        }
+        else {
+            var objType = game.objectTypes.get(mapObject.objTypeId);
+            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
+            objectBitmap.gotoAndStop(objType._spriteFrame);
+        }
+    }
 
     objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
     objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
