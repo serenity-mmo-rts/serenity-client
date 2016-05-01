@@ -16,7 +16,7 @@ UpgradesTab.prototype.listAvailableUpgrades = function () {
     var wrap1 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px'});
     this.creationTitle =  $('<div>Available Upgrades</div>').css({});
     this.creationBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
-    var allowedItemIds = this.mapObj._blocks.UpgradeProduction._itemTypeId;
+    var allowedItemIds = this.mapObj._blocks.UpgradeProduction.itemTypeIds;
 
     for (var i = 0; i<allowedItemIds.length; i++){
         var itemId = allowedItemIds[i];
