@@ -81,6 +81,10 @@ Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game,mapData.initMap);
+
+        //if (game.layers.get(myNewMap._id) !== undefined) {
+        //    game.layers.deleteById(myNewMap._id);
+        //}
         game.layers.add(myNewMap);
         myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
         myNewMap.mapData.rebuildQuadTree();

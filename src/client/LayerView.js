@@ -30,6 +30,7 @@ LayerView.prototype.finishedLoadingMap = function () {
     if (this.mapContainer) {
         var oldMapContainer = this.mapContainer;
         oldMapContainer.removeFromCanvas();
+        game.layers.deleteById(oldMapContainer.mapId);
     }
 
     this.mapContainer = this.mapContainerTempLoading;

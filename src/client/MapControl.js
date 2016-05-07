@@ -211,11 +211,13 @@ MapControl.prototype.tick = function () {
 
     if (this.state == this.controlState.SELECTOBJ) {
         var hitObjId = this.map.getCurrentObject();
-        if (this.callbackCheckValidSelection(hitObjId)) {
-            document.body.style.cursor='pointer';
-        }
-        else {
-            document.body.style.cursor='default';
+        if (hitObjId) {
+            if (this.callbackCheckValidSelection(hitObjId)) {
+                document.body.style.cursor = 'pointer';
+            }
+            else {
+                document.body.style.cursor = 'default';
+            }
         }
 
     }

@@ -20,7 +20,7 @@ var HubTab = function (mapObj) {
         e.preventDefault();
 
         var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId, x: 0, y: 0, objTypeId: "connection", userId: uc.userId, state: mapObjectStates.TEMP});
-        object._blocks.Connection._connectedFrom = self.mapObj._id;
+        object._blocks.Connection.connectedFrom = self.mapObj._id;
 
         self.tmpEvent = new BuildObjectEvent(game);
         self.tmpEvent.setMapObject(object);
@@ -31,7 +31,7 @@ var HubTab = function (mapObj) {
             self.tmpEvent = null;
         }
         function callbackCheckValidSelection(objId){
-            self.tmpEvent._mapObj._blocks.Connection._connectedTo = objId;
+            self.tmpEvent._mapObj._blocks.Connection.connectedTo = objId;
             uc.layerView.mapContainer.mapControl.map.renderObj(self.tmpEvent._mapObj);
             var valid = self.tmpEvent.isValid();
             if (valid) {
