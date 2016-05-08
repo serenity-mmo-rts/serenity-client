@@ -16,6 +16,8 @@ var UiGlobalMenu = function () {
     this.mouseCoord = $('<div>x: , y: </div>');
     this.mouseCoord.appendTo(this.content);
 
+    this.debugText = $('<div></div>');
+    this.debugText.appendTo(this.content);
 
     var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
     if (parentLayerId) {
@@ -35,4 +37,8 @@ UiGlobalMenu.prototype.setFPS = function(fps) {
 
 UiGlobalMenu.prototype.setMouseCoord = function(mouseCoord) {
     this.mouseCoord.text("x: " + Math.round(mouseCoord.x).toString() + ", y: " + Math.round(mouseCoord.y).toString());
+}
+
+UiGlobalMenu.prototype.setDebugText = function(debugText) {
+    this.debugText.text(debugText);
 }

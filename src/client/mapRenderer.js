@@ -116,9 +116,9 @@ var Map = function(mapContainer, stage,mapId) {
     this.bgImg.src = bgFile;
 
     // use preloadJS to load the images:
-    var queue = new createjs.LoadQueue(true);
-    queue.addEventListener("complete", function() {self.createMap()});
-    queue.loadManifest(imagesToLoad);
+    this.loadqueue = new createjs.LoadQueue(true);
+    this.loadqueue.addEventListener("complete", function() {self.createMap()});
+    this.loadqueue.loadManifest(imagesToLoad);
 };
 
 
@@ -224,9 +224,9 @@ Map.prototype.renderObj = function(mapObject) {
         this.obj_container.removeChild(mapObject.objectBitmap);
     }
 
+    var objType = game.objectTypes.get(mapObject.objTypeId);
 
     if (mapObject._blocks.hasOwnProperty("Connection")) {
-        var objectBitmap = new createjs.Shape();
 
         var dx = 0.5 * mapObject.width * Math.cos(-mapObject.ori);
         var dy = 0.5 * mapObject.width * Math.sin(-mapObject.ori);
@@ -234,32 +234,123 @@ Map.prototype.renderObj = function(mapObject) {
         var tmpX = this.gameCoord2RenderX(dx,dy);
         var tmpY = this.gameCoord2RenderY(dx,dy);
 
-        if (mapObject.state == mapObjectStates.TEMP) {
-        objectBitmap.graphics.moveTo(-tmpX, -tmpY)
-            .beginStroke("rgba(0,0,0,0.5)")
-            .setStrokeStyle(10)
-            .lineTo(tmpX, tmpY)
-            .closePath();
-        }
-        else if (mapObject.state == mapObjectStates.WORKING) {
-            objectBitmap.graphics.moveTo(-tmpX, -tmpY)
-                .beginStroke("rgba(130,130,130,1)")
-                .setStrokeStyle(10)
-                .lineTo(tmpX, tmpY)
-                .closePath();
+        var objectBitmap = new createjs.Shape();
+
+        if (objType._spriteFrame instanceof Array){
+            // mapObject.ori is between -pi to pi
+
+            var pi = Math.PI;
+            var orientation = mapObject.ori;
+            orientation -= pi/4;
+            if (orientation<-pi) {
+                orientation += 2 * pi;
+            }
+
+            var flipUpDown = false;
+            if (orientation<0) {
+                flipUpDown = true;
+                orientation += 2 * pi;
+            }
+            orientation = orientation % pi;
+            // now from 0 to pi
+
+            var mirror = false;
+            if (orientation > pi/2) {
+                mirror = true;
+                orientation = pi - orientation;
+            }
+
+            if (uc.layerView.uiGlobalMenu)
+                uc.layerView.uiGlobalMenu.setDebugText(orientation.toString() + " mirror: " + mirror.toString() + " flip: " + flipUpDown.toString());
+
+            orientation = Math.round(12*orientation/pi);
+            // the result should be a number between 0 and 6
+            //
+
+
+            if (orientation>6)
+                orientation=6;
+            if (orientation<0)
+                orientation=0;
+
+            /* deprecated... use method below instead...
+
+            // load the sprite and render to a temporary canvas to extract bitmap:
+            var singleImg = document.createElement("canvas");
+            singleImg.width = 100;
+            singleImg.height = 50;
+            var ctx = singleImg.getContext("2d");
+            var singleSpriteBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);
+            singleSpriteBitmap.gotoAndStop(objType._spriteFrame[orientation]);
+            singleSpriteBitmap.x = 50;
+            singleSpriteBitmap.y = 25;
+            var tmpstage = new createjs.Stage(singleImg);
+            tmpstage.addChild(singleSpriteBitmap);
+            tmpstage.update();
+
+            */
+
+            // easier by directly accessing the image field in the spritesheet:
+            var singleImg = this.spritesheets[objType._spritesheetId]._frames[orientation].image;
+
+            var width = 2*Math.sqrt( tmpX*tmpX + tmpY*tmpY );
+            objectBitmap.graphics.beginBitmapFill( singleImg,  "repeat" ).rect(-width/2, 0, width, 50);
+
+            var renderAngle = Math.atan2(tmpY, tmpX);
+            objectBitmap.rotation = 180*renderAngle/Math.PI;
+
+            if (flipUpDown) {
+                if (mirror) {
+                    // bottom left
+                    objectBitmap.scaleX = -1;
+                    objectBitmap.scaleY = 1;
+                }
+                else {
+                    // bottom right
+                    objectBitmap.scaleX = -1;
+                    objectBitmap.scaleY = -1;
+                }
+            }
+            else {
+                if (mirror) {
+                    //top left
+                    objectBitmap.scaleX = 1;
+                    objectBitmap.scaleY = -1;
+                }
+                else {
+                    // top right
+                    objectBitmap.scaleX = 1;
+                    objectBitmap.scaleY = 1;
+                }
+            }
         }
         else {
-            objectBitmap.graphics.moveTo(-tmpX, -tmpY)
-                .beginStroke("rgba(0,0,0,1)")
-                .setStrokeStyle(10)
-                .lineTo(tmpX, tmpY)
-                .closePath();
+            var objectBitmap = new createjs.Shape();
+            if (mapObject.state == mapObjectStates.TEMP) {
+                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                    .beginStroke("rgba(0,0,0,0.5)")
+                    .setStrokeStyle(10)
+                    .lineTo(tmpX, tmpY)
+                    .closePath();
+            }
+            else if (mapObject.state == mapObjectStates.WORKING) {
+                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                    .beginStroke("rgba(130,130,130,1)")
+                    .setStrokeStyle(10)
+                    .lineTo(tmpX, tmpY)
+                    .closePath();
+            }
+            else {
+                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                    .beginStroke("rgba(0,0,0,1)")
+                    .setStrokeStyle(10)
+                    .lineTo(tmpX, tmpY)
+                    .closePath();
+            }
         }
     }
     else {
         if (mapObject.state == mapObjectStates.TEMP) {
-            var objType = game.objectTypes.get(mapObject.objTypeId);
-
             var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
             // here could come a image cropping
             objectBitmap.gotoAndStop(objType._spriteFrame);
@@ -272,7 +363,6 @@ Map.prototype.renderObj = function(mapObject) {
             objectBitmap.alpha = 1;
         }
         else {
-            var objType = game.objectTypes.get(mapObject.objTypeId);
             var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
             objectBitmap.gotoAndStop(objType._spriteFrame);
         }
