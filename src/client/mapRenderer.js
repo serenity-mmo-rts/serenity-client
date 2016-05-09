@@ -273,7 +273,7 @@ Map.prototype.renderObj = function(mapObject) {
             if (orientation<0)
                 orientation=0;
 
-            /* deprecated... use method below instead...
+            /* method 1: deprecated... use method below instead...
 
             // load the sprite and render to a temporary canvas to extract bitmap:
             var singleImg = document.createElement("canvas");
@@ -290,7 +290,13 @@ Map.prototype.renderObj = function(mapObject) {
 
             */
 
-            // easier by directly accessing the image field in the spritesheet:
+            /* method 2: not working ... deprecated... use method below instead...
+             var singleSpriteBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);
+            singleSpriteBitmap.cache(-50, -25, 100, 50);
+             var singleImg = singleSpriteBitmap.cacheCanvas;
+             */
+
+            /* method 3: easier by directly accessing the image field in the spritesheet: */
             var singleImg = this.spritesheets[objType._spritesheetId]._frames[orientation].image;
 
             var width = 2*Math.sqrt( tmpX*tmpX + tmpY*tmpY );
@@ -357,10 +363,16 @@ Map.prototype.renderObj = function(mapObject) {
             objectBitmap.alpha = 0.7;
         }
         else if (mapObject.state == mapObjectStates.WORKING) {
-            var construction = game.objectTypes.get("constructionSite");
-            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
-            objectBitmap.gotoAndStop(construction._spriteFrame);
-            objectBitmap.alpha = 1;
+
+            if (objType._spriteAnimation !== null){
+                var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId], "working");
+            }
+            else {
+                var construction = game.objectTypes.get("constructionSite");
+                var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
+                objectBitmap.gotoAndStop(construction._spriteFrame);
+                objectBitmap.alpha = 1;
+            }
         }
         else {
             var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
