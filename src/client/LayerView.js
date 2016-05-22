@@ -11,7 +11,8 @@ var LayerView = function(){
 
     window.addEventListener('resize',function(){self.resize()}, false);
 
-    createjs.Ticker.setFPS(60);
+    createjs.Ticker.framerate = 60;
+    //createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
 }
