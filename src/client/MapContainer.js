@@ -14,8 +14,11 @@ var MapContainer = function(mapId){
 
     // Containers
     this.zoom_container = new createjs.Container();
+    this.zoom_container.name = "zoom_container";
     this.main_container = new createjs.Container();
+    this.main_container.name = "main_container";
     this.menu_container = new createjs.Container();
+    this.menu_container.name = "menu_container";
 
     // movement outside
     this.stage.mouseMoveOutside = true;

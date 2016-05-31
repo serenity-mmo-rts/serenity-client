@@ -17,6 +17,9 @@ var MapControl = function (map) {
 
     this.state = this.controlState.DEFAULT;
 
+    this.startDragAt = null;
+
+
     this.tempGameEvent = null;
 
     // member variable to store a callback function which is executed after selection of object/item on map with the selected object
@@ -31,15 +34,32 @@ var MapControl = function (map) {
         self.handleMousedownMain(evt)
     }));
 
+    this.screenMoved = false;
+
+    this.map.main_container.addEventListener("pressmove", function (ev) {
+        if (self.startDragAt != null) {
+            self.screenMoved = true;
+            var mouseAt = self.map.main_container.globalToLocal(ev.stageX, ev.stageY);
+            self.map.main_container.x += mouseAt.x - self.startDragAt.x;
+            self.map.main_container.y += mouseAt.y - self.startDragAt.y;
+        }
+    });
+
+    this.map.main_container.addEventListener("pressup", function (ev) {
+        self.startDragAt = null;
+        if (self.screenMoved) {
+            self.map.checkRendering();
+            self.screenMoved = false;
+        }
+
+    });
+
 }
 
 
 MapControl.prototype.handleMousedownMain = function (evt) {
     var self = this;
-
-
     switch (this.state) {
-
 
         case this.controlState.DEFAULT:
             var hitObjId = this.map.getCurrentObject();
@@ -47,32 +67,9 @@ MapControl.prototype.handleMousedownMain = function (evt) {
                 uc.layerView.uiObjectContext.loadObjectById(hitObjId);
                 uc.layerView.uiObjectContextPanel.show(200);
             }
-
-            else { // drag main container
-
-                var startDragAt = this.map.main_container.globalToLocal(evt.stageX, evt.stageY);
-                var mouseMoved = false;
-                var main_container = this.map.main_container;
-                evt.addEventListener("mousemove", function (ev) {
-                    var mouseAt = main_container.globalToLocal(ev.stageX, ev.stageY);
-                    main_container.x += mouseAt.x - startDragAt.x;
-                    main_container.y += mouseAt.y - startDragAt.y;
-                    mouseMoved = true;
-                });
-
-
-                evt.addEventListener("mouseup", function (ev) {
-
-//                    var minicoords =  self.minimap.render2game.layers.get(uc.layerView.mapId).mapData.mapObjects.hashListMiniCoords(-self.main_container.x,-self.main_container.y);
-                    //                  self.minimap.location.x = minicoords[0];
-                    //                  self.minimap.location.y = minicoords[1];
-                    self.map.checkRendering();
-
-                    if (mouseMoved==false) {
-                        uc.layerView.uiObjectContext.loadObjectById(null);
-                        uc.layerView.uiObjectContextPanel.hide(200);
-                    }
-                });
+            else {
+                // start dragging:
+                this.startDragAt = this.map.main_container.globalToLocal(evt.stageX, evt.stageY);
             }
 
             break;

@@ -119,7 +119,28 @@ var Map = function(mapContainer, stage,mapId) {
     this.loadqueue = new createjs.LoadQueue(true);
     this.loadqueue.addEventListener("complete", function() {self.createMap()});
     this.loadqueue.loadManifest(imagesToLoad);
+
 };
+
+Map.prototype.IsImageOk = function(img) {
+    // During the onload event, IE correctly identifies any images that
+    // weren’t downloaded as not complete. Others should too. Gecko-based
+    // browsers act like NS4 in that they report this incorrectly.
+    if (!img.complete) {
+        return false;
+    }
+
+    // However, they do have two very useful properties: naturalWidth and
+    // naturalHeight. These give the true size of the image. If it failed
+    // to load, either of these should be zero.
+
+    if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0) {
+        return false;
+    }
+
+    // No other way of checking: assume it’s ok.
+    return true;
+}
 
 
 Map.prototype.createMap = function() {
@@ -273,14 +294,14 @@ Map.prototype.renderObj = function(mapObject) {
             if (orientation<0)
                 orientation=0;
 
-            /* deprecated... use method below instead...
+            /* method 1: deprecated... use method below instead...
 
             // load the sprite and render to a temporary canvas to extract bitmap:
             var singleImg = document.createElement("canvas");
             singleImg.width = 100;
             singleImg.height = 50;
             var ctx = singleImg.getContext("2d");
-            var singleSpriteBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);
+            var singleSpriteBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);
             singleSpriteBitmap.gotoAndStop(objType._spriteFrame[orientation]);
             singleSpriteBitmap.x = 50;
             singleSpriteBitmap.y = 25;
@@ -290,11 +311,31 @@ Map.prototype.renderObj = function(mapObject) {
 
             */
 
-            // easier by directly accessing the image field in the spritesheet:
-            var singleImg = this.spritesheets[objType._spritesheetId]._frames[orientation].image;
+            /* method 2: not working ... deprecated... use method below instead...
+             var singleSpriteBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);
+            singleSpriteBitmap.cache(-50, -25, 100, 50);
+             var singleImg = singleSpriteBitmap.cacheCanvas;
+             */
 
+            /* method 3: easier by directly accessing the image field in the spritesheet: */
+            //var singleImg = this.spritesheets[objType._spritesheetId]._frames[orientation].image;
+            //var singleImg = this.spritesheets[objType._spritesheetId].getFrame(orientation).image;
+
+
+
+            var singleImg = new Image();
+            singleImg.src = this.spritesheets[objType._spritesheetId].getFrame(orientation).image.src;
+
+            var test = this.IsImageOk(this.spritesheets[objType._spritesheetId].getFrame(orientation).image);
+            console.log("image loaded:" + test.toString());
+
+            if (!test){
+                return objectBitmap;
+            }
             var width = 2*Math.sqrt( tmpX*tmpX + tmpY*tmpY );
-            objectBitmap.graphics.beginBitmapFill( singleImg,  "repeat" ).rect(-width/2, 0, width, 50);
+            var g = objectBitmap.graphics;
+            g.beginBitmapFill( singleImg,  "repeat" );
+            g.rect(-width/2, 0, width, 50);
 
             var renderAngle = Math.atan2(tmpY, tmpX);
             objectBitmap.rotation = 180*renderAngle/Math.PI;
@@ -326,45 +367,57 @@ Map.prototype.renderObj = function(mapObject) {
         }
         else {
             var objectBitmap = new createjs.Shape();
+
             if (mapObject.state == mapObjectStates.TEMP) {
-                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
-                    .beginStroke("rgba(0,0,0,0.5)")
+                objectBitmap.graphics
+                    .beginStroke("rgba(0,50,0,0.5)")
                     .setStrokeStyle(10)
+                    .moveTo(-tmpX, -tmpY)
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
             else if (mapObject.state == mapObjectStates.WORKING) {
-                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                objectBitmap.graphics
                     .beginStroke("rgba(130,130,130,1)")
                     .setStrokeStyle(10)
+                    .moveTo(-tmpX, -tmpY)
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
             else {
-                objectBitmap.graphics.moveTo(-tmpX, -tmpY)
+                objectBitmap.graphics
                     .beginStroke("rgba(0,0,0,1)")
                     .setStrokeStyle(10)
+                    .moveTo(-tmpX, -tmpY)
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
         }
     }
     else {
-        if (mapObject.state == mapObjectStates.TEMP) {
-            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
-            // here could come a image cropping
-            objectBitmap.gotoAndStop(objType._spriteFrame);
-            objectBitmap.alpha = 0.7;
-        }
-        else if (mapObject.state == mapObjectStates.WORKING) {
-            var construction = game.objectTypes.get("constructionSite");
-            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[construction._spritesheetId]);
-            objectBitmap.gotoAndStop(construction._spriteFrame);
-            objectBitmap.alpha = 1;
+        if (objType._spriteAnimation !== null){
+            var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId], "working");
         }
         else {
-            var objectBitmap = new createjs.BitmapAnimation(this.spritesheets[objType._spritesheetId]);  // render object from database
-            objectBitmap.gotoAndStop(objType._spriteFrame);
+
+            if (mapObject.state == mapObjectStates.TEMP) {
+                var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);  // render object from database
+                // here could come a image cropping
+                objectBitmap.gotoAndStop(objType._spriteFrame);
+                objectBitmap.alpha = 0.7;
+            }
+            else if (mapObject.state == mapObjectStates.WORKING) {
+                    var construction = game.objectTypes.get("constructionSite");
+                    var objectBitmap = new createjs.Sprite(this.spritesheets[construction._spritesheetId]);
+                    objectBitmap.gotoAndStop(construction._spriteFrame);
+                    objectBitmap.alpha = 1;
+
+            }
+            else {
+                var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);  // render object from database
+                objectBitmap.gotoAndStop(objType._spriteFrame);
+            }
+            objectBitmap.tickEnabled = false;
         }
     }
 
@@ -377,6 +430,8 @@ Map.prototype.renderObj = function(mapObject) {
     objectBitmap.name = mapObject._id;
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
+
+
 
     return objectBitmap;
 }

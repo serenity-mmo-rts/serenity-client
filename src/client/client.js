@@ -6,6 +6,8 @@ var Client = function() {
     this.loginForm;
     // vorübergehend
     this.layerView = new LayerView();
+
+
 };
 
 // Init function
