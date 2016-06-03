@@ -115,10 +115,13 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     wrap2.appendTo(this.content);
 };
 
-UpgradesTab.prototype.buildUpgrade = function (container,itemId) {
+UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
     var self = this;
     container.click(function (e) {
-        self.mapObj._blocks.UpgradeProduction.startUpgrade(itemId);
+        var evt = new BuildUpgradeEvent(game);
+        evt.setItemTypeId(itemTypeId);
+        evt.setParentObject(self.mapObj);
+        uc.addEvent(evt);
     });
     container.appendTo(this.creationBox);
     container = null;
