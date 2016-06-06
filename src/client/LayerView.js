@@ -19,7 +19,7 @@ var LayerView = function(){
 
 LayerView.prototype.loadMap = function (mapId) {
     var self = this;
-    this.mapContainerTempLoading =  new MapContainer(mapId);
+    this.mapContainerTempLoading = new MapContainer(mapId);
     this.mapContainerTempLoading.map.callbackFinishedLoading = function (){
         self.finishedLoadingMap();
     };
@@ -112,12 +112,6 @@ LayerView.prototype.tick = function() {
             }
 
         }
-
-
-
-
-
-
 
     }
     this.lastTick = Date.now();

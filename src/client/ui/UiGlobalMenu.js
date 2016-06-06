@@ -29,6 +29,9 @@ var UiGlobalMenu = function () {
         });
     }
 
+    this.testImage = new SpriteImg('cityBuildingsSprite01',5,50,50);
+    this.testImage.content.appendTo(this.content);
+
 }
 
 UiGlobalMenu.prototype.setFPS = function(fps) {

@@ -42,13 +42,17 @@ var BuildMenu = function(mapId,MapControl){
             var objectType = game.objectTypes.hashList[objectTypeId];
             var spritesheet = game.spritesheets.hashList[objectType._iconSpritesheetId];
             var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
-            var img = spritesheet.images[spriteFrameIcon[4]];
+            var imgSrc = spritesheet.images[spriteFrameIcon[4]];
             var objectname = objectType._name;
 
             var buildMenuItemId = 'cat' + i + 'obj' + k;
             $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="buildTime: '+objectType._buildTime+'"></a></li>');
             $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectname+'</p>');
-            $("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+img+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px" />');
+
+            var sprite = new SpriteImg(objectType._iconSpritesheetId, objectType._iconSpriteFrame, 32, 32);
+            $("#"+buildMenuItemId).append(sprite.content);
+            //$("#"+buildMenuItemId).append('<span class="buildMenuImg" style="background-image: url('+imgSrc+'); background-position:-'+spriteFrameIcon[0]+'px -'+spriteFrameIcon[1]+'px; background-repeat: no-repeat;" />');
+
             $("#"+buildMenuItemId).click(function()  {
                 //$("#buildMenu").hide();
                 //self.clickcount = 0;

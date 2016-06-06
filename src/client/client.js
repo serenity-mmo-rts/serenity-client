@@ -6,7 +6,9 @@ var Client = function() {
     this.loginForm;
     // vorübergehend
     this.layerView = new LayerView();
-
+    this.loadqueue = new createjs.LoadQueue(true);
+    this.spritesLoaded = false;
+    this.onSpriteLoadedCallback = {};
 
 };
 
@@ -104,13 +106,45 @@ Client.prototype.loadMap = function(mapId) {
         });
 
         // Create Layer Object
-        self.layerView.loadMap(myNewMap._id);
+
+        if (self.spritesLoaded) {
+            self.layerView.loadMap(myNewMap._id);
+        }
+        else {
+            self.onSpriteLoadedCallback['loadMap'] = function() {
+                self.layerView.loadMap(myNewMap._id);
+                delete self.onSpriteLoadedCallback['loadMap'];
+            };
+        }
     });
 }
 
 Client.prototype.onInitGameData = function(initGameData) {
+    var self = this;
+
     //init all global gameData variables:
     game.spritesheets.load(initGameData.spritesheets);
+
+    // start preloadJS:
+    var imagesToLoadHashList = {}, imagesToLoad = [];
+    for (var spritesheetId in game.spritesheets.hashList) {
+        var spritesheet = game.spritesheets.hashList[spritesheetId];
+        for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
+            if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
+                imagesToLoad.push({id: "sheet"+spritesheetId+"image"+i, src:spritesheet.images[i]});
+                imagesToLoadHashList[spritesheet.images[i]] = 1;
+            }
+        }
+    }
+    this.loadqueue.addEventListener("complete", function() {
+        self.spritesLoaded = true;
+        for (var key in self.onSpriteLoadedCallback){
+            self.onSpriteLoadedCallback[key]();
+        }
+    });
+    this.loadqueue.loadManifest(imagesToLoad);
+
+
     game.layerTypes.load(initGameData.layerTypes);
     game.objectTypes.load(initGameData.objectTypes);
     game.ressourceTypes.load(initGameData.ressourceTypes);

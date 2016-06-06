@@ -99,7 +99,8 @@ var Map = function(mapContainer, stage,mapId) {
 
     // create unique list of images to load:
     var imagesToLoadHashList = {}, imagesToLoad = [];
-    for (var spritesheetId in game.spritesheets.hashList) {
+
+    /*for (var spritesheetId in game.spritesheets.hashList) {
         var spritesheet = game.spritesheets.hashList[spritesheetId];
         for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
             if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
@@ -107,7 +108,7 @@ var Map = function(mapContainer, stage,mapId) {
                 imagesToLoadHashList[spritesheet.images[i]] = 1;
             }
         }
-    }
+    }*/
 
     // load background image:
     var bgFile = this.mapType._groundImage;
