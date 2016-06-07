@@ -112,9 +112,8 @@ var Map = function(mapContainer, stage,mapId) {
 
     // load background image:
     var bgFile = this.mapType._groundImage;
-    imagesToLoad.push(bgFile);
-    this.bgImg = new Image();
-    this.bgImg.src = bgFile;
+    imagesToLoad.push({id: "bgimage", src:bgFile} );
+    this.bgImg = null;
 
     // use preloadJS to load the images:
     this.loadqueue = new createjs.LoadQueue(true);
@@ -145,6 +144,8 @@ Map.prototype.IsImageOk = function(img) {
 
 
 Map.prototype.createMap = function() {
+
+    this.bgImg = this.loadqueue.getResult("bgimage");
 
     // add background object to map_container
     var background = new createjs.Graphics();
