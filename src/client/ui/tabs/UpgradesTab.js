@@ -83,6 +83,12 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 'height': hoehe
             });
             image.appendTo(iconContainer);
+            // check if item can be activated
+            if(item._blocks.Feature._processedStack[item._blocks.Feature._executeIndex]==false) {
+                this.activatePerClick(iconContainer, item);
+                iconContainer.css('cursor', 'pointer');
+            }
+
             var upgradeContainer = $('<div><b>+</b></div>').css({
                 'width': 6,
                 'height': 6,
@@ -91,7 +97,6 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 'left': 32 + 'px',
                 'top': -32 + 'px'
             });
-
             if (level < maxLevel) {
                 this.levelUpgrade(upgradeContainer, item);
                 upgradeContainer.css('cursor', 'pointer');
@@ -139,6 +144,11 @@ UpgradesTab.prototype.levelUpgrade = function (container,item) {
 };
 
 
+UpgradesTab.prototype.activatePerClick = function (container,item) {
+    container.click(function (e) {
+        item._blocks.Feature.checkStackExecution(true);
+    });
+    container.appendTo(this.creationBox);
+    container = null;
 
-
-
+};
