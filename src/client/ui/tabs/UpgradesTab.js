@@ -103,12 +103,11 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
             image.appendTo(iconContainer);
 
             // check if item can be activated
-            var spell = $('<div style="white-space:nowrap" ></div>');
-            if(item._blocks.Feature._processedStack[item._blocks.Feature._executeIndex]==false) {
-                this.activatePerClick(spell, item);
+
+            if(item._blocks.Feature._processedStack.isActivated==false) {
+                this.activatePerClick(iconContainer, item);
                 iconContainer.css('cursor', 'pointer');
             }
-            spell.appendTo(iconContainer);
 
             var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
                 'width': 6,
@@ -163,6 +162,8 @@ UpgradesTab.prototype.levelUpgrade = function (container,item) {
 
 UpgradesTab.prototype.activatePerClick = function (container,item) {
     container.click(function (e) {
-        item._blocks.Feature.checkStackExecution(true);
+        var evt = new ActivateFeatureEvent(game);
+        evt.setItem(item);
+        uc.addEvent(evt);
     });
 };
