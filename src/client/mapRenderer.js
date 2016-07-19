@@ -116,7 +116,7 @@ var Map = function(mapContainer, stage,mapId) {
     this.bgImg = null;
 
     // use preloadJS to load the images:
-    this.loadqueue = new createjs.LoadQueue(true);
+    this.loadqueue = new createjs.LoadQueue(false);
     this.loadqueue.addEventListener("complete", function() {self.createMap()});
     this.loadqueue.loadManifest(imagesToLoad);
 

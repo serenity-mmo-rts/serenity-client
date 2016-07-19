@@ -1,0 +1,22 @@
+{
+
+  "name": "A Wizard’s Lizard",
+
+  "main": "index.html",
+
+  "version": "1.0.0",
+
+  "nodejs": true,
+
+  "window": {
+
+    "title": "Serenity",
+
+    "fullscreen": true,
+    "toolbar": false,
+
+    "position": "center"
+
+  }
+
+}
