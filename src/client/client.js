@@ -6,7 +6,7 @@ var Client = function() {
     this.loginForm;
     // vorübergehend
     this.layerView = new LayerView();
-    this.loadqueue = new createjs.LoadQueue(true);
+    this.loadqueue = new createjs.LoadQueue(false);
     this.spritesLoaded = false;
     this.onSpriteLoadedCallback = {};
 
@@ -17,7 +17,8 @@ Client.prototype.init = function() {
 
     var self = this;
 
-    socket = io.connect(window.location.href);
+    //socket = io.connect(window.location.href);
+    socket = io.connect("http://localhost:8080/");
 
     socket.socket.on('error', function (reason){
         console.error('Unable to connect Socket.IO', reason);
