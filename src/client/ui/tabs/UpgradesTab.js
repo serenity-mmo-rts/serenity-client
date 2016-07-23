@@ -104,7 +104,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
 
             // check if item can be activated
 
-            if(item._blocks.Feature._processedStack.isActivated==false) {
+            if(item._blocks.Feature._processedStack.canBeActivated) {
                 this.activatePerClick(iconContainer, item);
                 iconContainer.css('cursor', 'pointer');
             }
