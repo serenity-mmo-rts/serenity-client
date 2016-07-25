@@ -216,6 +216,9 @@ MapControl.prototype.tick = function () {
                 document.body.style.cursor = 'default';
             }
         }
+        else{
+            document.body.style.cursor = 'default';
+        }
 
     }
 

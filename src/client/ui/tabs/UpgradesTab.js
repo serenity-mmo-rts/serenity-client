@@ -162,8 +162,29 @@ UpgradesTab.prototype.levelUpgrade = function (container,item) {
 
 UpgradesTab.prototype.activatePerClick = function (container,item) {
     container.click(function (e) {
+        var targetType = item._blocks.Feature._processedStack.targetType;
+        var operation = item._blocks.Feature._processedStack.currentOperation;
         var evt = new ActivateFeatureEvent(game);
         evt.setItem(item);
-        uc.addEvent(evt);
+        evt.setActivationParameters(operation);
+        if (targetType=="self"){
+            uc.addEvent(evt);
+        }
+        else if (targetType=="object"){
+
+            function callbackOnSelect(){
+                uc.addEvent(evt);
+            }
+            function callbackCheckValidSelection(objId){
+                evt.setTarget(objId);
+                var valid = evt.isValid();
+                return valid;
+            }
+            function callbackCanceled(){
+                evt = null;
+            }
+            uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
+        }
+
     });
 };
