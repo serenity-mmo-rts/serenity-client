@@ -25,16 +25,18 @@ var HubTab = function (mapObj) {
         object._blocks.Connection.connectedFrom = self.mapObj._id;
 
         self.tmpEvent = new BuildObjectEvent(game);
-        self.tmpEvent.setMapObject(object);
+        self.tmpEvent.setParameters(object,self.mapObj._id);
         uc.layerView.mapContainer.mapControl.map.addTempObj(object);
 
         function callbackOnSelect(objId){
+            uc.layerView.mapContainer.mapControl.map.deleteTempObj();
             uc.addEvent(self.tmpEvent);
             self.tmpEvent = null;
         }
         function callbackCheckValidSelection(objId){
-            self.tmpEvent._mapObj._blocks.Connection.connectedTo = objId;
-            uc.layerView.mapContainer.mapControl.map.renderObj(self.tmpEvent._mapObj);
+            self.tmpEvent.setTargetConnection(objId);
+            object._blocks.Connection.connectedTo = objId;
+            uc.layerView.mapContainer.mapControl.map.renderObj(object);
             var valid = self.tmpEvent.isValid();
             if (valid) {
                 object.objectBitmap.alpha = 1;

@@ -210,7 +210,7 @@ UiObjectContext.prototype.tick = function() {
 
         if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")) {
 
-            if (this.mapObj._blocks["UpgradeProduction"].buildQueue.length > 0) {
+            if (this.mapObj._blocks["UpgradeProduction"].buildQueueIds.length > 0) {
                 this.updateProgress(this.mapObj._blocks["UpgradeProduction"].progress());
             }
             else {

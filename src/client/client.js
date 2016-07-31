@@ -160,13 +160,12 @@ Client.prototype.addEvent = function(event) {
 
     // check if event is valid:
     if(event.isValid()) {
-        event.setValid();
 
         // execute locally:
-        event.execute();
+        event.executeOnClient();
 
         // add to event List:
-        //game.layers.get(event._mapId).eventScheduler.addEvent(event);
+        game.layers.get(event._mapId).eventScheduler.addEvent(event);
 
         // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {

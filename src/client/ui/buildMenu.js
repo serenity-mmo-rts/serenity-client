@@ -72,19 +72,21 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
 
     var object = new MapObject(game, {_id: 'tempObject', mapId: this.mapId, x: 0, y: 0, objTypeId: objectTypeId, userId: uc.userId, state: mapObjectStates.TEMP});
     this.tmpEvent = new BuildObjectEvent(game);
-    this.tmpEvent.setMapObject(object);
+    this.tmpEvent.setParameters(object);
     this.mapControl.map.addTempObj(object);
     var self = this;
 
     function callbackOnSelect(gameCoord){
+        self.mapControl.map.deleteTempObj();
         uc.addEvent(self.tmpEvent);
         self.tmpEvent = null;
     }
 
     function callbackCheckValidSelection(gameCoord){
-        self.tmpEvent._mapObj.x = gameCoord.x;
-        self.tmpEvent._mapObj.y = gameCoord.y;
+        object.x = gameCoord.x;
+        object.y = gameCoord.y;
         self.mapControl.map.renderObj(object);
+        self.tmpEvent.setCoordinates(gameCoord);
         var valid = self.tmpEvent.isValid();
         if (valid) {
             object.objectBitmap.alpha = 1;
@@ -99,7 +101,6 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
         self.tmpEvent = null;
         self.mapControl.map.deleteTempObj();
     }
-
     this.mapControl.setStateSelectCoord(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
 
 

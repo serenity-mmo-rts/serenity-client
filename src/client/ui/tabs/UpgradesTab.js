@@ -146,8 +146,7 @@ UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
     var self = this;
     container.click(function (e) {
         var evt = new BuildUpgradeEvent(game);
-        evt.setItemTypeId(itemTypeId);
-        evt.setParentObject(self.mapObj);
+        evt.setParameters(itemTypeId,self.mapObj);
         uc.addEvent(evt);
     });
 };
@@ -155,18 +154,20 @@ UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
 UpgradesTab.prototype.levelUpgrade = function (container,item) {
     var self = this;
     container.click(function (e) {
-        self.mapObj._blocks.UpgradeProduction.levelUpgrade(item);
+        var evt = new LevelUpgradeEvent(game);
+        evt.setParameters(item);
+        uc.addEvent(evt);
+        //self.mapObj._blocks.UpgradeProduction.levelUpgrade(item);
     });
 };
 
 
 UpgradesTab.prototype.activatePerClick = function (container,item) {
     container.click(function (e) {
-        var targetType = item._blocks.Feature._processedStack.targetType;
-        var operation = item._blocks.Feature._processedStack.currentOperation;
         var evt = new ActivateFeatureEvent(game);
-        evt.setItem(item);
-        evt.setActivationParameters(operation);
+        var operation = item._blocks.Feature._processedStack.currentOperation;
+        evt.setParameters(item,operation);
+        var targetType = item._blocks.Feature._processedStack.targetType;
         if (targetType=="self"){
             uc.addEvent(evt);
         }

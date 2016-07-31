@@ -118,7 +118,6 @@ LayerView.prototype.tick = function() {
 
     var currGameTime = Date.now() - ntp.offset();
     if (this.mapId){
-        game.layers.get(this.mapId).eventScheduler.finishAllTillTime(currGameTime);
         game.layers.get(this.mapId).timeScheduler.finishAllTillTime(currGameTime);
     }
 };
