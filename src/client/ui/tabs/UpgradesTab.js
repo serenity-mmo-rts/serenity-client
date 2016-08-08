@@ -70,71 +70,72 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     for (var itemId in allItems) {
         if (allItems.hasOwnProperty(itemId)) {
             var item = allItems[itemId];
-            var level = allItems[itemId].getLevel();
-            if (item._itemType._blocks.hasOwnProperty("Feature")){
-                var maxLevel = item._itemType._blocks.Feature.length;
-            }
-            var itemType = allItems[itemId]._itemType;
-            var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
-            var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
-            var x = spriteFrameIcon[0];
-            var y = spriteFrameIcon[1];
-            var breite = spriteFrameIcon[2];
-            var hoehe = spriteFrameIcon[3];
-            var img = spritesheet.images[spriteFrameIcon[4]];
-            var gap = 10;
+            if (item.state != item.HIDDEN) {
+                var level = allItems[itemId].getLevel();
+                if (item._itemType._blocks.hasOwnProperty("Feature")) {
+                    var maxLevel = item._itemType._blocks.Feature.length;
+                }
+                var itemType = allItems[itemId]._itemType;
+                var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
+                var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
+                var x = spriteFrameIcon[0];
+                var y = spriteFrameIcon[1];
+                var breite = spriteFrameIcon[2];
+                var hoehe = spriteFrameIcon[3];
+                var img = spritesheet.images[spriteFrameIcon[4]];
+                var gap = 10;
 
-            var iconContainer = $('<div style="white-space:nowrap"></div>').css({
-                'width': 32,
-                'height': 32,
-                'position': 'relative',
-                'display': 'inline-block',
-                'padding-right': gap + 'px'
-            });
-            var image = $('<div style="white-space:nowrap" ></div>');
-            image.css({
-                'background-image': 'url(' + img + ')',
-                'background-position-x': -x,
-                'background-position-y': -y,
-                'background-repeat': 'no-repeat',
-                'width': breite,
-                'height': hoehe
-            });
-            image.appendTo(iconContainer);
+                var iconContainer = $('<div style="white-space:nowrap"></div>').css({
+                    'width': 32,
+                    'height': 32,
+                    'position': 'relative',
+                    'display': 'inline-block',
+                    'padding-right': gap + 'px'
+                });
+                var image = $('<div style="white-space:nowrap" ></div>');
+                image.css({
+                    'background-image': 'url(' + img + ')',
+                    'background-position-x': -x,
+                    'background-position-y': -y,
+                    'background-repeat': 'no-repeat',
+                    'width': breite,
+                    'height': hoehe
+                });
+                image.appendTo(iconContainer);
 
-            // check if item can be activated
+                // check if item can be activated
 
-            if(item._blocks.Feature._processedStack.canBeActivated) {
-                this.activatePerClick(iconContainer, item);
-                iconContainer.css('cursor', 'pointer');
-            }
+                if (item._blocks.Feature._processedStack.canBeActivated) {
+                    this.activatePerClick(iconContainer, item);
+                    iconContainer.css('cursor', 'pointer');
+                }
 
-            var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
-                'width': 6,
-                'height': 6,
-                'position': 'relative',
-                'display': 'inline-block',
-                'left': 32 + 'px',
-                'top': -14 + 'px'
-            });
-            levelShowContainer.appendTo(iconContainer);
-
-            if (level < maxLevel) {
-                var upgradeContainer = $('<div><b>+</b></div>').css({
+                var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
                     'width': 6,
                     'height': 6,
                     'position': 'relative',
                     'display': 'inline-block',
-                    'left': 27 + 'px',
-                    'top': -32 + 'px'
+                    'left': 32 + 'px',
+                    'top': -14 + 'px'
                 });
+                levelShowContainer.appendTo(iconContainer);
 
-                this.levelUpgrade(upgradeContainer, item);
-                upgradeContainer.css('cursor', 'pointer');
-                upgradeContainer.appendTo(iconContainer);
+                if (level < maxLevel) {
+                    var upgradeContainer = $('<div><b>+</b></div>').css({
+                        'width': 6,
+                        'height': 6,
+                        'position': 'relative',
+                        'display': 'inline-block',
+                        'left': 27 + 'px',
+                        'top': -32 + 'px'
+                    });
+
+                    this.levelUpgrade(upgradeContainer, item);
+                    upgradeContainer.css('cursor', 'pointer');
+                    upgradeContainer.appendTo(iconContainer);
+                }
+                iconContainer.appendTo(this.availableBox);
             }
-
-            iconContainer.appendTo(this.availableBox);
         }
     }
     this.availableTitle.appendTo(wrap2);
