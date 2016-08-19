@@ -64,8 +64,8 @@ MapControl.prototype.handleMousedownMain = function (evt) {
         case this.controlState.DEFAULT:
             var hitObjId = this.map.getCurrentObject();
             if (hitObjId) {     // open Object Menu
-                uc.layerView.uiObjectContext.loadObjectById(hitObjId);
-                uc.layerView.uiObjectContextPanel.show(200);
+                    uc.layerView.uiObjectContext.loadObjectById(hitObjId);
+                    // uc.layerView.uiObjectContextPanel.show(200);
             }
             else {
                 // start dragging:
