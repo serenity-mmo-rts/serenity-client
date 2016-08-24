@@ -30,6 +30,7 @@ var UiObjectContext = function () {
 
 UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
+
     if (this.mapObj!=null){
         this.mapObj.removeCallback("renderUI");
     }
@@ -38,19 +39,18 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
     if (mapObjId) {
         this.mapObjId = mapObjId;
-
         this.map = game.layers.get(uc.layerView.mapId);
         this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
         this.objetType = game.objectTypes.get(this.mapObj.objTypeId);
         this.className = this.objetType._className;
-
         var self= this;
-
-        this.mapObj.addCallback("renderUI", function(){self.update();});
-
     }
 
-    this.update();
+    if (this.mapObj._blocks.hasOwnProperty("Environment")==false) {
+        this.mapObj.addCallback("renderUI", function(){self.update();});
+        this.update();
+        uc.layerView.uiObjectContextPanel.show(200);
+    }
 
 };
 
