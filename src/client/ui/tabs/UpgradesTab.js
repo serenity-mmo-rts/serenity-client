@@ -105,7 +105,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
 
                 // check if item can be activated
 
-                if (item._blocks.Feature._processedStack.canBeActivated) {
+                if (item._blocks.Feature._processedStack().canBeActivated()) {
                     this.activatePerClick(iconContainer, item);
                     iconContainer.css('cursor', 'pointer');
                 }
@@ -166,9 +166,9 @@ UpgradesTab.prototype.levelUpgrade = function (container,item) {
 UpgradesTab.prototype.activatePerClick = function (container,item) {
     container.click(function (e) {
         var evt = new ActivateFeatureEvent(game);
-        var operation = item._blocks.Feature._processedStack.currentOperation;
+        var operation = item._blocks.Feature._processedStack().currentOperation();
         evt.setParameters(item,operation);
-        var targetType = item._blocks.Feature._processedStack.targetType;
+        var targetType = item._blocks.Feature._processedStack().targetType();
         if (targetType=="self"){
             uc.addEvent(evt);
         }
