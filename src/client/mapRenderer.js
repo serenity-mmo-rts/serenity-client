@@ -331,7 +331,7 @@ Map.prototype.renderObj = function(mapObject) {
             singleImg.src = this.spritesheets[objType._spritesheetId].getFrame(orientation).image.src;
 
             var test = this.IsImageOk(this.spritesheets[objType._spritesheetId].getFrame(orientation).image);
-            console.log("image loaded:" + test.toString());
+            //console.log("image loaded:" + test.toString());
 
             if (!test){
                 return objectBitmap;
