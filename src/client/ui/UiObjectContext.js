@@ -41,7 +41,7 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
         this.mapObjId = mapObjId;
         this.map = game.layers.get(uc.layerView.mapId);
         this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
-        this.objetType = game.objectTypes.get(this.mapObj.objTypeId);
+        this.objetType = game.objectTypes.get(this.mapObj.objTypeId());
         this.className = this.objetType._className;
         var self= this;
     }
@@ -85,7 +85,7 @@ UiObjectContext.prototype.mainInfo = function(mapObj) {
     var level = this.mapObj._blocks.UserObject.getLevel(points);
     var maxHp = this.mapObj._blocks.UserObject.getMaxHealthPoints();
     var Hp = this.mapObj._blocks.UserObject.getHealthPoints();
-    var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId + ' Level: ' + level+ '</div>').css({'text-align': 'center'});
+    var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId() + ' Level: ' + level+ '</div>').css({'text-align': 'center'});
     var pointDisplay = $('<div style="white-space:nowrap;">' + 'Points: ' + points+ '</div>').css({'text-align': 'left'})
     var HealthDisplay = $('<div style="white-space:nowrap;">' + 'Health Points: ' +Hp+ '/'+maxHp+ '</div>').css({'text-align': 'left'});
     var percentHP  = (Hp/maxHp) *100;

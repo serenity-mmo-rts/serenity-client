@@ -83,8 +83,8 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
     }
 
     function callbackCheckValidSelection(gameCoord){
-        object.x = gameCoord.x;
-        object.y = gameCoord.y;
+        object.x(gameCoord.x);
+        object.y(gameCoord.y);
         self.mapControl.map.renderObj(object);
         self.tmpEvent.setCoordinates(gameCoord);
         var valid = self.tmpEvent.isValid();

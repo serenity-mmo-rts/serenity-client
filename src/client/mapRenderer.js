@@ -206,21 +206,21 @@ Map.prototype.checkRendering = function(){
 
 Map.prototype.checkRenderingOfObject = function(mapObject){
 
-    var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x,mapObject.y) +this.main_container.x);
-    var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x,mapObject.y) +this.main_container.y);
+    var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x(),mapObject.y()) +this.main_container.x);
+    var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x(),mapObject.y()) +this.main_container.y);
     var isalreadyRendered  = false;
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id)) {
+    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id())) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
-           if (mapObject.state != mapObjectStates.HIDDEN){
+           if (mapObject.state() != mapObjectStates.HIDDEN){
                shouldbeRendered = true;
            }
         }
     }
 
-    var checkedObj = this.obj_container.getChildByName(mapObject._id);
+    var checkedObj = this.obj_container.getChildByName(mapObject._id());
     isalreadyRendered = this.obj_container.contains(checkedObj);
 
     if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
@@ -240,7 +240,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
 
 Map.prototype.renderObj = function(mapObject) {
     //remove if already in container:
-    var checkedObj = this.obj_container.getChildByName(mapObject._id);
+    var checkedObj = this.obj_container.getChildByName(mapObject._id());
     if (checkedObj) {
         this.obj_container.removeChild(checkedObj);
     }
@@ -249,12 +249,12 @@ Map.prototype.renderObj = function(mapObject) {
         this.obj_container.removeChild(mapObject.objectBitmap);
     }
 
-    var objType = game.objectTypes.get(mapObject.objTypeId);
+    var objType = game.objectTypes.get(mapObject.objTypeId());
 
     if (mapObject._blocks.hasOwnProperty("Connection")) {
 
-        var dx = 0.5 * mapObject.width * Math.cos(-mapObject.ori);
-        var dy = 0.5 * mapObject.width * Math.sin(-mapObject.ori);
+        var dx = 0.5 * mapObject.width() * Math.cos(-mapObject.ori());
+        var dy = 0.5 * mapObject.width() * Math.sin(-mapObject.ori());
 
         var tmpX = this.gameCoord2RenderX(dx,dy);
         var tmpY = this.gameCoord2RenderY(dx,dy);
@@ -265,7 +265,7 @@ Map.prototype.renderObj = function(mapObject) {
             // mapObject.ori is between -pi to pi
 
             var pi = Math.PI;
-            var orientation = mapObject.ori;
+            var orientation = mapObject.ori();
             orientation -= pi/4;
             if (orientation<-pi) {
                 orientation += 2 * pi;
@@ -372,7 +372,7 @@ Map.prototype.renderObj = function(mapObject) {
         else {
             var objectBitmap = new createjs.Shape();
 
-            if (mapObject.state == mapObjectStates.TEMP) {
+            if (mapObject.state() == mapObjectStates.TEMP) {
                 objectBitmap.graphics
                     .beginStroke("rgba(0,50,0,0.5)")
                     .setStrokeStyle(10)
@@ -380,7 +380,7 @@ Map.prototype.renderObj = function(mapObject) {
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
-            else if (mapObject.state == mapObjectStates.WORKING) {
+            else if (mapObject.state() == mapObjectStates.WORKING) {
                 objectBitmap.graphics
                     .beginStroke("rgba(130,130,130,1)")
                     .setStrokeStyle(10)
@@ -404,13 +404,13 @@ Map.prototype.renderObj = function(mapObject) {
         }
         else {
 
-            if (mapObject.state == mapObjectStates.TEMP) {
+            if (mapObject.state() == mapObjectStates.TEMP) {
                 var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);  // render object from database
                 // here could come a image cropping
                 objectBitmap.gotoAndStop(objType._spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
-            else if (mapObject.state == mapObjectStates.WORKING) {
+            else if (mapObject.state() == mapObjectStates.WORKING) {
                     var construction = game.objectTypes.get("constructionSite");
                     var objectBitmap = new createjs.Sprite(this.spritesheets[construction._spritesheetId]);
                     objectBitmap.gotoAndStop(construction._spriteFrame);
@@ -425,17 +425,15 @@ Map.prototype.renderObj = function(mapObject) {
         }
     }
 
-    objectBitmap.x = this.gameCoord2RenderX(mapObject.x, mapObject.y);
-    objectBitmap.y = this.gameCoord2RenderY(mapObject.x, mapObject.y);
+    objectBitmap.x = this.gameCoord2RenderX(mapObject.x(), mapObject.y());
+    objectBitmap.y = this.gameCoord2RenderY(mapObject.x(), mapObject.y());
 
     //TODO: set bitmap scaling proportional to objType._initWidth / mapObject._width
 
-    objectBitmap.mapObjectId = mapObject._id;
-    objectBitmap.name = mapObject._id;
+    objectBitmap.mapObjectId = mapObject._id();
+    objectBitmap.name = mapObject._id();
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
-
-
 
     return objectBitmap;
 }
