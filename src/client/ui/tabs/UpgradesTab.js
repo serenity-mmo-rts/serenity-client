@@ -70,7 +70,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     for (var itemId in allItems) {
         if (allItems.hasOwnProperty(itemId)) {
             var item = allItems[itemId];
-            if (item.state != item.HIDDEN) {
+            if (item.state() != itemStates.HIDDEN) {
                 var level = allItems[itemId].getLevel();
                 if (item._itemType._blocks.hasOwnProperty("Feature")) {
                     var maxLevel = item._itemType._blocks.Feature.length;
