@@ -152,7 +152,7 @@ UiObjectContext.prototype.createTabs = function() {
     else if (this.mapObj._blocks.hasOwnProperty("ResourceProduction") || this.mapObj._blocks.hasOwnProperty("SoilProduction")) {
         var maintab = new ResourceProducerTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Technologies")) {
+    else if (this.mapObj._blocks.hasOwnProperty("TechProduction")) {
         var maintab = new ScienceCenterTab(this.mapObj);
     }
     else if (this.mapObj._blocks.hasOwnProperty("Sublayer")) {

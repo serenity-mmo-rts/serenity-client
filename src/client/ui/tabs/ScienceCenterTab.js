@@ -2,8 +2,8 @@
 var ScienceCenterTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.content= $('<div id="upgradeTab"></div>').css({'display': 'inline-block'});
-    if (this.mapObj._blocks.hasOwnProperty("Technologies")){
+    this.content= $('<div id="mainTab"></div>').css({'display': 'inline-block'});
+    if (this.mapObj._blocks.hasOwnProperty("TechProduction")){
         this.listProduceableTechnologies();
     }
 
@@ -15,7 +15,7 @@ ScienceCenterTab.prototype.listProduceableTechnologies = function () {
     var wrap1 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px'});
     this.creationTitle =  $('<div>Technologies</div>').css({});
     this.creationBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
-    var allowedTechnologies = this.mapObj._blocks.Technologies.producableTechnologies;
+    var allowedTechnologies = this.mapObj._blocks.TechProduction.type.producableTechnologies;
 
     for (var i = 0; i<allowedTechnologies.length; i++){
         var techId = allowedTechnologies[i];
@@ -34,7 +34,7 @@ ScienceCenterTab.prototype.listProduceableTechnologies = function () {
         image.css({'background-image': 'url('+img+')' ,'background-position-x':-x, 'background-position-y':-y,'background-repeat':'no-repeat','width':breite,'height':hoehe});
         image.appendTo(container);
 
-        this.buildUpgrade(container,techId);
+        this.initResearch(container,techId);
         container.css('cursor', 'pointer');
         container.appendTo(this.creationBox);
 
@@ -46,7 +46,7 @@ ScienceCenterTab.prototype.listProduceableTechnologies = function () {
 };
 
 
-ScienceCenterTab.prototype.buildUpgrade = function (container,techTypeId) {
+ScienceCenterTab.prototype.initResearch = function (container,techTypeId) {
     var self = this;
     container.click(function (e) {
         var evt = new ResearchEvent(game);
@@ -55,41 +55,3 @@ ScienceCenterTab.prototype.buildUpgrade = function (container,techTypeId) {
     });
 };
 
-ScienceCenterTab.prototype.levelUpgrade = function (container,item) {
-    var self = this;
-    container.click(function (e) {
-        var evt = new LevelUpgradeEvent(game);
-        evt.setParameters(item);
-        uc.addEvent(evt);
-        //self.mapObj._blocks.UpgradeProduction.levelUpgrade(item);
-    });
-};
-
-
-ScienceCenterTab.prototype.activatePerClick = function (container,item) {
-    container.click(function (e) {
-        var evt = new ActivateFeatureEvent(game);
-        var operation = item._blocks.Feature._processedStack().currentOperation();
-        evt.setParameters(item,operation);
-        var targetType = item._blocks.Feature._processedStack().targetType();
-        if (targetType=="self"){
-            uc.addEvent(evt);
-        }
-        else if (targetType=="object"){
-
-            function callbackOnSelect(){
-                uc.addEvent(evt);
-            }
-            function callbackCheckValidSelection(objId){
-                evt.setTarget(objId);
-                var valid = evt.isValid();
-                return valid;
-            }
-            function callbackCanceled(){
-                evt = null;
-            }
-            uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
-        }
-
-    });
-};
