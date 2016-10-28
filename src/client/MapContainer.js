@@ -19,20 +19,22 @@ var MapContainer = function(mapId){
     this.main_container.name = "main_container";
     this.menu_container = new createjs.Container();
     this.menu_container.name = "menu_container";
+    this.map_container = new createjs.Container();
+    this.map_container.name = "map_container";
 
     // movement outside
     this.stage.mouseMoveOutside = true;
     this.main_container.mouseMoveOutside = true;
     this.menu_container.mouseMoveOutside = true;
-
+    this.map_container.mouseMoveOutside = true;
 
     // inherit
-    this.zoom_container.addChild(this.main_container);
+    this.zoom_container.addChild(this.map_container,this.main_container);
     this.stage.addChild(this.zoom_container,this.menu_container);
 
     // zoom levels
     this.zoomFactors = [];
-    for (var i=-11; i<11; i++) {
+    for (var i=-33; i<33; i++) {
         this.zoomFactors.push(Math.pow(1.1,i));
     }
     this.zoom_level = 11;
@@ -137,3 +139,4 @@ var MapContainer = function(mapId){
      this.stage.removeAllChildren();
      this.stage.update();
  }
+

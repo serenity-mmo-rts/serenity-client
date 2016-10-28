@@ -30,22 +30,26 @@ var MapControl = function (map) {
     this.callbackCanceled = null;
 
     // event listener for main container
-    this.map.main_container.addEventListener("mousedown", (function (evt) {
+    this.map.mapContainer.zoom_container.addEventListener("mousedown", (function (evt) {
         self.handleMousedownMain(evt)
     }));
 
     this.screenMoved = false;
 
-    this.map.main_container.addEventListener("pressmove", function (ev) {
+    this.map.mapContainer.zoom_container.addEventListener("pressmove", function (ev) {
         if (self.startDragAt != null) {
             self.screenMoved = true;
             var mouseAt = self.map.main_container.globalToLocal(ev.stageX, ev.stageY);
             self.map.main_container.x += mouseAt.x - self.startDragAt.x;
             self.map.main_container.y += mouseAt.y - self.startDragAt.y;
+
+            var groundDragScaling = self.map.mapType._groundDragScaling;
+            self.map.map_container.x = groundDragScaling * self.map.main_container.x;
+            self.map.map_container.y = groundDragScaling * self.map.main_container.y;
         }
     });
 
-    this.map.main_container.addEventListener("pressup", function (ev) {
+    this.map.mapContainer.zoom_container.addEventListener("pressup", function (ev) {
         self.startDragAt = null;
         if (self.screenMoved) {
             self.map.checkRendering();
