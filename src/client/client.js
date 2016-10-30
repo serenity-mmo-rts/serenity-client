@@ -10,6 +10,8 @@ var Client = function() {
     this.spritesLoaded = false;
     this.onSpriteLoadedCallback = {};
 
+    this.spritesheets = {};
+
 };
 
 // Init function
@@ -138,6 +140,9 @@ Client.prototype.onInitGameData = function(initGameData) {
         }
     }
     this.loadqueue.addEventListener("complete", function() {
+        for (var spritesheetId in game.spritesheets.hashList) {
+            self.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
+        }
         self.spritesLoaded = true;
         for (var key in self.onSpriteLoadedCallback){
             self.onSpriteLoadedCallback[key]();

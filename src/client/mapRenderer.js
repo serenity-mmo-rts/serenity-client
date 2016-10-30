@@ -176,11 +176,6 @@ Map.prototype.createMap = function() {
     backgroundShape.y = 0;
     this.map_container.addChild(backgroundShape);
 
-    // load spritesheets
-    for (var spritesheetId in game.spritesheets.hashList) {
-        this.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
-    }
-
     this.checkRendering();
 
     if (this.callbackFinishedLoading) this.callbackFinishedLoading();
@@ -305,7 +300,7 @@ Map.prototype.renderObj = function(mapObject) {
             singleImg.width = 100;
             singleImg.height = 50;
             var ctx = singleImg.getContext("2d");
-            var singleSpriteBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);
+            var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
             singleSpriteBitmap.gotoAndStop(objType._spriteFrame[orientation]);
             singleSpriteBitmap.x = 50;
             singleSpriteBitmap.y = 25;
@@ -316,21 +311,21 @@ Map.prototype.renderObj = function(mapObject) {
             */
 
             /* method 2: not working ... deprecated... use method below instead...
-             var singleSpriteBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);
+             var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
             singleSpriteBitmap.cache(-50, -25, 100, 50);
              var singleImg = singleSpriteBitmap.cacheCanvas;
              */
 
             /* method 3: easier by directly accessing the image field in the spritesheet: */
-            //var singleImg = this.spritesheets[objType._spritesheetId]._frames[orientation].image;
-            //var singleImg = this.spritesheets[objType._spritesheetId].getFrame(orientation).image;
+            //var singleImg = uc.spritesheets[objType._spritesheetId]._frames[orientation].image;
+            //var singleImg = uc.spritesheets[objType._spritesheetId].getFrame(orientation).image;
 
 
 
             var singleImg = new Image();
-            singleImg.src = this.spritesheets[objType._spritesheetId].getFrame(orientation).image.src;
+            singleImg.src = uc.spritesheets[objType._spritesheetId].getFrame(orientation).image.src;
 
-            var test = this.IsImageOk(this.spritesheets[objType._spritesheetId].getFrame(orientation).image);
+            var test = this.IsImageOk(uc.spritesheets[objType._spritesheetId].getFrame(orientation).image);
             //console.log("image loaded:" + test.toString());
 
             if (!test){
@@ -400,25 +395,25 @@ Map.prototype.renderObj = function(mapObject) {
     }
     else {
         if (objType._spriteAnimation !== null){
-            var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId], "working");
+            var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId], "working");
         }
         else {
 
             if (mapObject.state() == mapObjectStates.TEMP) {
-                var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);  // render object from database
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);  // render object from database
                 // here could come a image cropping
                 objectBitmap.gotoAndStop(objType._spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
             else if (mapObject.state() == mapObjectStates.WORKING) {
                     var construction = game.objectTypes.get("constructionSite");
-                    var objectBitmap = new createjs.Sprite(this.spritesheets[construction._spritesheetId]);
+                    var objectBitmap = new createjs.Sprite(uc.spritesheets[construction._spritesheetId]);
                     objectBitmap.gotoAndStop(construction._spriteFrame);
                     objectBitmap.alpha = 1;
 
             }
             else {
-                var objectBitmap = new createjs.Sprite(this.spritesheets[objType._spritesheetId]);  // render object from database
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);  // render object from database
                 objectBitmap.gotoAndStop(objType._spriteFrame);
             }
             objectBitmap.tickEnabled = false;

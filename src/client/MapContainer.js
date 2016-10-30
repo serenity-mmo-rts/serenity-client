@@ -37,7 +37,7 @@ var MapContainer = function(mapId){
     for (var i=-33; i<33; i++) {
         this.zoomFactors.push(Math.pow(1.1,i));
     }
-    this.zoom_level = 11;
+    this.zoom_level = 20;
     this.zoom = this.zoomFactors[this.zoom_level];
 
 
@@ -62,6 +62,7 @@ var MapContainer = function(mapId){
     }), false);
 
     this.resize();
+    this.updateZoom();
 }
 
 
@@ -82,7 +83,6 @@ var MapContainer = function(mapId){
 
 
  MapContainer.prototype.MouseWheelHandler = function (e) {
-     var self = this;
      var changedZoom = false;
      if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
@@ -102,13 +102,19 @@ var MapContainer = function(mapId){
      }
 
      if (changedZoom) {
+         this.updateZoom();
+     }
+
+ };
+
+ MapContainer.prototype.updateZoom = function () {
+
          this.zoom_container.scaleX=this.zoom;
          this.zoom_container.scaleY=this.zoom;
          this.map.ressourceMapWrapper.loadRessourceOverlay();
          this.map.bgMapWrapper.loadRessourceOverlay();
          this.map.checkRendering();
-         self.stage.update();
-     }
+         this.stage.update();
 
  };
 
