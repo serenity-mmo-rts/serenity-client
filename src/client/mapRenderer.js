@@ -18,7 +18,7 @@ var Map = function(mapContainer, stage,mapId) {
     this.obj_container.mouseMoveOutside = true;
     this.res_container.mouseMoveOutside = true;
     this.main_container.addChild(this.bg_container,this.obj_container,this.res_container);
-    this.map_container = this.mapContainer.map_container;
+    this.bgImage_container = this.mapContainer.bgImage_container;
 
     this.res_container.alpha = 0.5;
 
@@ -147,7 +147,7 @@ Map.prototype.createMap = function() {
 
     this.bgImg = this.loadqueue.getResult("bgimage");
 
-    // add background object to map_container
+    // add background object to bgImage_container
     var background = new createjs.Graphics();
     background.beginBitmapFill ( this.bgImg, repetition='repeat' );
 
@@ -174,7 +174,7 @@ Map.prototype.createMap = function() {
     var backgroundShape = new createjs.Shape(background);
     backgroundShape.x = 0;
     backgroundShape.y = 0;
-    this.map_container.addChild(backgroundShape);
+    this.bgImage_container.addChild(backgroundShape);
 
     this.checkRendering();
 

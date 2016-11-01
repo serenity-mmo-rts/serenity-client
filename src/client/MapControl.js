@@ -2,6 +2,8 @@ var MapControl = function (map) {
 
     var self = this;
     this.map = map;
+    this.mapContainer = this.map.mapContainer;
+
    // this.map.mapControl = this;
     // this.minimap = minimap;
 
@@ -30,13 +32,13 @@ var MapControl = function (map) {
     this.callbackCanceled = null;
 
     // event listener for main container
-    this.map.mapContainer.zoom_container.addEventListener("mousedown", (function (evt) {
+    this.mapContainer.map_container.addEventListener("mousedown", (function (evt) {
         self.handleMousedownMain(evt)
     }));
 
     this.screenMoved = false;
 
-    this.map.mapContainer.zoom_container.addEventListener("pressmove", function (ev) {
+    this.mapContainer.map_container.addEventListener("pressmove", function (ev) {
         if (self.startDragAt != null) {
             self.screenMoved = true;
             var mouseAt = self.map.main_container.globalToLocal(ev.stageX, ev.stageY);
@@ -44,12 +46,12 @@ var MapControl = function (map) {
             self.map.main_container.y += mouseAt.y - self.startDragAt.y;
 
             var groundDragScaling = self.map.mapType._groundDragScaling;
-            self.map.map_container.x = groundDragScaling * self.map.main_container.x;
-            self.map.map_container.y = groundDragScaling * self.map.main_container.y;
+            self.map.bgImage_container.x = groundDragScaling * self.map.main_container.x;
+            self.map.bgImage_container.y = groundDragScaling * self.map.main_container.y;
         }
     });
 
-    this.map.mapContainer.zoom_container.addEventListener("pressup", function (ev) {
+    this.mapContainer.map_container.addEventListener("pressup", function (ev) {
         self.startDragAt = null;
         if (self.screenMoved) {
             self.map.checkRendering();

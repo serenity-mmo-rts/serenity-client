@@ -10,34 +10,46 @@ var MapContainer = function(mapId){
     // initialize stage and minimap
     createjs.MotionGuidePlugin.install(createjs.Tween);
     this.stage = new createjs.Stage("canvas");
+    this.stage.mouseMoveOutside = true;
     createjs.Touch.enable(this.stage);
 
     // Containers
-    this.zoom_container = new createjs.Container();
-    this.zoom_container.name = "zoom_container";
-    this.main_container = new createjs.Container();
-    this.main_container.name = "main_container";
-    this.menu_container = new createjs.Container();
-    this.menu_container.name = "menu_container";
     this.map_container = new createjs.Container();
     this.map_container.name = "map_container";
-
-    // movement outside
-    this.stage.mouseMoveOutside = true;
-    this.main_container.mouseMoveOutside = true;
-    this.menu_container.mouseMoveOutside = true;
     this.map_container.mouseMoveOutside = true;
 
-    // inherit
-    this.zoom_container.addChild(this.map_container,this.main_container);
-    this.stage.addChild(this.zoom_container,this.menu_container);
+    this.zoom_container = new createjs.Container();
+    this.zoom_container.name = "zoom_container";
+    this.zoom_container.mouseMoveOutside = true;
+
+    this.main_container = new createjs.Container();
+    this.main_container.name = "main_container";
+    this.main_container.mouseMoveOutside = true;
+
+    this.zoomBgImage_container = new createjs.Container();
+    this.zoomBgImage_container.name = "zoomBgImage_container";
+    this.zoomBgImage_container.mouseMoveOutside = true;
+
+    this.bgImage_container = new createjs.Container();
+    this.bgImage_container.name = "bgImage_container";
+    this.bgImage_container.mouseMoveOutside = true;
+
+    this.menu_container = new createjs.Container();
+    this.menu_container.name = "menu_container";
+    this.menu_container.mouseMoveOutside = true;
+
+    // compose containers:
+    this.zoom_container.addChild(this.main_container);
+    this.zoomBgImage_container.addChild(this.bgImage_container);
+    this.map_container.addChild(this.zoomBgImage_container, this.zoom_container);
+    this.stage.addChild(this.map_container,this.menu_container);
 
     // zoom levels
     this.zoomFactors = [];
     for (var i=-33; i<33; i++) {
         this.zoomFactors.push(Math.pow(1.1,i));
     }
-    this.zoom_level = 20;
+    this.zoom_level = 0;
     this.zoom = this.zoomFactors[this.zoom_level];
 
 
@@ -111,6 +123,12 @@ var MapContainer = function(mapId){
 
          this.zoom_container.scaleX=this.zoom;
          this.zoom_container.scaleY=this.zoom;
+
+
+     //var groundDragScaling = self.map.mapType._groundDragScaling;
+     this.zoomBgImage_container.scaleX= this.zoom;
+     this.zoomBgImage_container.scaleY=this.zoom;
+
          this.map.ressourceMapWrapper.loadRessourceOverlay();
          this.map.bgMapWrapper.loadRessourceOverlay();
          this.map.checkRendering();
@@ -128,13 +146,25 @@ var MapContainer = function(mapId){
      this.stage.x = window.innerWidth / 2;
      this.stage.y = window.innerHeight / 2;
 
+     this.map_container.regX = window.innerWidth / 2;
+     this.map_container.regY = window.innerHeight/ 2;
+     this.map_container.x = window.innerWidth / 2;
+     this.map_container.y = window.innerHeight / 2;
+
      this.zoom_container.regX = window.innerWidth / 2;
      this.zoom_container.regY = window.innerHeight/ 2;
      this.zoom_container.x = window.innerWidth / 2;
      this.zoom_container.y = window.innerHeight / 2;
 
+     this.zoomBgImage_container.regX = window.innerWidth / 2;
+     this.zoomBgImage_container.regY = window.innerHeight/ 2;
+     this.zoomBgImage_container.x = window.innerWidth / 2;
+     this.zoomBgImage_container.y = window.innerHeight / 2;
+
      this.main_container.regX = -window.innerWidth / 2;
      this.main_container.regY = -window.innerHeight / 2;
+     this.bgImage_container.regX = -window.innerWidth / 2;
+     this.bgImage_container.regY = -window.innerHeight / 2;
 
      this.map.resize();
  };
