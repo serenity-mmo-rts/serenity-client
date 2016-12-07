@@ -45,14 +45,8 @@ var MapContainer = function(mapId){
     this.stage.addChild(this.map_container,this.menu_container);
 
     // zoom levels
-    this.zoomFactors = [];
-    for (var i=-33; i<33; i++) {
-        this.zoomFactors.push(Math.pow(1.1,i));
-    }
     this.zoom_level = 0;
-    this.zoom = this.zoomFactors[this.zoom_level];
-
-
+    this.zoom = 1; //this.zoomFactors[this.zoom_level];
 
     // Initialize Map
     this.map = new Map(this, this.stage,this.mapId);
@@ -98,17 +92,15 @@ var MapContainer = function(mapId){
      var changedZoom = false;
      if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
-         if (this.zoom_level < this.zoomFactors.length-1) {
+         if (this.zoom_level < 30) {
              this.zoom_level+=1;
-             this.zoom = this.zoomFactors[this.zoom_level];
              changedZoom = true;
          }
      }
 
      else {
-         if (this.zoom_level >0) {
+         if (this.zoom_level > -30) {
              this.zoom_level-= 1;
-             this.zoom = this.zoomFactors[this.zoom_level];
              changedZoom = true;
          }
      }
@@ -121,13 +113,13 @@ var MapContainer = function(mapId){
 
  MapContainer.prototype.updateZoom = function () {
 
-         this.zoom_container.scaleX=this.zoom;
-         this.zoom_container.scaleY=this.zoom;
+     this.zoom = Math.pow(1.1, this.zoom_level);
+     this.zoom_container.scaleX = this.zoom;
+     this.zoom_container.scaleY = this.zoom;
 
-
-     //var groundDragScaling = self.map.mapType._groundDragScaling;
-     this.zoomBgImage_container.scaleX= this.zoom;
-     this.zoomBgImage_container.scaleY=this.zoom;
+     var zoomGround = Math.pow(1.1, this.zoom_level * this.map.mapType._groundDragScaling);
+     this.zoomBgImage_container.scaleX = zoomGround;
+     this.zoomBgImage_container.scaleY = zoomGround;
 
          this.map.ressourceMapWrapper.loadRessourceOverlay();
          this.map.bgMapWrapper.loadRessourceOverlay();
