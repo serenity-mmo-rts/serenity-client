@@ -1,10 +1,9 @@
-var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resColorFcn) {
+var ResourceMap = function (mapRenderer, resMap, mapId, res_container) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
-    this.resMap = resMap;
-    this.res_container = res_container;
-    this.resColorFcn = resColorFcn;
+    this.map = resMap;
+    this.container = res_container;
 
     this.mapData = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.mapData.mapTypeId);
@@ -32,20 +31,21 @@ var RessourceMap = function (mapRenderer, resMap, mapId, res_container, resColor
     this.sourcesQuadTree = null;
 
     this.progressBar = null;
-}
+};
 
-RessourceMap.prototype.enableProgressBar = function () {
+
+ResourceMap.prototype.enableProgressBar = function () {
     this.progressBar = new ProgressBar();
 }
 
-RessourceMap.prototype.disableProgressBar = function () {
+ResourceMap.prototype.disableProgressBar = function () {
     if (this.progressBar != null) {
         this.progressBar.destroy();
         this.progressBar = null;
     }
 }
 
-RessourceMap.prototype.initQuadtree = function (resTypeId) {
+ResourceMap.prototype.initQuadtree = function (resTypeId) {
     if (this.debugLog) console.log("generate quadtree");
 
     var renderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
@@ -60,12 +60,12 @@ RessourceMap.prototype.initQuadtree = function (resTypeId) {
 
     this.sourcesQuadTree = new QuadTree(bounds);
 
-    for (var i = this.resMap.sources.length-1; i >= 0; i--) {
-        if (this.resMap.sources[i].type == resTypeId) {
-            var xRender = this.mapRenderer.gameCoord2RenderX(this.resMap.sources[i].x,this.resMap.sources[i].y);
-            var yRender = this.mapRenderer.gameCoord2RenderY(this.resMap.sources[i].x,this.resMap.sources[i].y);
-            var widthRender = 2 * this.mapRenderer.gameCoord2RenderX(this.resMap.sources[i].r,-this.resMap.sources[i].r);
-            var heightRender = 2 * this.mapRenderer.gameCoord2RenderY(this.resMap.sources[i].r,this.resMap.sources[i].r);
+    for (var i = this.map.sources.length-1; i >= 0; i--) {
+        if (this.map.sources[i].type == resTypeId) {
+            var xRender = this.mapRenderer.gameCoord2RenderX(this.map.sources[i].x,this.map.sources[i].y);
+            var yRender = this.mapRenderer.gameCoord2RenderY(this.map.sources[i].x,this.map.sources[i].y);
+            var widthRender = 2 * this.mapRenderer.gameCoord2RenderX(this.map.sources[i].r,-this.map.sources[i].r);
+            var heightRender = 2 * this.mapRenderer.gameCoord2RenderY(this.map.sources[i].r,this.map.sources[i].r);
 
             this.sourcesQuadTree.insert({
                 i: i,
@@ -73,22 +73,22 @@ RessourceMap.prototype.initQuadtree = function (resTypeId) {
                 y: yRender-heightRender/2,
                 height: heightRender,
                 width: widthRender,
-                xGame: this.resMap.sources[i].x,
-                yGame: this.resMap.sources[i].y,
-                rGame: this.resMap.sources[i].r,
-                r1Game: this.resMap.sources[i].r1,
-                s: this.resMap.sources[i].s,
-                v: this.resMap.sources[i].v});
+                xGame: this.map.sources[i].x,
+                yGame: this.map.sources[i].y,
+                rGame: this.map.sources[i].r,
+                r1Game: this.map.sources[i].r1,
+                s: this.map.sources[i].s,
+                v: this.map.sources[i].v});
         }
     }
 }
 
-RessourceMap.prototype.checkRendering = function () {
+ResourceMap.prototype.checkRendering = function () {
 
     var self = this;
 
     if (this.updatingDisabled) {
-        if (this.debugLog) console.log("disabled update of ressourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
+        if (this.debugLog) console.log("disabled update of resourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
         this.disableProgressBar();
     }
     else {
@@ -100,8 +100,8 @@ RessourceMap.prototype.checkRendering = function () {
 
         var numTilesPerSide = 3 * this.numTilesOnScreen / 2;
 
-        for (var i = this.res_container.children.length - 1; i >= 0; i--) {
-            var bmpObj = this.res_container.children[i];
+        for (var i = this.container.children.length - 1; i >= 0; i--) {
+            var bmpObj = this.container.children[i];
             var DistanceX = Math.abs(bmpObj.x + xoff);
             var DistanceY = Math.abs(bmpObj.y + yoff);
 
@@ -110,7 +110,7 @@ RessourceMap.prototype.checkRendering = function () {
             }
             else {
                 //console.log("remove bmp with name=" + bmpObj.name)
-                this.res_container.removeChildAt(i);
+                this.container.removeChildAt(i);
             }
         }
 
@@ -122,9 +122,9 @@ RessourceMap.prototype.checkRendering = function () {
                 for (var bmpY = centerBmpY - radFromCenter; bmpY <= centerBmpY + radFromCenter; bmpY=isFirstOrLast?(bmpY+1):(bmpY+2*radFromCenter)) {
                     counter++;
                     var bmpName = "x" + bmpX + "y" + bmpY;
-                    var existObj = this.res_container.getChildByName(bmpName);
+                    var existObj = this.container.getChildByName(bmpName);
                     if (existObj == null) {
-                        if (this.debugLog) console.log("start adding bmpObj at radFromCenter=" +radFromCenter+ " with name=" + bmpName + " to ressourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
+                        if (this.debugLog) console.log("start adding bmpObj at radFromCenter=" +radFromCenter+ " with name=" + bmpName + " to resourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
                         var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
                         var bmpObj = this.genBitmapFromResData(resData);
                         bmpObj.name = bmpName;
@@ -133,7 +133,7 @@ RessourceMap.prototype.checkRendering = function () {
                         //console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
                         bmpObj.regX = this.bmpResolutionX / 2;
                         bmpObj.regY = this.bmpResolutionY / 2;
-                        this.res_container.addChild(bmpObj);
+                        this.container.addChild(bmpObj);
 
                         //update progress bar:
                         if (this.progressBar != null) {
@@ -170,10 +170,10 @@ RessourceMap.prototype.checkRendering = function () {
 
 
 
-}
+};
 
 
-RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax) {
+ResourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax) {
 
     var resData = this.newFilledArray(this.bmpResolutionX*this.bmpResolutionY, 0.0);
     resData = Object(resData);
@@ -263,7 +263,7 @@ RessourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax
 
 };
 
-RessourceMap.prototype.genBitmapFromResData = function (resData) {
+ResourceMap.prototype.genBitmapFromResData = function (resData) {
     var mycanvas = document.createElement("canvas");
     mycanvas.width = this.bmpResolutionX;
     mycanvas.height = this.bmpResolutionY;
@@ -273,7 +273,7 @@ RessourceMap.prototype.genBitmapFromResData = function (resData) {
         var startOfRow = this.bmpResolutionX * yy;
         for (var xx = 0; xx < this.bmpResolutionX; xx++) {
             var startOfPixel = (startOfRow + xx) * 4;
-            var colors = this.resColorFcn(resData[startOfRow + xx]);
+            var colors = this.GetHotColour(resData[startOfRow + xx],0, 1);
             imgData.data[startOfPixel] = colors.r;
             imgData.data[startOfPixel + 1] = colors.g;
             imgData.data[startOfPixel + 2] = colors.b;
@@ -300,10 +300,13 @@ RessourceMap.prototype.genBitmapFromResData = function (resData) {
 }
 
 
+ResourceMap.prototype.GetHotColour = function (v, vmin, vmax) {
+    var resDataScaled = Math.round(255 * (v-vmin)/(vmax - vmin));
+    return {r: resDataScaled, g: 0, b: 255 - resDataScaled};
+}
 
 
-
-RessourceMap.prototype.newFilledArray = function (len, val) {
+ResourceMap.prototype.newFilledArray = function (len, val) {
     var rv = new Array(len);
     while (--len >= 0) {
         rv[len] = val;
@@ -311,14 +314,14 @@ RessourceMap.prototype.newFilledArray = function (len, val) {
     return rv;
 }
 
-RessourceMap.prototype.wrapIndex = function (i, i_max) {
+ResourceMap.prototype.wrapIndex = function (i, i_max) {
     return ((i % i_max) + i_max) % i_max;
 }
 
-RessourceMap.prototype.addFinishedLoadingCallback = function (fcn) {
+ResourceMap.prototype.addFinishedLoadingCallback = function (fcn) {
     this.finishedLoadingCallback  = fcn;
 };
 
-RessourceMap.prototype.addFinishedScreenLoadingCallback = function (fcn) {
+ResourceMap.prototype.addFinishedScreenLoadingCallback = function (fcn) {
     this.finishedScreenLoadingCallback  = fcn;
 };

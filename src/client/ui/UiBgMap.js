@@ -1,8 +1,8 @@
-var UiBgMap = function (ressourceMapWrapper) {
+var UiBgMap = function (resourceMapWrapper) {
     var self = this;
 
-    this.ressourceMapWrapper = ressourceMapWrapper;
-    this.resTypes = ressourceMapWrapper.resMap.resTypes;
+    this.resourceMap = resourceMapWrapper;
+    this.resTypes = resourceMapWrapper.map.resTypes;
 
     this.content = $('<div>').addClass("ui-widget");
     this.label = $('<label>Background</label>').appendTo(this.content);
@@ -18,10 +18,10 @@ var UiBgMap = function (ressourceMapWrapper) {
 
     $(this.s).change(function () {
         if ($(this).val() == 'off') {
-            self.ressourceMapWrapper.removeRessourceOverlay();
+            self.resourceMap.removeOverlay();
         }
         else {
-            self.ressourceMapWrapper.addRessourceOverlay($(this).val());
+            self.resourceMap.addOverlay($(this).val());
         }
     });
 }

@@ -37,9 +37,12 @@ var MapContainer = function(mapId){
     this.menu_container = new createjs.Container();
     this.menu_container.name = "menu_container";
     this.menu_container.mouseMoveOutside = true;
+    this.background_container = new createjs.Container();
+    this.background_container.name = "background_container";
+    this.background_container.mouseMoveOutside = true;
 
     // compose containers:
-    this.zoom_container.addChild(this.main_container);
+    this.zoom_container.addChild(this.main_container,this.background_container);
     this.zoomBgImage_container.addChild(this.bgImage_container);
     this.map_container.addChild(this.zoomBgImage_container, this.zoom_container);
     this.stage.addChild(this.map_container,this.menu_container);
@@ -50,6 +53,13 @@ var MapContainer = function(mapId){
 
     // Initialize Map
     this.map = new Map(this, this.stage,this.mapId);
+
+    // Initialize BackgroundMap
+    var bgSize =5;
+    var seed = 4;
+    var roughness = 0.7;
+    this.backgroundMap = new BackgroundMap(this,bgSize,seed,roughness);
+    // terrain.draw(ctx, window.innerWidth, window.innerHeight);
 
     // Initialize map control
     this.mapControl = new MapControl(this.map);
@@ -121,9 +131,10 @@ var MapContainer = function(mapId){
      this.zoomBgImage_container.scaleX = zoomGround;
      this.zoomBgImage_container.scaleY = zoomGround;
 
-         this.map.ressourceMapWrapper.loadRessourceOverlay();
-         this.map.bgMapWrapper.loadRessourceOverlay();
+         this.map.resourceMap.loadOverlay();
+         this.map.bgMap.loadOverlay();
          this.map.checkRendering();
+
          this.stage.update();
 
  };

@@ -1,8 +1,8 @@
 var UiRessourceMap = function (ressourceMapWrapper) {
     var self = this;
 
-    this.ressourceMapWrapper = ressourceMapWrapper;
-    this.resTypes = ressourceMapWrapper.resMap.resTypes;
+    this.resourceMap = ressourceMapWrapper;
+    this.resTypes = ressourceMapWrapper.map.resTypes;
 
     this.content = $('<div>').addClass("ui-widget");
     this.label = $('<label>Ressources</label>').appendTo(this.content);
@@ -15,10 +15,10 @@ var UiRessourceMap = function (ressourceMapWrapper) {
 
     $(this.s).change(function () {
         if ($(this).val() == 'off') {
-            self.ressourceMapWrapper.removeRessourceOverlay();
+            self.resourceMap.removeOverlay();
         }
         else {
-            self.ressourceMapWrapper.addRessourceOverlay($(this).val());
+            self.resourceMap.addOverlay($(this).val());
         }
     });
 }

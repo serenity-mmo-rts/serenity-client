@@ -6,90 +6,33 @@ var Map = function(mapContainer, stage,mapId) {
     this.stage = stage;
     this.mapContainer = mapContainer;
     this.main_container = mapContainer.main_container;
+    this.bgImage_container = this.mapContainer.bgImage_container;
+
     this.mapId = mapId;
     this.callbackFinishedLoading = null
     this.tickCounter = 0;
 
-
     this.bg_container = new createjs.Container();
     this.obj_container = new createjs.Container();
     this.res_container = new createjs.Container();
+
     this.bg_container.mouseMoveOutside = true;
     this.obj_container.mouseMoveOutside = true;
     this.res_container.mouseMoveOutside = true;
     this.main_container.addChild(this.bg_container,this.obj_container,this.res_container);
-    this.bgImage_container = this.mapContainer.bgImage_container;
+
 
     this.res_container.alpha = 0.5;
 
+    var type = "background";
+    this.bgMap = new ResAndBgWrapper(this,this.bg_container,this.mapId,type);
+    var type = "resource";
+    this.resourceMap = new ResAndBgWrapper(this,this.res_container,this.mapId,type);
 
-    var bgMapRenderer = (function(){
-        var noiseLevel = 0;
-
-        var deepwaterSize = 6;
-        var coastwaterSize = 4;
-        var beachSize = 2;
-        var valleySize = 5;
-        var greenSize = 5;
-        var mountainSize = 5;
-        var halficeSize = 5;
-        var iceSize = 20;
-
-        var sumSize = deepwaterSize + coastwaterSize + beachSize + valleySize + greenSize + mountainSize + iceSize;
-
-        var landscape = [];
-        landscape.push({maxV: deepwaterSize / sumSize,                                         c1: {r: 0, g: 0, b: 150}, c2: {r: 0, g: 0, b: 150}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "deepwater"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + coastwaterSize / sumSize, c1: {r: 0, g: 0, b: 150}, c2: {r: 56, g: 200, b: 200}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "coastwater"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + beachSize / sumSize,      c1: {r: 255, g: 255, b: 153}, c2: {r: 200, g: 120, b: 20}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "beach"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + valleySize / sumSize,     c1: {r: 200, g: 120, b: 20}, c2: {r: 50, g: 150, b: 50}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "valley"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + greenSize / sumSize,      c1: {r: 50, g: 150, b: 50}, c2: {r: 153, g: 76, b: 0}, cnoise: {r: 100, g: 120, b: 25, vol: 0.05}, name: "green"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + mountainSize / sumSize,   c1: {r: 153, g: 76, b: 0}, c2: {r: 102, g: 51, b: 0}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "mountain"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + halficeSize / sumSize,   c1: {r: 255, g: 255, b: 255}, c2: {r: 255, g: 255, b: 255}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "halfice"});
-        landscape.push({maxV: landscape[landscape.length - 1].maxV + iceSize / sumSize,        c1: {r: 255, g: 255, b: 255}, c2: {r: 255, g: 255, b: 255}, cnoise: {r: 0, g: 0, b: 0, vol: 0}, name: "ice"});
-
-        var convertToLandscape = function(resDataScaled){
-            var resDataScaled = 1-1/(1+resDataScaled);
-            var c = {r: 1, g: 1, b: 1};
-
-            var i = 0;
-            while (i < landscape.length - 1 && landscape[i].maxV < resDataScaled) {
-                i++;
-            }
-            var minV = (i == 0 ? 0 : landscape[i - 1].maxV);
-            var a = (resDataScaled - minV) / (landscape[i].maxV - minV);
-            c.r = landscape[i].c1.r * (1 - a) + landscape[i].c2.r * (a);
-            c.g = landscape[i].c1.g * (1 - a) + landscape[i].c2.g * (a);
-            c.b = landscape[i].c1.b * (1 - a) + landscape[i].c2.b * (a);
-
-            if (landscape[i].cnoise.vol != 0) {
-                //Add Noise
-                var curNoiseLevel = Math.min(1,Math.max(0, Math.exp( - Math.random() / landscape[i].cnoise.vol )));
-                c.r = c.r * (1 - curNoiseLevel) + landscape[i].cnoise.r * curNoiseLevel;
-                c.g = c.g * (1 - curNoiseLevel) + landscape[i].cnoise.g * curNoiseLevel;
-                c.b = c.b * (1 - curNoiseLevel) + landscape[i].cnoise.b * curNoiseLevel;
-            }
-
-            if (noiseLevel) {
-                //Add Noise
-                c.r += noiseLevel * Math.random();
-                c.g += noiseLevel * Math.random();
-                c.b += noiseLevel * Math.random();
-            }
-
-            return c;
-        };
-        return convertToLandscape
-
-    })();
-    this.bgMapWrapper = new RessourceMapWrapper(this,this.bg_container,this.mapId,bgMapRenderer);
-
-    this.ressourceMapWrapper = new RessourceMapWrapper(this,this.res_container,this.mapId);
 
     this.tempObj;
     this.tempObjBitmap;
 
-    this.spritesheets = {};
-    this.bgImg;
     this.layer = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.layer.mapTypeId);
     this.layer.mapData.objectChangedCallback = function(mapObject) {
@@ -98,17 +41,8 @@ var Map = function(mapContainer, stage,mapId) {
     };
 
     // create unique list of images to load:
-    var imagesToLoadHashList = {}, imagesToLoad = [];
-
-    /*for (var spritesheetId in game.spritesheets.hashList) {
-        var spritesheet = game.spritesheets.hashList[spritesheetId];
-        for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
-            if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
-                imagesToLoad.push(spritesheet.images[i]);
-                imagesToLoadHashList[spritesheet.images[i]] = 1;
-            }
-        }
-    }*/
+    var imagesToLoadHashList = {};
+    var imagesToLoad = [];
 
     // load background image:
     var bgFile = this.mapType._groundImage;
@@ -191,11 +125,13 @@ Map.prototype.checkRendering = function(){
 
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
 
-    if (this.ressourceMapWrapper != null) {
-        this.ressourceMapWrapper.checkRendering();
+
+    if (this.resourceMap != null) {
+        this.resourceMap.checkRendering();
     }
-    if (this.bgMapWrapper != null) {
-        this.bgMapWrapper.checkRendering();
+
+    if (this.bgMap != null) {
+        this.bgMap.checkRendering();
     }
 }
 
@@ -231,7 +167,8 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         mapObject.addCallback("renderObj", function() {self.renderObj(mapObject)})
     }
 
-}
+
+};
 
 Map.prototype.renderObj = function(mapObject) {
     //remove if already in container:
@@ -534,10 +471,11 @@ Map.prototype.tick = function() {
 
 
 Map.prototype.resize = function () {
-    if (this.ressourceMapWrapper != null) {
-        this.ressourceMapWrapper.resize();
+    if (this.resourceMap != null) {
+        this.resourceMap.resize();
     }
-    if (this.bgMapWrapper != null) {
-        this.bgMapWrapper.resize();
-    }
-};
+    if (this.bgMap != null) {
+        this.bgMap.resize();
+    }};
+
+
