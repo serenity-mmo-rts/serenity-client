@@ -74,7 +74,7 @@ Client.prototype.init = function() {
     }));*/
 
     socket.on('newGameEvent', (function(data){
-        var event = EventFactory(game,data[1]);
+        var event = EventFactory(game,data);
         //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
         event.executeOnOthers();
