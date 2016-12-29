@@ -24,10 +24,9 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.res_container.alpha = 0.5;
 
-    var type = "background";
-    this.bgMap = new ResAndBgWrapper(this,this.bg_container,this.mapId,type);
-    var type = "resource";
-    this.resourceMap = new ResAndBgWrapper(this,this.res_container,this.mapId,type);
+
+    this.bgMap = new ResAndBgWrapper(this,this.bg_container,this.mapId,"background");
+    this.resourceMap = new ResAndBgWrapper(this,this.res_container,this.mapId,"resource");
 
 
     this.tempObj;

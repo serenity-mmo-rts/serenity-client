@@ -32,21 +32,16 @@ ResAndBgWrapper.prototype.removeOverlay = function() {
         this.foregroundContainer = null;
     }
 
-    this.cancelOverlayLoading();
-
-};
-
-
-ResAndBgWrapper.prototype.cancelOverlayLoading = function() {
     if (this.mapBackgroundLoading != null) {
         this.mapBackgroundLoading.updatingDisabled = true;
         this.mapBackgroundLoading = null;
         this.backgroundContainer = null;
     }
-    if (this.ressourceMap != null) {
-        this.ressourceMap.updatingDisabled = true;
-    }
+
 };
+
+
+
 
 ResAndBgWrapper.prototype.addOverlay = function(resTypeId) {
 
@@ -103,7 +98,7 @@ ResAndBgWrapper.prototype.resize = function () {
 
 ResAndBgWrapper.prototype.checkRendering = function () {
     if (this.ressourceMap != null) {
-        this.ressourceMap.checkRendering();
+        this.ressourceMap.loadOverlay();
     }
 };
 

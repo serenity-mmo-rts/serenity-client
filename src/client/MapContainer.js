@@ -54,13 +54,6 @@ var MapContainer = function(mapId){
     // Initialize Map
     this.map = new Map(this, this.stage,this.mapId);
 
-    // Initialize BackgroundMap
-    var bgSize =5;
-    var seed = 4;
-    var roughness = 0.7;
-    this.backgroundMap = new BackgroundMap(this,bgSize,seed,roughness);
-    // terrain.draw(ctx, window.innerWidth, window.innerHeight);
-
     // Initialize map control
     this.mapControl = new MapControl(this.map);
 
@@ -131,11 +124,11 @@ var MapContainer = function(mapId){
      this.zoomBgImage_container.scaleX = zoomGround;
      this.zoomBgImage_container.scaleY = zoomGround;
 
-         this.map.resourceMap.loadOverlay();
-         this.map.bgMap.loadOverlay();
-         this.map.checkRendering();
+     this.map.resourceMap.addOverlay();
+     this.map.bgMap.addOverlay();
+     this.map.checkRendering();
 
-         this.stage.update();
+     this.stage.update();
 
  };
 
