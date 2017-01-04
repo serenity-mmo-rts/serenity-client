@@ -66,12 +66,12 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
     this.uiRessourceMapPanel.show(0);
 
-   /**
+
     this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMap);
     if (this.uiBgMapPanel) this.uiBgMapPanel.remove();
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
-    **/
+
 
 
     var mapObjectMenuX = canvas.width*0.5;
@@ -83,8 +83,8 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.uiObjectContextPanel.hide(0);
 
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
-    //this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
-   // this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
+    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
+    this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
 }
 
 LayerView.prototype.resize = function () {

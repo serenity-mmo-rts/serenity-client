@@ -26,6 +26,7 @@ var Map = function(mapContainer, stage,mapId) {
 
 
     this.bgMap = new ResAndBgWrapper(this,this.bg_container,this.mapId,"background");
+
     this.resourceMap = new ResAndBgWrapper(this,this.res_container,this.mapId,"resource");
 
 
