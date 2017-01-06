@@ -17,7 +17,7 @@ var ResAndBgWrapper = function(mapRenderer,container,mapId,type) {
     this.backgroundContainer = new createjs.Container();
     this.container.addChild(this.backgroundContainer);
 
-    this.map = new MapGenerator('3',this.mapData.width,this.mapData.height);
+
 
     this.loadOverlay();
 };
@@ -54,11 +54,14 @@ ResAndBgWrapper.prototype.addOverlay = function(resTypeId) {
 ResAndBgWrapper.prototype.loadOverlay = function() {
     var self = this;
 
+
+
+
     if (this.resTypeId != null) {
         console.log("start to generate new resource map overlay in background...")
 
         this.backgroundContainer = new createjs.Container();
-        this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.map, this.mapId, this.backgroundContainer);
+        this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.mapData.mapGenerator, this.mapId, this.backgroundContainer, this.type);
         this.mapBackgroundLoading.initQuadtree(this.resTypeId);
         this.mapBackgroundLoading.enableProgressBar();
         this.mapBackgroundLoading.checkRendering();

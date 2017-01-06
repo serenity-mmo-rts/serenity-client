@@ -1,9 +1,11 @@
-var ResourceMap = function (mapRenderer, resMap, mapId, res_container) {
+var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.map = resMap;
     this.container = res_container;
+
+    this.type = type;
 
     this.mapData = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.mapData.mapTypeId);
@@ -125,8 +127,12 @@ ResourceMap.prototype.checkRendering = function () {
                     var existObj = this.container.getChildByName(bmpName);
                     if (existObj == null) {
                         if (this.debugLog) console.log("start adding bmpObj at radFromCenter=" +radFromCenter+ " with name=" + bmpName + " to resourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
-                        var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
-                        var bmpObj = this.genBitmapFromResData(resData);
+
+                        //var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
+                        //var bmpObj = this.genBitmapFromResData(resData);
+
+                        var bmpObj = this.genBitmapFromPlanetGenerator((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
+
                         bmpObj.name = bmpName;
                         bmpObj.x = this.bmpRenderSizeX * bmpX;
                         bmpObj.y = this.bmpRenderSizeY * bmpY;
@@ -168,9 +174,69 @@ ResourceMap.prototype.checkRendering = function () {
 
     }
 
-
-
 };
+
+
+ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax) {
+    var mycanvas = document.createElement("canvas");
+    mycanvas.width = this.bmpResolutionX;
+    mycanvas.height = this.bmpResolutionY;
+    var ctx = mycanvas.getContext("2d");
+    var imgData = ctx.createImageData(this.bmpResolutionX, this.bmpResolutionY);
+
+
+    var planetMap = new PlanetGenerator(2,200,15,50,20);
+
+
+    var targetDepth = planetMap.getDepthAtNormalZoom();
+    /*
+    var finalEdgeLength = planetMap.getEdgeLength(targetDepth);
+    var nrOfYPxl = window.innerHeight;
+    var nrOfXPxl = window.innerWidth;
+    var xPos = 0;
+    var yPos = 0;
+    var width = nrOfXPxl/finalEdgeLength;
+    var height = nrOfYPxl/finalEdgeLength;
+    */
+
+    var xpos = (bmpxmin / this.mapData.width) + 0.5;
+    var ypos = (bmpymin / this.mapData.height) + 0.5;
+    var width = (bmpxmax-bmpxmin) / this.mapData.width;
+    var height = (bmpymax-bmpymin) / this.mapData.height;
+    var rgb = planetMap.getMatrix(xpos,ypos,width,height,10,"rgb"); // x,y, width, height, depth
+
+
+
+    for (var yy = 0; yy < this.bmpResolutionY; yy++) {
+        var startOfRow = this.bmpResolutionX * yy;
+        for (var xx = 0; xx < this.bmpResolutionX; xx++) {
+            var startOfPixel = (startOfRow + xx) * 4;
+            var colors = this.GetHotColour(resData[startOfRow + xx],0, 1);
+            imgData.data[startOfPixel] = colors.r;
+            imgData.data[startOfPixel + 1] = colors.g;
+            imgData.data[startOfPixel + 2] = colors.b;
+            imgData.data[startOfPixel + 3] = 255; //alpha
+        }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    var bmp = new createjs.Bitmap(mycanvas);
+    if (this.debugTiles) {
+        bmp.scaleX = this.bmpToRenderScaling*0.99;
+        bmp.scaleY = this.bmpToRenderScaling*0.99;
+    }
+    else {
+        bmp.scaleX = this.bmpToRenderScaling;
+        bmp.scaleY = this.bmpToRenderScaling;
+        var browser=navigator.userAgent.toLowerCase();
+        if(browser.indexOf('firefox') > -1) {
+            bmp.scaleX *= 1.001;
+            bmp.scaleY *= 1.001;
+        }
+    }
+    return bmp;
+}
+
 
 
 ResourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax) {

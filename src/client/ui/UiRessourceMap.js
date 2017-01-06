@@ -2,7 +2,7 @@ var UiRessourceMap = function (ressourceMapWrapper) {
     var self = this;
 
     this.resourceMap = ressourceMapWrapper;
-    this.resTypes = ressourceMapWrapper.map.resTypes;
+    this.resTypes = ressourceMapWrapper.mapData.mapGenerator.resTypes;
 
     this.content = $('<div>').addClass("ui-widget");
     this.label = $('<label>Ressources</label>').appendTo(this.content);
