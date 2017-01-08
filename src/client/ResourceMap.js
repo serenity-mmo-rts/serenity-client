@@ -188,22 +188,27 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var planetMap = new PlanetGenerator(2,200,15,50,20);
 
 
-    var targetDepth = planetMap.getDepthAtNormalZoom();
-    /*
-    var finalEdgeLength = planetMap.getEdgeLength(targetDepth);
-    var nrOfYPxl = window.innerHeight;
-    var nrOfXPxl = window.innerWidth;
-    var xPos = 0;
-    var yPos = 0;
-    var width = nrOfXPxl/finalEdgeLength;
-    var height = nrOfYPxl/finalEdgeLength;
-    */
+
+
 
     var xpos = (bmpxmin / this.mapData.width) + 0.5;
     var ypos = (bmpymin / this.mapData.height) + 0.5;
     var width = (bmpxmax-bmpxmin) / this.mapData.width;
     var height = (bmpymax-bmpymin) / this.mapData.height;
-    var rgb = planetMap.getMatrix(xpos,ypos,width,height,10,"rgb"); // x,y, width, height, depth
+    var targetDepth = planetMap.getDepthAtNormalZoom();
+
+/**
+     var targetDepth = planetMap.getDepthAtNormalZoom();
+     var finalEdgeLength = planetMap.getEdgeLength(targetDepth);
+     var nrOfYPxl = window.innerHeight;
+     var nrOfXPxl = window.innerWidth;
+     var xpos = 0;
+     var ypos = 0;
+     var width = nrOfXPxl/finalEdgeLength;
+     var height = nrOfYPxl/finalEdgeLength;
+ **/
+
+    var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
 
 
 
