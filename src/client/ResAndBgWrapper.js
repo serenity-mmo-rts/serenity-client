@@ -65,6 +65,7 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
         this.mapBackgroundLoading.initQuadtree(this.resTypeId);
         this.mapBackgroundLoading.enableProgressBar();
         this.mapBackgroundLoading.checkRendering();
+
         this.mapBackgroundLoading.addFinishedScreenLoadingCallback(function(resMap) {
 
             if (resMap.updatingDisabled) {
@@ -74,19 +75,22 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
                 console.log("finished background-loading of ressource overlay in screen area. now add it to res_container.");
                 resMap.finishedLoadingCallback = null;
                 resMap.finishedScreenLoadingCallback = null;
-                if (self.foregroundContainer != null) {
-                    self.container.removeChild(self.foregroundContainer);
-                }
-                self.foregroundContainer = self.backgroundContainer;
-                self.foregroundContainer.name = 'ressources';
-                self.backgroundContainer = null;
-                self.ressourceMap = self.mapBackgroundLoading;
-                self.mapBackgroundLoading = null;
-                self.container.addChild(self.foregroundContainer);
-                self.foregroundContainer.mouseMoveOutside = true;
-                resMap.disableProgressBar();
+
             }
         });
+
+        // the following was moved outside of the callback
+        if (self.foregroundContainer != null) {
+            self.container.removeChild(self.foregroundContainer);
+        }
+        self.foregroundContainer = self.backgroundContainer;
+        self.foregroundContainer.name = 'ressources';
+        self.backgroundContainer = null;
+        self.ressourceMap = self.mapBackgroundLoading;
+        self.mapBackgroundLoading = null;
+        self.container.addChild(self.foregroundContainer);
+        self.foregroundContainer.mouseMoveOutside = true;
+        //this.mapBackgroundLoading.disableProgressBar();
     }
 
     else{
@@ -96,12 +100,12 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
 }
 
 ResAndBgWrapper.prototype.resize = function () {
-    this.loadOverlay();
+    this.checkRendering();
 };
 
 ResAndBgWrapper.prototype.checkRendering = function () {
     if (this.ressourceMap != null) {
-        this.ressourceMap.loadOverlay();
+        this.ressourceMap.checkRendering();
     }
 };
 

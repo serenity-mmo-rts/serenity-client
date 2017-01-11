@@ -20,7 +20,7 @@ var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
     this.finishedScreenLoadingCallback  = null;
     this.updatingDisabled = false;
 
-    this.bmpResolutionToPixelScaling = 4;  // this variable can be increased to reduce cpu strain
+    this.bmpResolutionToPixelScaling = 1;  // this variable can be increased to reduce cpu strain
     this.numTilesOnScreen = 2; // this variable controls the number of tiles
 
     this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
@@ -184,42 +184,32 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var ctx = mycanvas.getContext("2d");
     var imgData = ctx.createImageData(this.bmpResolutionX, this.bmpResolutionY);
 
-
     var planetMap = new PlanetGenerator(2,200,15,50,20);
 
+    var xpos = bmpxmin + this.mapData.width/2;
+    var ypos = bmpymin + this.mapData.height/2;
+    var width = (bmpxmax-bmpxmin);
+    var height = (bmpymax-bmpymin);
+    var targetDepth = 14;
 
-
-
-
-    var xpos = (bmpxmin / this.mapData.width) + 0.5;
-    var ypos = (bmpymin / this.mapData.height) + 0.5;
-    var width = (bmpxmax-bmpxmin) / this.mapData.width;
-    var height = (bmpymax-bmpymin) / this.mapData.height;
-    var targetDepth = planetMap.getDepthAtNormalZoom();
-
-/**
-     var targetDepth = planetMap.getDepthAtNormalZoom();
-     var finalEdgeLength = planetMap.getEdgeLength(targetDepth);
-     var nrOfYPxl = window.innerHeight;
-     var nrOfXPxl = window.innerWidth;
-     var xpos = 0;
-     var ypos = 0;
-     var width = nrOfXPxl/finalEdgeLength;
-     var height = nrOfYPxl/finalEdgeLength;
- **/
+    xpos = xpos / this.bmpToRenderScaling;
+    ypos = ypos / this.bmpToRenderScaling;
+    //console.log("width="+width+" height="+height)
+    width = width / this.bmpToRenderScaling;
+    //console.log("width="+width+" height="+height)
+    height = height / this.bmpToRenderScaling;
+    //console.log("width="+width+" height="+height)
+    targetDepth = targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
 
     var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
-
-
 
     for (var yy = 0; yy < this.bmpResolutionY; yy++) {
         var startOfRow = this.bmpResolutionX * yy;
         for (var xx = 0; xx < this.bmpResolutionX; xx++) {
             var startOfPixel = (startOfRow + xx) * 4;
-            var colors = this.GetHotColour(resData[startOfRow + xx],0, 1);
-            imgData.data[startOfPixel] = colors.r;
-            imgData.data[startOfPixel + 1] = colors.g;
-            imgData.data[startOfPixel + 2] = colors.b;
+            imgData.data[startOfPixel] = rgb.r[targetDepth+1][startOfRow + xx];
+            imgData.data[startOfPixel + 1] = rgb.g[targetDepth+1][startOfRow + xx];
+            imgData.data[startOfPixel + 2] = rgb.b[targetDepth+1][startOfRow + xx];
             imgData.data[startOfPixel + 3] = 255; //alpha
         }
     }
