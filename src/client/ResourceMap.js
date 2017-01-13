@@ -184,13 +184,13 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var ctx = mycanvas.getContext("2d");
     var imgData = ctx.createImageData(this.bmpResolutionX, this.bmpResolutionY);
 
-    var planetMap = new PlanetGenerator(2,200,15,50,20);
+    var planetMap = new PlanetGenerator(2,200,15,50,13);
 
     var xpos = bmpxmin + this.mapData.width/2;
     var ypos = bmpymin + this.mapData.height/2;
     var width = (bmpxmax-bmpxmin);
     var height = (bmpymax-bmpymin);
-    var targetDepth = 14;
+    var targetDepth = 4;
 
     xpos = xpos / this.bmpToRenderScaling;
     ypos = ypos / this.bmpToRenderScaling;
@@ -199,9 +199,10 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     //console.log("width="+width+" height="+height)
     height = height / this.bmpToRenderScaling;
     //console.log("width="+width+" height="+height)
-    targetDepth = targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
+    targetDepth =  13;//targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
 
     var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
+   // var rgb = planetMap.getMatrix(8,8,20,20,targetDepth,"rgb"); // x,y, width, height, depth
 
     for (var yy = 0; yy < this.bmpResolutionY; yy++) {
         var startOfRow = this.bmpResolutionX * yy;
