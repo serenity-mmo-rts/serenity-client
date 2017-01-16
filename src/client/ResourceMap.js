@@ -13,14 +13,14 @@ var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
     this.mapWidth = this.mapData.width;
     this.mapHeight = this.mapData.height;
 
-    this.debugTiles = false;
+    this.debugTiles = true;
     this.debugLog = false;
 
     this.finishedLoadingCallback  = null;
     this.finishedScreenLoadingCallback  = null;
     this.updatingDisabled = false;
 
-    this.bmpResolutionToPixelScaling = 1;  // this variable can be increased to reduce cpu strain
+    this.bmpResolutionToPixelScaling = 32;  // this variable can be increased to reduce cpu strain
     this.numTilesOnScreen = 2; // this variable controls the number of tiles
 
     this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
@@ -178,11 +178,7 @@ ResourceMap.prototype.checkRendering = function () {
 
 
 ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax) {
-    var mycanvas = document.createElement("canvas");
-    mycanvas.width = this.bmpResolutionX;
-    mycanvas.height = this.bmpResolutionY;
-    var ctx = mycanvas.getContext("2d");
-    var imgData = ctx.createImageData(this.bmpResolutionX, this.bmpResolutionY);
+
 
     var planetMap = new PlanetGenerator(2,200,15,50,13);
 
@@ -201,12 +197,19 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     //console.log("width="+width+" height="+height)
     targetDepth =  13;//targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
 
+
+    var mycanvas = document.createElement("canvas");
+    mycanvas.width = width;
+    mycanvas.height = height;
+    var ctx = mycanvas.getContext("2d");
+    var imgData = ctx.createImageData(width, height);
+
     var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
    // var rgb = planetMap.getMatrix(8,8,20,20,targetDepth,"rgb"); // x,y, width, height, depth
 
-    for (var yy = 0; yy < this.bmpResolutionY; yy++) {
-        var startOfRow = this.bmpResolutionX * yy;
-        for (var xx = 0; xx < this.bmpResolutionX; xx++) {
+    for (var yy = 0; yy < height; yy++) {
+        var startOfRow = width * yy;
+        for (var xx = 0; xx < width; xx++) {
             var startOfPixel = (startOfRow + xx) * 4;
             imgData.data[startOfPixel] = rgb.r[targetDepth+1][startOfRow + xx];
             imgData.data[startOfPixel + 1] = rgb.g[targetDepth+1][startOfRow + xx];
