@@ -20,7 +20,7 @@ var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
     this.finishedScreenLoadingCallback  = null;
     this.updatingDisabled = false;
 
-    this.bmpResolutionToPixelScaling = 32;  // this variable can be increased to reduce cpu strain
+    this.bmpResolutionToPixelScaling = 2;  // this variable can be increased to reduce cpu strain
     this.numTilesOnScreen = 2; // this variable controls the number of tiles
 
     this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
@@ -180,13 +180,14 @@ ResourceMap.prototype.checkRendering = function () {
 ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax) {
 
 
-    var planetMap = new PlanetGenerator(2,200,15,50,13);
+    var seed = (1 << 30);
+    var planetMap = new PlanetGenerator(seed,0.01,15,50,20);
 
     var xpos = bmpxmin + this.mapData.width/2;
     var ypos = bmpymin + this.mapData.height/2;
     var width = (bmpxmax-bmpxmin);
     var height = (bmpymax-bmpymin);
-    var targetDepth = 4;
+    var targetDepth = 14;
 
     xpos = xpos / this.bmpToRenderScaling;
     ypos = ypos / this.bmpToRenderScaling;
@@ -195,8 +196,15 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     //console.log("width="+width+" height="+height)
     height = height / this.bmpToRenderScaling;
     //console.log("width="+width+" height="+height)
-    targetDepth =  13;//targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
+    targetDepth = targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
 
+/*
+    xpos = 12;
+    ypos = 15;
+    width = 5;
+    height = 5;
+    targetDepth = 8;
+*/
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;
@@ -205,7 +213,6 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var imgData = ctx.createImageData(width, height);
 
     var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
-   // var rgb = planetMap.getMatrix(8,8,20,20,targetDepth,"rgb"); // x,y, width, height, depth
 
     for (var yy = 0; yy < height; yy++) {
         var startOfRow = width * yy;
