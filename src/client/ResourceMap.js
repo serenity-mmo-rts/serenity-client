@@ -218,9 +218,9 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
         var startOfRow = width * yy;
         for (var xx = 0; xx < width; xx++) {
             var startOfPixel = (startOfRow + xx) * 4;
-            imgData.data[startOfPixel] = rgb.r[targetDepth+1][startOfRow + xx];
-            imgData.data[startOfPixel + 1] = rgb.g[targetDepth+1][startOfRow + xx];
-            imgData.data[startOfPixel + 2] = rgb.b[targetDepth+1][startOfRow + xx];
+            imgData.data[startOfPixel] = rgb.r[targetDepth][startOfRow + xx];
+            imgData.data[startOfPixel + 1] = rgb.g[targetDepth][startOfRow + xx];
+            imgData.data[startOfPixel + 2] = rgb.b[targetDepth][startOfRow + xx];
             imgData.data[startOfPixel + 3] = 255; //alpha
         }
     }
