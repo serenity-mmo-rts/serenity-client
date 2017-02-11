@@ -13,7 +13,7 @@ var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
     this.mapWidth = this.mapData.width;
     this.mapHeight = this.mapData.height;
 
-    this.debugTiles = true;
+    this.debugTiles = false;
     this.debugLog = false;
 
     this.finishedLoadingCallback  = null;
@@ -181,7 +181,7 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
 
 
     var seed = (1 << 30);
-    var planetMap = new PlanetGenerator(seed,0.01,15,50,20);
+    var planetMap = new PlanetGenerator(seed,10000,15,50,20);
 
     var xpos = bmpxmin + this.mapData.width/2;
     var ypos = bmpymin + this.mapData.height/2;
@@ -214,14 +214,16 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
 
     var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
 
-    for (var yy = 0; yy < height; yy++) {
-        var startOfRow = width * yy;
-        for (var xx = 0; xx < width; xx++) {
-            var startOfPixel = (startOfRow + xx) * 4;
-            imgData.data[startOfPixel] = rgb.r[targetDepth][startOfRow + xx];
-            imgData.data[startOfPixel + 1] = rgb.g[targetDepth][startOfRow + xx];
-            imgData.data[startOfPixel + 2] = rgb.b[targetDepth][startOfRow + xx];
-            imgData.data[startOfPixel + 3] = 255; //alpha
+    for (var yDest = 0, ySource=2; yDest < height; yDest++, ySource++) {
+        var startOfRowDest = width * yDest;
+        var startOfRowSource = planetMap.sizeX * ySource;
+        for (var xDest = 0, xSource=2; xDest < width; xDest++, xSource++) {
+            var startOfPixelDest = (startOfRowDest + xDest) *4;
+            var startOfPixelSource = (startOfRowSource + xSource);
+            imgData.data[startOfPixelDest] = rgb.r[targetDepth][startOfPixelSource];
+            imgData.data[startOfPixelDest + 1] = rgb.g[targetDepth][startOfPixelSource];
+            imgData.data[startOfPixelDest + 2] = rgb.b[targetDepth][startOfPixelSource];
+            imgData.data[startOfPixelDest + 3] = 255; //alpha
         }
     }
     ctx.putImageData(imgData, 0, 0);
