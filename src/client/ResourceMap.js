@@ -164,7 +164,7 @@ ResourceMap.prototype.checkRendering = function () {
 
         }
 
-        console.log("all tiles loaded");
+        //console.log("all tiles loaded");
 
         this.disableProgressBar();
 
