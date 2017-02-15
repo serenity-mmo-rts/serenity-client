@@ -118,9 +118,13 @@ Map.prototype.createMap = function() {
 Map.prototype.checkRendering = function(){
 
     var objectList = this.layer.mapData.mapObjects.hashList;
-
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
+    }
+
+    var worldObjectList = this.layer.mapGenerator.getWorldObjects();
+    for (var worldObjectId in worldObjectList) {
+        this.checkRenderingOfObject(worldObjectList[worldObjectId]);
     }
 
     this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
