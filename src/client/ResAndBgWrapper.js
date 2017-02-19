@@ -61,7 +61,7 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
         console.log("start to generate new resource map overlay in background...")
 
         this.backgroundContainer = new createjs.Container();
-        this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.mapData.mapGenerator, this.mapId, this.backgroundContainer, this.type);
+        this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.mapData.mapProperties, this.mapId, this.backgroundContainer, this.type);
         this.mapBackgroundLoading.initQuadtree(this.resTypeId);
         this.mapBackgroundLoading.enableProgressBar();
         this.mapBackgroundLoading.checkRendering();

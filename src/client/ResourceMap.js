@@ -179,10 +179,6 @@ ResourceMap.prototype.checkRendering = function () {
 
 ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax) {
 
-
-    var seed = (1 << 30);
-    var planetMap = new PlanetGenerator(seed,10000,15,50,20);
-
     var xpos = bmpxmin + this.mapData.width/2;
     var ypos = bmpymin + this.mapData.height/2;
     var width = (bmpxmax-bmpxmin);
@@ -191,20 +187,9 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
 
     xpos = xpos / this.bmpToRenderScaling;
     ypos = ypos / this.bmpToRenderScaling;
-    //console.log("width="+width+" height="+height)
     width = width / this.bmpToRenderScaling;
-    //console.log("width="+width+" height="+height)
     height = height / this.bmpToRenderScaling;
-    //console.log("width="+width+" height="+height)
     targetDepth = targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
-
-/*
-    xpos = 12;
-    ypos = 15;
-    width = 5;
-    height = 5;
-    targetDepth = 8;
-*/
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;
@@ -212,7 +197,7 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var ctx = mycanvas.getContext("2d");
     var imgData = ctx.createImageData(width, height);
 
-    var rgb = planetMap.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
+    var rgb = this.mapData.mapGenerator.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
 
     for (var yDest = 0, ySource=2; yDest < height; yDest++, ySource++) {
         var startOfRowDest = width * yDest;

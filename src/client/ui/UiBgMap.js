@@ -2,7 +2,7 @@ var UiBgMap = function (resourceMapWrapper) {
     var self = this;
 
     this.resourceMap = resourceMapWrapper;
-    this.resTypes = resourceMapWrapper.mapData.mapGenerator.resTypes;
+    this.resTypes = resourceMapWrapper.mapData.mapProperties.resTypes;
 
     this.content = $('<div>').addClass("ui-widget");
     this.label = $('<label>Background</label>').appendTo(this.content);

@@ -42,8 +42,9 @@ Client.prototype.init = function() {
 
     socket.on('loggedIn', (function(data){
         self.userId = data.userId;
-        console.log("logged in")
+        console.log("logged in");
         loginForm.close();
+        // TODO add new User.js here?, where to add it on server?
     }));
 
     socket.on('spritesheets', (function(spritesheets){
