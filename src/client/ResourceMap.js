@@ -199,15 +199,20 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
 
     var rgb = this.mapData.mapGenerator.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
 
+    var r = rgb.r;
+    var g = rgb.g;
+    var b = rgb.b;
+    var sizeX = rgb.sizeX;
+
     for (var yDest = 0, ySource=2; yDest < height; yDest++, ySource++) {
         var startOfRowDest = width * yDest;
-        var startOfRowSource = planetMap.sizeX * ySource;
+        var startOfRowSource = sizeX * ySource;
         for (var xDest = 0, xSource=2; xDest < width; xDest++, xSource++) {
             var startOfPixelDest = (startOfRowDest + xDest) *4;
             var startOfPixelSource = (startOfRowSource + xSource);
-            imgData.data[startOfPixelDest] = rgb.r[targetDepth][startOfPixelSource];
-            imgData.data[startOfPixelDest + 1] = rgb.g[targetDepth][startOfPixelSource];
-            imgData.data[startOfPixelDest + 2] = rgb.b[targetDepth][startOfPixelSource];
+            imgData.data[startOfPixelDest] = r[startOfPixelSource];
+            imgData.data[startOfPixelDest + 1] = g[startOfPixelSource];
+            imgData.data[startOfPixelDest + 2] = b[startOfPixelSource];
             imgData.data[startOfPixelDest + 3] = 255; //alpha
         }
     }
