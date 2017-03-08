@@ -59,7 +59,7 @@ LayerView.prototype.finishedLoadingMap = function () {
     if (this.minimapPanel) this.minimapPanel.remove();
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
     this.minimap.init();
-    this.minimapPanel.hide(0);
+    //this.minimapPanel.hide(0);
 
     this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.resourceMap);
     if (this.uiRessourceMapPanel) this.uiRessourceMapPanel.remove();
