@@ -118,7 +118,8 @@ Minimap.prototype.genBitmapFromPlanetGenerator = function(targetDepth) {
     var width = Math.pow(2,targetDepth);
     var height = Math.pow(2,targetDepth);
 
-    var rgb = this.layer.mapGenerator.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
+    var tmpMapGenerator = this.layer.mapGenerator.getSeededCopy();
+    var rgb = tmpMapGenerator.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;

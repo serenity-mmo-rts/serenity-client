@@ -199,7 +199,8 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var ctx = mycanvas.getContext("2d");
     var imgData = ctx.createImageData(width, height);
 
-    var rgb = this.mapData.mapGenerator.getMatrix(xpos,2*ypos,width,2*height,targetDepth,"rgb"); // x,y, width, height, depth
+    var tmpMapGenerator = this.mapData.mapGenerator.getSeededCopy();
+    var rgb = tmpMapGenerator.getMatrix(xpos,2*ypos,width,2*height,targetDepth,"rgb"); // x,y, width, height, depth
 
     var r = rgb.r;
     var g = rgb.g;
