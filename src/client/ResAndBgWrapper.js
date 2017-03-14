@@ -64,9 +64,14 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
         this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.mapData.mapProperties, this.mapId, this.backgroundContainer, this.type);
         this.mapBackgroundLoading.initQuadtree(this.resTypeId);
         this.mapBackgroundLoading.enableProgressBar();
+
+        console.time('mapgen');
+
         this.mapBackgroundLoading.checkRendering();
 
         this.mapBackgroundLoading.addFinishedScreenLoadingCallback(function(resMap) {
+
+            console.timeEnd('mapgen');
 
             if (resMap.updatingDisabled) {
                 console.log("canceled loading new map")
