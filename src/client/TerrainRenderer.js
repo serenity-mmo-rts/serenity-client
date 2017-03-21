@@ -41,7 +41,7 @@ var TerrainRenderer = function (mapRenderer, resMap, mapId, res_container, type)
      this.zoomLevelContainers[6] contains 64x64 map tiles, each having a resolution 512x256
 
      after zooming:
-     first select the zoom level that can fill the visible screen with at most 2x2 tiles.
+     first select the zoom level that can fill the visible screen with at most 2x2 tiles (usually just 1 tile).
      then incrementally also render more detailed tile levels, up to the level which matches to the screen-resolution/bmpResolutionToPixelScaling.
      */
     for (var i=0; i<=6; i++) {
