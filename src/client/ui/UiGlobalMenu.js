@@ -1,38 +1,115 @@
+
 var UiGlobalMenu = function () {
     var self = this;
 
-    this.content = $('<div>').addClass("ui-widget");
+    var UiGlobalMenuX = canvas.width/8;
+    var UiGlobalMenuY = canvas.height/6;
 
-    if (uc.userId) {
-        $('<b>userId: '+uc.userId+'</b>').appendTo(this.content);
-    }
-    else {
-        $('<b>not logged in</b>').appendTo(this.content);
-    }
+    this.content = $('<div>').addClass("ui-widget");
+    this.content.empty();
+    this.content.css({
+        "min-width": "200px",
+        "min-height": "200px"
+    });
+
+    this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'width':UiGlobalMenuX,'height':UiGlobalMenuY,'display': 'inline-block'}).appendTo(this.content);
+
+        this.createContent();
+
+
+};
+
+UiGlobalMenu.prototype.createContent = function() {
+    this.createUserInfo("not logged in");
+    this.createLevelUpButton();
+    this.createOccupation();
+    this.createStats();
 
     this.fps = $('<div>fps: </div>');
     this.fps.appendTo(this.content);
 
     this.mouseCoord = $('<div>x: , y: </div>');
     this.mouseCoord.appendTo(this.content);
+/**
+    this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.container);
+    this.healthContainer.css({'width':25+'%','display': 'inline-block'});
 
-    this.debugText = $('<div></div>');
-    this.debugText.appendTo(this.content);
+    this.armorContainer = $('<div id="armorContainer"></div>').appendTo(this.container);
+    this.armorContainer.css({'width':25+'%','display': 'inline-block'});
 
+    this.engergyContainer = $('<div id="engergyContainer"></div>').appendTo(this.container);
+    this.engergyContainer.css({'width':25+'%','display': 'inline-block'});
+
+    this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.container);
+    this.coinContainer.css({'width':25+'%','display': 'inline-block'});
+ **/
+};
+
+
+UiGlobalMenu.prototype.createUserInfo= function(userName) {
+    this.imageContainer = $('<div id="imageContainer"></div>').appendTo(this.container);
+    this.imageContainer.css({'top':0+'%','left':0%+'%','display': 'inline-block'});
+    this.nameContainer = $('<div id="nameContainer"></div>').appendTo(this.container);
+    this.nameContainer.css({'top':0+'%','left':25+'%','display': 'inline-block'});
+    // commander image
+    this.commanderImage = new SpriteImg('cityBuildingsSprite01',5,50,50);
+    this.commanderImage.content.appendTo(this.imageContainer);
+    // user name
+    this.updateUserName(userName);
+};
+
+
+UiGlobalMenu.prototype.updateUserName = function(userName) {
+    this.nameContainer.empty();
+    this.userName = $('<b>'+userName+'</b>');
+    this.userName.appendTo(this.nameContainer);
+};
+
+
+UiGlobalMenu.prototype.createLevelUpButton = function() {
+    // layer up button
+    this.levelUpContainer = $('<div id="levelUpContainer"></div>').appendTo(this.container);
+    this.levelUpContainer.css({'top':0+'%','left':50+'%','display': 'inline-block'});
     var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
     if (parentLayerId) {
-        var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.content);
+        var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.levelUpContainer);
         openParentLayerBtn.click(function (e) {
             e.stopImmediatePropagation();
             e.preventDefault();
             uc.loadMap(parentLayerId);
         });
     }
+};
 
-    this.testImage = new SpriteImg('cityBuildingsSprite01',5,50,50);
-    this.testImage.content.appendTo(this.content);
+UiGlobalMenu.prototype.createStats = function() {
+    this.statsContainer = $('<div id="statsContainer"></div>').appendTo(this.container);
+    this.statsContainer.css({'top':25+'%','left':25+'%','display': 'inline-block'});
+    var parentLayerId = game.users.get(uc.userId).parentMapId;
+    this.stats = $('<b>'+userName+'</b>');
+};
 
-}
+
+UiGlobalMenu.prototype.createOccupation = function() {
+    this.occupationContainer = $('<div id="occupationContainer"></div>').appendTo(this.container);
+    this.occupationContainer.css({'width':25+'%','display': 'inline-block'});
+
+    $(function() {
+        $( "#radio" ).buttonset();
+    });
+
+    var selectionMenu = $('<div id="occupationSelectionMenu">' +
+    '<form>' +
+    '<div id="radio">' +
+    '<input type="radio" id="radio1" name="radio" /><label for="radio1">Pilot</label>' +
+    '<input type="radio" id="radio2" name="radio" /><label for="radio2">Merchant</label>' +
+    '<input type="radio" id="radio3" name="radio" /><label for="radio3">Soldier</label>' +
+    '</div>' +
+    '</form>' +
+    '</div>');
+
+    selectionMenu.appendTo(this.occupationContainer);
+
+};
 
 UiGlobalMenu.prototype.setFPS = function(fps) {
     this.fps.text("fps: " + fps.toString());
@@ -45,3 +122,7 @@ UiGlobalMenu.prototype.setMouseCoord = function(mouseCoord) {
 UiGlobalMenu.prototype.setDebugText = function(debugText) {
     this.debugText.text(debugText);
 }
+
+
+
+

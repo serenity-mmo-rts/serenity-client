@@ -21,7 +21,9 @@ LayerView.prototype.loadMap = function (mapId) {
     var self = this;
     this.mapContainerTempLoading = new MapContainer(mapId);
     this.mapContainerTempLoading.map.callbackFinishedLoading = function (){
-        self.finishedLoadingMap();
+        if (uc.userId!=null) {
+            self.finishedLoadingMap();
+        }
     };
 
 };

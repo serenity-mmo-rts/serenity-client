@@ -44,7 +44,9 @@ Client.prototype.init = function() {
         self.userId = data.userId;
         console.log("logged in");
         loginForm.close();
-        // TODO add new User.js here?, where to add it on server?
+        self.name = data.userName;
+        self.loadMap(self.initMapId);
+        uc.layerView.uiGlobalMenu.updateUserName(data.userName);
     }));
 
     socket.on('spritesheets', (function(spritesheets){
@@ -89,6 +91,10 @@ Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game,mapData.initMap);
+        if (mapData.initUserData!=null){
+            game.users.load(mapData.initUserData);
+        }
+
 
         //if (game.layers.get(myNewMap._id) !== undefined) {
         //    game.layers.deleteById(myNewMap._id);
@@ -111,7 +117,7 @@ Client.prototype.loadMap = function(mapId) {
 
         // Create Layer Object
 
-        if (self.spritesLoaded) {
+        if (self.spritesLoaded && self.name ==null) {
             self.layerView.loadMap(myNewMap._id);
         }
         else {
@@ -149,16 +155,18 @@ Client.prototype.onInitGameData = function(initGameData) {
             self.onSpriteLoadedCallback[key]();
         }
     });
+    this.initMapId = initGameData.initMapId;
     this.loadqueue.loadManifest(imagesToLoad);
-
-
     game.layerTypes.load(initGameData.layerTypes);
     game.objectTypes.load(initGameData.objectTypes);
     game.ressourceTypes.load(initGameData.ressourceTypes);
     game.technologyTypes.load(initGameData.technologyTypes);
     game.itemTypes.load(initGameData.itemTypes);
-
+    game.userTypes.load(initGameData.userTypes);
     this.loadMap(initGameData.initMapId);
+
+
+
 }
 
 
