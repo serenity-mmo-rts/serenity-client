@@ -41,13 +41,17 @@ Client.prototype.init = function() {
     }));
 
     socket.on('loggedIn', (function(data){
-        self.userId = data.userId;
-        console.log("logged in");
         loginForm.close();
+        console.log("logged in");
+        self.userId = data.userId;
         self.name = data.userName;
-        self.loadMap(self.initMapId);
         uc.layerView.uiGlobalMenu.updateUserName(data.userName);
+        //self.loadMap(self.initMapId);
+        socket.emit('getUserData',{mapId: uc.layerView.mapId}, function(user) {
+            game.users.load(user.internal);
+        });
     }));
+
 
     socket.on('spritesheets', (function(spritesheets){
         game.spritesheets = new GameList(Spritesheet,spritesheets);
@@ -91,10 +95,6 @@ Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game,mapData.initMap);
-        if (mapData.initUserData!=null){
-            game.users.load(mapData.initUserData);
-        }
-
 
         //if (game.layers.get(myNewMap._id) !== undefined) {
         //    game.layers.deleteById(myNewMap._id);
@@ -117,7 +117,7 @@ Client.prototype.loadMap = function(mapId) {
 
         // Create Layer Object
 
-        if (self.spritesLoaded && self.name ==null) {
+        if (self.spritesLoaded) {
             self.layerView.loadMap(myNewMap._id);
         }
         else {

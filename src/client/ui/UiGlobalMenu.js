@@ -13,8 +13,11 @@ var UiGlobalMenu = function () {
     });
 
     this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'width':UiGlobalMenuX,'height':UiGlobalMenuY,'display': 'inline-block'}).appendTo(this.content);
+    this.createDebugInfo();
 
+    if (uc.userId!=null) {
         this.createContent();
+    }
 
 
 };
@@ -25,11 +28,7 @@ UiGlobalMenu.prototype.createContent = function() {
     this.createOccupation();
     this.createStats();
 
-    this.fps = $('<div>fps: </div>');
-    this.fps.appendTo(this.content);
 
-    this.mouseCoord = $('<div>x: , y: </div>');
-    this.mouseCoord.appendTo(this.content);
 /**
     this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.container);
     this.healthContainer.css({'width':25+'%','display': 'inline-block'});
@@ -44,6 +43,17 @@ UiGlobalMenu.prototype.createContent = function() {
     this.coinContainer.css({'width':25+'%','display': 'inline-block'});
  **/
 };
+
+UiGlobalMenu.prototype.createDebugInfo = function() {
+    this.debugContainer = $('<div id="debugContainer"></div>').appendTo(this.container);
+    this.debugContainer.css({'top':50+'%','left':50%+'%','display': 'inline-block'});
+    this.fps = $('<div>fps: </div>');
+    this.fps.appendTo(this.debugContainer);
+
+    this.mouseCoord = $('<div>x: , y: </div>');
+    this.mouseCoord.appendTo(this.debugContainer);
+};
+
 
 
 UiGlobalMenu.prototype.createUserInfo= function(userName) {
@@ -60,7 +70,7 @@ UiGlobalMenu.prototype.createUserInfo= function(userName) {
 
 
 UiGlobalMenu.prototype.updateUserName = function(userName) {
-    this.nameContainer.empty();
+    //this.nameContainer.empty();
     this.userName = $('<b>'+userName+'</b>');
     this.userName.appendTo(this.nameContainer);
 };
