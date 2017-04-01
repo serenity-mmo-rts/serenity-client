@@ -27,31 +27,16 @@ UiGlobalMenu.prototype.createContent = function() {
     this.createLevelUpButton();
     this.createOccupation();
     this.createStats();
+    this.createCommanderStats();
+    this.createCoins();
 
-
-/**
-    this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.container);
-    this.healthContainer.css({'width':25+'%','display': 'inline-block'});
-
-    this.armorContainer = $('<div id="armorContainer"></div>').appendTo(this.container);
-    this.armorContainer.css({'width':25+'%','display': 'inline-block'});
-
-    this.engergyContainer = $('<div id="engergyContainer"></div>').appendTo(this.container);
-    this.engergyContainer.css({'width':25+'%','display': 'inline-block'});
-
-    this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.container);
-    this.coinContainer.css({'width':25+'%','display': 'inline-block'});
- **/
 };
 
 UiGlobalMenu.prototype.createDebugInfo = function() {
     this.debugContainer = $('<div id="debugContainer"></div>').appendTo(this.container);
     this.debugContainer.css({'top':50+'%','left':50%+'%','display': 'inline-block'});
-    this.fps = $('<div>fps: </div>');
-    this.fps.appendTo(this.debugContainer);
-
-    this.mouseCoord = $('<div>x: , y: </div>');
-    this.mouseCoord.appendTo(this.debugContainer);
+    this.fps = $('<div>fps: </div>').appendTo(this.debugContainer);
+    this.mouseCoord = $('<div>x: , y: </div>').appendTo(this.debugContainer);
 };
 
 
@@ -120,6 +105,49 @@ UiGlobalMenu.prototype.createOccupation = function() {
     selectionMenu.appendTo(this.occupationContainer);
 
 };
+
+
+UiGlobalMenu.prototype.createCommanderStats = function() {
+
+    var commanderHealth =10;
+    var commanderArmor =10;
+    var commanderEngergy =10;
+
+    this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.container);
+    this.healthContainer.css({'width':25+'%','display': 'inline-block'});
+    var commanderHP = $('<div  style="white-space:nowrap; id="commanderHP"></div>').appendTo(this.healthContainer);
+    commanderHP.progressbar({
+        value: commanderHealth
+    });
+
+    this.armorContainer = $('<div id="armorContainer"></div>').appendTo(this.container);
+    this.armorContainer.css({'width':25+'%','display': 'inline-block'});
+    var commanderArm = $('<div  style="white-space:nowrap; id="commanderArm"></div>').appendTo(this.armorContainer);
+    commanderArm.progressbar({
+        value: commanderArmor
+    });
+
+    this.engergyContainer = $('<div id="engergyContainer"></div>').appendTo(this.container);
+    this.engergyContainer.css({'width':25+'%','display': 'inline-block'});
+    var commanderEngy = $('<div  style="white-space:nowrap; id="commanderEngy"></div>').appendTo(this.engergyContainer);
+    commanderEngy.progressbar({
+        value: commanderEngergy
+    });
+
+};
+
+
+UiGlobalMenu.prototype.createCoins = function() {
+    var blackMarketFunds = 50;
+    var credits = 200;
+    this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.container);
+    this.coinContainer.css({'width':25+'%','display': 'inline-block'});
+    this.credits = $('<b>Credits:'+credits+'</b>').appendTo(this.coinContainer);
+    this.blackMarketFunds = $('<b>Black Market Funds:'+blackMarketFunds+'</b>').appendTo(this.coinContainer);
+};
+
+
+
 
 UiGlobalMenu.prototype.setFPS = function(fps) {
     this.fps.text("fps: " + fps.toString());
