@@ -1,19 +1,27 @@
 
 /** Upper Most Layer object. Initiates and handles all Div elements*/
-var LayerView = function(){
+var LayerView = function(client){
     var self = this;
 
+    this.client = client;
     this.mapContainer = null;
     this.mapContainerTempLoading = null;
 
     this.lastTick = 0;
     this.tickCounter = 0;
 
+    this.mapLoaded = false;
+
     window.addEventListener('resize',function(){self.resize()}, false);
 
     createjs.Ticker.framerate = 60;
     //createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
+
+
+    this.uiGlobalMenu = new UiGlobalMenu( this );
+    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
+    this.uiGlobalMenuPanel.show(0);
 
 }
 
@@ -39,8 +47,10 @@ LayerView.prototype.finishedLoadingMap = function () {
 
     this.mapId = this.mapContainer.mapId;
 
+    this.mapLoaded = true;
+
     if (this.uiGlobalMenuPanel) this.uiGlobalMenuPanel.remove();
-    this.uiGlobalMenu = new UiGlobalMenu();
+    this.uiGlobalMenu = new UiGlobalMenu( this );
     this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
     this.uiGlobalMenuPanel.show(0);
 
@@ -71,11 +81,6 @@ LayerView.prototype.finishedLoadingMap = function () {
     if (this.uiBgMapPanel) this.uiBgMapPanel.remove();
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
-
-
-
-    var mapObjectMenuX = canvas.width*0.5;
-    var mapObjectMenuY = canvas.height-(mapObjectMenuX/4);
 
     this.uiObjectContext = new UiObjectContext();
     if (this.uiObjectContextPanel) this.uiObjectContextPanel.remove();

@@ -1,9 +1,10 @@
 
-var UiGlobalMenu = function () {
+var UiGlobalMenu = function ( layerView ) {
     var self = this;
 
-    var UiGlobalMenuX = canvas.width/8;
-    var UiGlobalMenuY = canvas.height/6;
+
+    this.layerView = layerView;
+    this.client = layerView.client;
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.empty();
@@ -12,10 +13,10 @@ var UiGlobalMenu = function () {
         "min-height": "200px"
     });
 
-    this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'width':UiGlobalMenuX,'height':UiGlobalMenuY,'display': 'inline-block'}).appendTo(this.content);
+    this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'display': 'inline-block'}).appendTo(this.content);
     this.createDebugInfo();
 
-    if (uc.userId!=null) {
+    if (this.client.userDataLoaded) {
         this.createContent();
     }
 
@@ -94,8 +95,8 @@ UiGlobalMenu.prototype.createLevelUpButton = function() {
 UiGlobalMenu.prototype.createStats = function() {
     this.statsContainer = $('<div id="statsContainer"></div>').appendTo(this.container);
     this.statsContainer.css({'top':25+'%','left':25+'%','display': 'inline-block'});
-    var parentLayerId = game.users.get(uc.userId).parentMapId;
-    this.stats = $('<b>'+userName+'</b>');
+    //var parentLayerId = game.users.get(this.client.userId).parentMapId;
+    this.stats = $('<b>'+this.userName+'</b>');
 };
 
 
