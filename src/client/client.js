@@ -2,13 +2,19 @@
 var Client = function() {
 
     this.socket;
-    this.userId;
+    this.userId = null;
     this.loginForm;
     // vorübergehend
-    this.layerView = new LayerView();
+    this.layerView = new LayerView( this );
     this.loadqueue = new createjs.LoadQueue(false);
+
     this.spritesLoaded = false;
     this.onSpriteLoadedCallback = {};
+
+    this.gameDataLoaded = false;
+    this.onGameDataLoaded = {};
+
+    this.userDataLoaded = false;
 
     this.spritesheets = {};
 
@@ -46,10 +52,19 @@ Client.prototype.init = function() {
         self.userId = data.userId;
         self.name = data.userName;
         uc.layerView.uiGlobalMenu.updateUserName(data.userName);
-        //self.loadMap(self.initMapId);
-        socket.emit('getUserData',{mapId: uc.layerView.mapId}, function(user) {
-            game.users.load(user.internal);
-        });
+
+        console.log("check if gameData loaded: "+self.gameDataLoaded);
+        if (self.gameDataLoaded) {
+            self.loadUserdata();
+        }
+        else {
+            self.onGameDataLoaded['loggedIn'] = function () {
+                self.loadUserdata();
+                delete self.onGameDataLoaded['loggedIn'];
+            };
+            console.log("added callback to onGameDataLoaded")
+        }
+
     }));
 
 
@@ -89,6 +104,19 @@ Client.prototype.init = function() {
 
     socket.emit('ready');
 }
+
+Client.prototype.loadUserdata = function() {
+    var self = this;
+    socket.emit('getUserData',{}, function(user) {
+        var userObj = new User(game,user.internal);
+        game.users.add(userObj);
+        self.userDataLoaded = true;
+        console.log("userdata was loaded...");
+        if (self.layerView.mapLoaded){
+            self.layerView.uiGlobalMenu.createContent();
+        }
+    });
+};
 
 Client.prototype.loadMap = function(mapId) {
     var self = this;
@@ -163,8 +191,14 @@ Client.prototype.onInitGameData = function(initGameData) {
     game.technologyTypes.load(initGameData.technologyTypes);
     game.itemTypes.load(initGameData.itemTypes);
     game.userTypes.load(initGameData.userTypes);
-    this.loadMap(initGameData.initMapId);
 
+    console.log("gameData loaded successfully...");
+    this.gameDataLoaded = true;
+    for (var key in self.onGameDataLoaded){
+        self.onGameDataLoaded[key]();
+    }
+
+    this.loadMap(initGameData.initMapId);
 
 
 }
@@ -205,24 +239,3 @@ Client.prototype.addEvent = function(event) {
 
 
 }
-
-// not yet working
-Client.prototype.changeLayer = function(initGameData) {
-    this.stage.removeAllChildren();
-    this.stage.update();
-    var self = this;
-
-    var oldMapId = this.layerView.mapId;
-
-    game.layers.add(new LayerView(game,initGameData.initMap));
-
-    // Create Layer Object                                            k
-
-    this.layerView =  new LayerView(this,this.stage,game,initGameData.initMap._id);
-
-
-    game.layers.deleteById(oldMapId);
-
-}
-
-
