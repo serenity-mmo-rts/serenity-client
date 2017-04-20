@@ -5,6 +5,7 @@ var UiGlobalMenu = function ( layerView ) {
 
     this.layerView = layerView;
     this.client = layerView.client;
+    this.userData = null;
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.empty();
@@ -15,21 +16,28 @@ var UiGlobalMenu = function ( layerView ) {
 
     this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'display': 'inline-block'}).appendTo(this.content);
     this.createDebugInfo();
-
-    if (this.client.userDataLoaded) {
-        this.createContent();
-    }
-
+    this.createDivs();
 
 };
 
-UiGlobalMenu.prototype.createContent = function() {
-    this.createUserInfo("not logged in");
-    this.createLevelUpButton();
-    this.createOccupation();
-    this.createStats();
-    this.createCommanderStats();
-    this.createCoins();
+UiGlobalMenu.prototype.setUserData = function (userData) {
+    this.userData = userData;
+    userData.userName.subscribe(function(newValue) {
+      self.userName(); // update ui conainer
+
+    });
+};
+
+UiGlobalMenu.prototype.createDivs = function() {
+
+    if (this.client.userDataLoaded && this.layerView.mapLoaded){
+        this.createUserInfo("not logged in");
+        this.createLevelUpButton();
+        this.createOccupation();
+        this.createStats();
+        this.createCommanderStats();
+        this.createCoins();
+    }
 
 };
 
@@ -50,6 +58,8 @@ UiGlobalMenu.prototype.createUserInfo= function(userName) {
     // commander image
     this.commanderImage = new SpriteImg('cityBuildingsSprite01',5,50,50);
     this.commanderImage.content.appendTo(this.imageContainer);
+    this.userName = $('<b></b>');
+
     // user name
     this.updateUserName(userName);
 };

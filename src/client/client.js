@@ -112,9 +112,8 @@ Client.prototype.loadUserdata = function() {
         game.users.add(userObj);
         self.userDataLoaded = true;
         console.log("userdata was loaded...");
-        if (self.layerView.mapLoaded){
-            self.layerView.uiGlobalMenu.createContent();
-        }
+        self.layerView.setUserData(userObj);
+
     });
 };
 
@@ -123,27 +122,18 @@ Client.prototype.loadMap = function(mapId) {
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game,mapData.initMap);
-
-        //if (game.layers.get(myNewMap._id) !== undefined) {
-        //    game.layers.deleteById(myNewMap._id);
-        //}
         game.layers.add(myNewMap);
+
         myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
         myNewMap.mapData.rebuildQuadTree();
         myNewMap.mapData.items.load(mapData.initItems);
-        //myNewMap.mapData.items.each(function(item){
-        //    item._mapObj.deployedItems.push(item); // set link from mapObj to item
-        //});
-
         myNewMap.mapData.setPointers();
-
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
 
         myNewMap.mapData.mapObjects.each(function(mapObject){
             mapObject.setPointers();
         });
 
-        // Create Layer Object
 
         if (self.spritesLoaded) {
             self.layerView.loadMap(myNewMap._id);
@@ -154,6 +144,7 @@ Client.prototype.loadMap = function(mapId) {
                 delete self.onSpriteLoadedCallback['loadMap'];
             };
         }
+
     });
 }
 
