@@ -1,0 +1,22 @@
+<div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
+    <div>
+        <div id="buildMenu" class="ui-widget-content ui-accordion">
+            <div data-bind="foreach: BuildMenuData">
+
+                <div data-bind="foreach: buildMenuData, accordion: {}">
+                    <h3>Building Category
+                        <a href="#" data-bind="text: name"></a>
+                    </h3>
+                    <ol class="build-menu-list"></ol>
+
+                    <div data-bind="foreach: nrOfEntriesPerCategory">
+                        <li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="buildTime: '+objectType._buildTime+'"></a></li>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
+    </div>
+</div>

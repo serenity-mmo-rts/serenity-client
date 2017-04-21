@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="css/BuildMenu.css">
     <link rel="stylesheet" href="css/uiMenus.css">
     <link rel="stylesheet" href="css/Minimap.css">
-
     <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/cupertino/jquery-ui-1.10.3.custom.css" />
+
+
     <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
     <script src="lib/jquery.ui.touch-punch.js"></script>
@@ -19,7 +20,7 @@
     <script type="text/javascript" src="lib/tweenjs-0.6.0.combined.js"></script>
     <script type="text/javascript" src="lib/preloadjs-0.6.0.combined.js"></script>
     <script type="text/javascript" src="http://localhost:8080/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="lib/knockout-3.3.0.debug.js"></script>
+
     <script type="text/javascript" src="lib/math.js"></script>
     <script type="text/javascript" src="lib/QuadTree.js"></script>
     <script type="text/javascript" src="lib/underscore.js"></script>
@@ -27,7 +28,7 @@
     <script type="text/javascript" src="http://localhost:8080/ntpClient/ntp.js"></script>
 
     <script type="text/javascript" src="ui/SpriteImg.js"></script>
-    <script type="text/javascript" src="ui/BuildMenu.js"></script>
+
     <script type="text/javascript" src="ui/Button.js"></script>
     <script type="text/javascript" src="ui/ButtonMenu.js"></script>
     <script type="text/javascript" src="ui/ChatRenderer.js"></script>
@@ -153,6 +154,7 @@
     <script type="text/javascript" src="http://localhost:8080/game/user/Technologies.js"></script>
 
     <script type="text/javascript" src="client.js"></script>
+    <script type="text/javascript"  data-main="main" src="lib/requirejs-2.1.17.min.js"></script>
 
 
     <script type="text/javascript">
@@ -246,29 +248,6 @@
     </form>
 </div>
 
-
-<div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
-    <div>
-        <div id="buildMenu" class="ui-widget-content ui-accordion">
-            <div data-bind="foreach: BuildMenuData">
-
-                <div data-bind="foreach: buildMenuData, accordion: {}">
-                    <h3>Building Category
-                        <a href="#" data-bind="text: name"></a>
-                    </h3>
-                    <ol class="build-menu-list"></ol>
-
-                        <div data-bind="foreach: nrOfEntriesPerCategory">
-                            <li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="buildTime: '+objectType._buildTime+'"></a></li>
-                        </div>
-
-                </div>
-
-            </div>
-        </div>
-        <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
-    </div>
-</div>
 
 
 <div id="allUiPanels" style="width:0px;

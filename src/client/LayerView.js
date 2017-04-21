@@ -21,35 +21,7 @@ var LayerView = function(client){
      * GUI Menu
      * @type {UiGlobalMenu}
      */
-    this.uiGlobalMenu = new UiGlobalMenu( this );
-    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
-    this.uiGlobalMenuPanel.show(0);
 
-    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
-    this.uiGlobalMenuPanel2.hide(0);
-
-    this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
-
-    this.minimap = new Minimap(this.mapContainer.mapControl);
-    this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
-    this.minimap.init();
-
-    this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.resourceMap);
-    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
-    this.uiRessourceMapPanel.show(0);
-
-    this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMap);
-    this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
-    this.uiBgMapPanel.show(0);
-
-    this.uiObjectContext = new UiObjectContext();
-    this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
-    this.uiObjectContextPanel.hide(0);
-
-    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
-    this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
-    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
-    this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
 
 };
 
@@ -75,7 +47,36 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapLoaded = true;
     this.mapId = this.mapContainer.mapId;
 
-    // updateMapInfo
+    this.uiGlobalMenu = new UiGlobalMenu( this );
+    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
+    this.uiGlobalMenuPanel.show(0);
+
+    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
+    this.uiGlobalMenuPanel2.hide(0);
+
+
+    this.minimap = new Minimap(this.mapContainer.mapControl);
+    this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
+    this.minimap.init();
+
+    this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.resourceMap);
+    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
+    this.uiRessourceMapPanel.show(0);
+
+    this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMap);
+    this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
+    this.uiBgMapPanel.show(0);
+
+    this.uiObjectContext = new UiObjectContext();
+    this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
+    this.uiObjectContextPanel.hide(0);
+
+    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
+    this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
+    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
+    this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
+
+    //this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
 };
 
 LayerView.prototype.setUserData = function (userData) {
