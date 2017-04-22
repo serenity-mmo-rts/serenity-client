@@ -1,23 +1,17 @@
-// make button and add it to button container
-
-// 'mapId','MapControl' unsure how to integrate
-
-//define(['knockout','text!./BuildMenu.html'], function(ko,htmlString) {
- define(['knockout'], function(ko) {
-    function BuildMenu(ko,params) {
+//define(['knockout'], function(ko) {
+    var BuildMenu = function(params) {
         var self = this;
         this.mapId = params.mapId;
-        this.mapControl = params.MapControl;
+        this.mapControl = params.mapControl;
         this.mapTypeId = game.layers.hashList[this.mapId].mapTypeId;
-        this.buildMenuData = ko.observable(game.layerTypes.hashList[this.mapTypeId]._buildCategories);
-        this.nrOfCategories = ko.observable(this.buildMenuData.length);
-        this.nrOfEntriesPerCategory = ko.observableArray([]);
-        for (var i = 0; i < this.nrOfCategories; i++) {
+        this.buildMenuData = game.layerTypes.hashList[this.mapTypeId]._buildCategories;
+        this.nrOfEntriesPerCategory = [];
+        for (var i = 0; i < this.buildMenuData.length; i++) {
             this.nrOfEntriesPerCategory.push(this.buildMenuData[i].objectTypeIds.length);
         }
         this.objectTypes = ko.observableArray([]);
         // fill it
-        for (var i = 0; i < this.nrOfCategories; i++) {
+        for (var i = 0; i < this.buildMenuData.length; i++) {
             this.objectTypes.push(ko.observableArray([]));
             // $("#ui-accordion-accordion-header-"+i+"").text(this.BuildMenuData[i].name);
             for (var k = 0; k < this.nrOfEntriesPerCategory[i]; k++) {
@@ -42,7 +36,7 @@
             }
         }
 
-    }
+    };
 
     BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID missing
 
@@ -82,14 +76,8 @@
         this.mapControl.setStateSelectCoord(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
     };
 
-    return BuildMenu;
-    //return { viewModel: BuildMenu, template: htmlString };
-
-});
-
-
-
-
+ko.applyBindings();
+//});
 
 /**
  $("#accordion").html('');

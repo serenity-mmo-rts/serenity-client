@@ -21,6 +21,12 @@ var LayerView = function(client){
      * GUI Menu
      * @type {UiGlobalMenu}
      */
+    this.uiGlobalMenu = new UiGlobalMenu( this );
+    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
+    this.uiGlobalMenuPanel.show(0);
+
+    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
+    this.uiGlobalMenuPanel2.hide(0);
 
 
 };
@@ -47,12 +53,6 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapLoaded = true;
     this.mapId = this.mapContainer.mapId;
 
-    this.uiGlobalMenu = new UiGlobalMenu( this );
-    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
-    this.uiGlobalMenuPanel.show(0);
-
-    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
-    this.uiGlobalMenuPanel2.hide(0);
 
 
     this.minimap = new Minimap(this.mapContainer.mapControl);
@@ -75,7 +75,14 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
     this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
+    var params = {
+        mapId: this.mapId,
+        mapContainer: this.mapContainer
+    };
 
+    ko.applyBindings(new BuildMenu(params));
+
+    var tut =1;
     //this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
 };
 

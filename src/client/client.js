@@ -5,6 +5,7 @@ var Client = function() {
     this.userId = null;
     this.loginForm;
     // vorübergehend
+
     this.layerView = new LayerView( this );
     this.loadqueue = new createjs.LoadQueue(false);
 
@@ -24,6 +25,7 @@ var Client = function() {
 Client.prototype.init = function() {
 
     var self = this;
+    this.registerComponents();
 
     //socket = io.connect(window.location.href);
     socket = io.connect("http://localhost:8080/");
@@ -115,6 +117,35 @@ Client.prototype.loadUserdata = function() {
         self.layerView.setUserData(userObj);
 
     });
+};
+
+Client.prototype.registerComponents = function(){
+
+    require.config({
+        paths: {
+            "text": "text",
+            "knockout": "lib/knockout-3.3.0.debug"
+        }
+    });
+    //require(["knockout","text"], function (ko) {
+        ko.components.register('build-menu', {
+            viewModel: BuildMenu,
+            //template: { element: 'build-menu-template' }
+            template: { require: 'text!BuildMenu.html' }
+
+        });
+    var correctRegisterd = ko.components.isRegistered("build-menu");
+   // });
+
+
+
+/**
+ko.components.register('build-menu', {
+    viewModel: BuildMenu,
+    template: {element: 'build-menu-template'}
+});
+**/
+
 };
 
 Client.prototype.loadMap = function(mapId) {
