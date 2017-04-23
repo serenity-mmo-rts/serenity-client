@@ -22,10 +22,16 @@ var UiGlobalMenu = function ( layerView ) {
 
 UiGlobalMenu.prototype.setUserData = function (userData) {
     this.userData = userData;
-    userData.userName.subscribe(function(newValue) {
-      self.userName(); // update ui conainer
 
+    /*
+    // @Caspar: guck hier mal drüber... irgendwie macht das wenig sinn, daher habe ich es auskommentiert:
+
+    // ERROR: userName does not exist in class User
+    userData.userName.subscribe(function(newValue) {
+        // ERROR: self is not defined
+      self.userName(); // update ui conainer
     });
+    */
 };
 
 UiGlobalMenu.prototype.createDivs = function() {

@@ -8,9 +8,6 @@
     <link rel="stylesheet" href="css/uiMenus.css">
     <link rel="stylesheet" href="css/Minimap.css">
     <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/cupertino/jquery-ui-1.10.3.custom.css" />
-
-
-
     <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
     <script src="lib/jquery.ui.touch-punch.js"></script>
@@ -18,8 +15,9 @@
     <!-- client  -->
 
 
-    <script type="text/javascript" src="ui/BuildMenu.js"></script>
+    <!-- <script type="text/javascript" src="ui/BuildMenu.js"></script>-->
     <script type="text/javascript" src="lib/knockout-3.3.0.debug.js"></script>
+
 
     <script type="text/javascript" src="lib/easeljs-0.8.0.combined.js"></script>
     <script type="text/javascript" src="lib/tweenjs-0.6.0.combined.js"></script>
@@ -52,6 +50,7 @@
     <script type="text/javascript" src="ui/UiSlidingPanel.js"></script>
     <script type="text/javascript" src="ui/UiSlidingPanelRight.js"></script>
     <script type="text/javascript" src="ui/UiSlidingPanelRightBottom.js"></script>
+    <script type="text/javascript" src="ui/testComponent.js"></script>
 
 
     <script type="text/javascript" src="ui/tabs/DefenseTab.js"></script>
@@ -158,8 +157,9 @@
     <script type="text/javascript" src="http://localhost:8080/game/user/News.js"></script>
     <script type="text/javascript" src="http://localhost:8080/game/user/Technologies.js"></script>
 
-    <script type="text/javascript" src="client.js"></script>
     <script type="text/javascript" src="requirejs-2.1.17.min.js"></script>
+    <script type="text/javascript" src="client.js"></script>
+
 
 
 
@@ -256,9 +256,14 @@
 </div>
 
 
-
-
-<div data-bind="component: 'build-menu'"></div>
+<div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
+    <div>
+        <div id="buildMenu" class="ui-widget-content">
+            <!--   <div id="accordion" data-bind="component: 'build-menu'"></div> -->
+        </div>
+        <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
+    </div>
+</div>
 
 
 <div id="allUiPanels" style="width:0px;
@@ -267,6 +272,19 @@
                              border: none">
 
 </div>
+
+
+<div style="position: absolute; top: 300px; width: auto; z-index: 2; right: 300px;">
+    <div class="ui-widget-content ui-corner-all visible" style="position: absolute; min-height: 30px;">
+        <div class="ui-widget">
+            <label>test panel</label>
+            blablabla
+            <div data-bind="component: 'testComponent'"></div>
+        </div>
+        <div class="toggleButton ui-corner-all" style="position: absolute; left: -30px; bottom: 0px;"></div>
+    </div>
+</div>
+
 
 
 </body>

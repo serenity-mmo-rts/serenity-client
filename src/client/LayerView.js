@@ -26,9 +26,8 @@ var LayerView = function(client){
     this.uiGlobalMenuPanel.show(0);
 
     this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
-    this.uiGlobalMenuPanel2.hide(0);
-
-
+    this.uiGlobalMenuPanel2.show(0);
+    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
 };
 
 LayerView.prototype.loadMap = function (mapId) {
@@ -71,7 +70,7 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
     this.uiObjectContextPanel.hide(0);
 
-    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
+
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
     this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
@@ -80,7 +79,7 @@ LayerView.prototype.finishedLoadingMap = function () {
         mapContainer: this.mapContainer
     };
 
-    ko.applyBindings(new BuildMenu(params));
+
 
     var tut =1;
     //this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);

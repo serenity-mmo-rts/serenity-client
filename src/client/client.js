@@ -6,6 +6,10 @@ var Client = function() {
     this.loginForm;
     // vorübergehend
 
+
+
+
+
     this.layerView = new LayerView( this );
     this.loadqueue = new createjs.LoadQueue(false);
 
@@ -128,13 +132,30 @@ Client.prototype.registerComponents = function(){
         }
     });
     //require(["knockout","text"], function (ko) {
-        ko.components.register('build-menu', {
+        /*ko.components.register('build-menu', {
             viewModel: BuildMenu,
             //template: { element: 'build-menu-template' }
             template: { require: 'text!BuildMenu.html' }
 
-        });
+        });*/
+
+    ko.components.register('build-Menu', { require: 'ui/buildMenu' });
+
     var correctRegisterd = ko.components.isRegistered("build-menu");
+
+
+    this.testComponentInstance = new testComponent();
+    ko.components.register('testComponent', {
+        viewModel: { instance: this.testComponentInstance },
+        template: { require: 'text!ui/testComponent.html' }
+    });
+    ko.applyBindings();
+
+
+    //ko.applyBindings(new BuildMenu(params));
+
+    //ko.applyBindings(myViewModel, document.getElementById('someElementId'))
+
    // });
 
 

@@ -1,10 +1,24 @@
-//define(['knockout'], function(ko) {
+
+
+
+define(['knockout', 'text!./buildMenu.html'], function(ko, htmlString) {
+
     var BuildMenu = function(params) {
         var self = this;
-        this.mapId = params.mapId;
-        this.mapControl = params.mapControl;
-        this.mapTypeId = game.layers.hashList[this.mapId].mapTypeId;
-        this.buildMenuData = game.layerTypes.hashList[this.mapTypeId]._buildCategories;
+
+        this.game = params.game;
+        this.mapId = ko.observable(0);
+        this.mapControl = null;
+        this.mapTypeId = ko.computed(function() {
+            if (this.mapId()) {
+                return 0;
+            }
+            else {
+                return this.game.layers.hashList[this.mapId()].mapTypeId;
+            }
+        }, this);
+
+        this.buildMenuData = this.game.layerTypes.hashList[this.mapTypeId()]._buildCategories;
         this.nrOfEntriesPerCategory = [];
         for (var i = 0; i < this.buildMenuData.length; i++) {
             this.nrOfEntriesPerCategory.push(this.buildMenuData[i].objectTypeIds.length);
@@ -16,7 +30,7 @@
             // $("#ui-accordion-accordion-header-"+i+"").text(this.BuildMenuData[i].name);
             for (var k = 0; k < this.nrOfEntriesPerCategory[i]; k++) {
                 var objectTypeId = this.buildMenuData[i].objectTypeIds[k];
-                var objectType = game.objectTypes.hashList[objectTypeId];
+                var objectType = this.game.objectTypes.hashList[objectTypeId];
                 this.objectTypes()[i]().push(objectType);
                 /**   var spritesheet = game.spritesheets.hashList[objectType._iconSpritesheetId];
                  var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
@@ -76,8 +90,11 @@
         this.mapControl.setStateSelectCoord(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
     };
 
-ko.applyBindings();
-//});
+    // Return component definition
+    return { viewModel: BuildMenu, template: htmlString };
+
+//ko.applyBindings();
+});
 
 /**
  $("#accordion").html('');
