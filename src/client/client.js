@@ -25,6 +25,10 @@ var Client = function() {
 
 };
 
+Client.prototype.testing = function() {
+    this.testComponentInstance.personName('Alice');
+};
+
 // Init function
 Client.prototype.init = function() {
 
@@ -149,7 +153,9 @@ Client.prototype.registerComponents = function(){
         viewModel: { instance: this.testComponentInstance },
         template: { require: 'text!ui/testComponent.html' }
     });
-    ko.applyBindings();
+
+    ko.applyBindings(this.testComponentInstance, document.getElementById("testComponentDiv"));
+    //ko.applyBindings();
 
 
     //ko.applyBindings(new BuildMenu(params));

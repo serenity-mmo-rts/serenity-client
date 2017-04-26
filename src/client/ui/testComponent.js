@@ -1,5 +1,5 @@
 
 var testComponent = function () {
-    personName = ko.observable('Bob');
-    personAge = ko.observable(123);
+    this.personName = ko.observable('Bob');
+    this.personAge = ko.observable(123);
 };

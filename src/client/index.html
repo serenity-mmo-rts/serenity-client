@@ -278,8 +278,9 @@
     <div class="ui-widget-content ui-corner-all visible" style="position: absolute; min-height: 30px;">
         <div class="ui-widget">
             <label>test panel</label>
-            blablabla
-            <div data-bind="component: 'testComponent'"></div>
+            <div id="testComponentDiv" data-bind="component: 'testComponent'"></div>
+
+            <button onclick="uc.testing();">rename</button>
         </div>
         <div class="toggleButton ui-corner-all" style="position: absolute; left: -30px; bottom: 0px;"></div>
     </div>
