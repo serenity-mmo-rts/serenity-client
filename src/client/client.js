@@ -1,16 +1,14 @@
 
 var Client = function() {
 
+    // WARNING: here, the html content is not yet fully loaded! Therefore do most of the initialization later in init()
+
     this.socket;
     this.userId = null;
     this.loginForm;
     // vorübergehend
 
-
-
-
-
-    this.layerView = new LayerView( this );
+    this.layerView = null; // this is created later...
     this.loadqueue = new createjs.LoadQueue(false);
 
     this.spritesLoaded = false;
@@ -33,6 +31,8 @@ Client.prototype.testing = function() {
 Client.prototype.init = function() {
 
     var self = this;
+
+    this.layerView = new LayerView( this );
     this.registerComponents();
 
     //socket = io.connect(window.location.href);
