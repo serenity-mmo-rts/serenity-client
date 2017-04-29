@@ -163,6 +163,13 @@ Client.prototype.registerComponents = function(){
     //ko.applyBindings(myViewModel, document.getElementById('someElementId'))
 
    // });
+    this.itemContextMenu = new ItemContextMenu();
+    ko.components.register('itemMenu', {
+        viewModel: { instance: this.itemContextMenu },
+        template: { require: 'text!ui/ItemContextMenu.html' }
+    });
+
+    ko.applyBindings(this.itemContextMenu, document.getElementById("itemContextMenuDiv"));
 
 
 
