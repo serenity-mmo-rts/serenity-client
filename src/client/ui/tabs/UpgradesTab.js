@@ -64,14 +64,16 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     var self = this;
     var wrap2 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px','top':'200','position': 'absolute'});
     this.availableTitle =  $('<div>Produced Upgrades</div>').css({});
-    this.availableBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
+    this.availableBox =  $('<div id="availableBox"></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
     var allItems= this.mapObj.getItems();
 
+    var countItems = 0;
     for (var itemId in allItems) {
         if (allItems.hasOwnProperty(itemId)) {
             var item = allItems[itemId];
             if (item.state() != itemStates.HIDDEN) {
                 var level = allItems[itemId].getLevel();
+                countItems=countItems+1;
                 if (item._itemType._blocks.hasOwnProperty("Feature")) {
                     var maxLevel = item._itemType._blocks.Feature.length;
                 }
@@ -85,13 +87,26 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 var img = spritesheet.images[spriteFrameIcon[4]];
                 var gap = 10;
 
-                var iconContainer = $('<div style="white-space:nowrap"></div>').css({
-                    'width': 32,
-                    'height': 32,
-                    'position': 'relative',
+                var dispItemoffset = countItems*110;
+                var menuWrapper = $('<div class="context-menu-one box menu-1"></div>').css({
+                    'position': 'realative',
+                    'top': 0,
+                    'left':dispItemoffset,
                     'display': 'inline-block',
                     'padding-right': gap + 'px'
                 });
+
+                var iconContainer = $('<div style="white-space:nowrap"></div>').css({
+                    'width': 32,
+                    'height': 32,
+                    'position': 'realative',
+                    'top': 0,
+                    'left':-dispItemoffset,
+                    'display': 'inline-block',
+                    'padding-right': gap + 'px'
+                });
+                iconContainer.css('cursor', 'pointer');
+
                 var image = $('<div style="white-space:nowrap" ></div>');
                 image.css({
                     'background-image': 'url(' + img + ')',
@@ -103,12 +118,15 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 });
                 image.appendTo(iconContainer);
 
+
                 // check if item can be activated
 
+                /**
                 if (item._blocks.Feature._processedStack().canBeActivated()) {
                     this.activatePerClick(iconContainer, item);
                     iconContainer.css('cursor', 'pointer');
                 }
+                 **/
 
                 var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
                     'width': 6,
@@ -134,7 +152,19 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                     upgradeContainer.css('cursor', 'pointer');
                     upgradeContainer.appendTo(iconContainer);
                 }
-                iconContainer.appendTo(this.availableBox);
+                menuWrapper.appendTo(this.availableBox);
+                iconContainer.appendTo(menuWrapper);
+
+                iconContainer.on('mouseover', function(){
+                    uc.layerView.itemContextMenu.setItem(item);
+                    $(".context-menu-one").contextMenu.toggle();
+                });
+
+                iconContainer.on('mouseout', function(){
+                    uc.layerView.itemContextMenu.setItem(null);
+                    $(".context-menu-one").contextMenu.toggle();
+                })
+
             }
         }
     }

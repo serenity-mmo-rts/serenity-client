@@ -16,6 +16,7 @@ var LayerView = function(client){
     createjs.Ticker.framerate = 60;
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
+    this.itemContextMenu = new ItemContextMenu();
 
     /**
      * GUI Menu

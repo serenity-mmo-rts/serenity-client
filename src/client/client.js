@@ -109,6 +109,7 @@ Client.prototype.init = function() {
         var event = EventFactory(game,data);
         //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
+
         event.executeOnOthers();
     }));
 
@@ -163,14 +164,6 @@ Client.prototype.registerComponents = function(){
     //ko.applyBindings(myViewModel, document.getElementById('someElementId'))
 
    // });
-    this.itemContextMenu = new ItemContextMenu();
-    ko.components.register('itemMenu', {
-        viewModel: { instance: this.itemContextMenu },
-        template: { require: 'text!ui/ItemContextMenu.html' }
-    });
-
-    ko.applyBindings(this.itemContextMenu, document.getElementById("itemContextMenuDiv"));
-
 
 
 /**
