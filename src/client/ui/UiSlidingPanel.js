@@ -33,7 +33,7 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.panelDiv.appendChild(this.innerDiv);
     this.innerDiv.appendChild(this.buttonDiv);
     //$('#allUiPanels').append(this.panelDiv);
-    $('body').append(this.panelDiv);
+    $('#uiPanels').append(this.panelDiv);
 
 };
 
