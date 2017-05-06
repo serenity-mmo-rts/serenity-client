@@ -23,10 +23,6 @@ var Client = function() {
 
 };
 
-Client.prototype.testing = function() {
-    this.testComponentInstance.personName('Alice');
-};
-
 // Init function
 Client.prototype.init = function() {
 
@@ -109,7 +105,6 @@ Client.prototype.init = function() {
         var event = EventFactory(game,data);
         //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
-
         event.executeOnOthers();
     }));
 
@@ -148,30 +143,25 @@ Client.prototype.registerComponents = function(){
 
     var correctRegisterd = ko.components.isRegistered("build-menu");
 
-
+    /*
     this.testComponentInstance = new testComponent();
     ko.components.register('testComponent', {
         viewModel: { instance: this.testComponentInstance },
         template: { require: 'text!ui/testComponent.html' }
     });
-
     ko.applyBindings(this.testComponentInstance, document.getElementById("testComponentDiv"));
-    //ko.applyBindings();
 
+    ko.components.register('layerView', {
+        viewModel: { instance: this.layerView },
+        template: { require: 'text!layerView.html' }
+    });
+    ko.applyBindings(this.layerView, document.getElementById("layerView"));
 
-    //ko.applyBindings(new BuildMenu(params));
-
-    //ko.applyBindings(myViewModel, document.getElementById('someElementId'))
-
-   // });
-
-
-/**
-ko.components.register('build-menu', {
-    viewModel: BuildMenu,
-    template: {element: 'build-menu-template'}
-});
-**/
+    ko.components.register('build-menu', {
+        viewModel: BuildMenu,
+        template: {element: 'build-menu-template'}
+    });
+    */
 
 };
 

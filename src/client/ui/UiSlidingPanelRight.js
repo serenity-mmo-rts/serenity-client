@@ -34,7 +34,7 @@ var UiSlidingPanelRight = function(topPosition,zIndex,content){
     this.panelDiv.appendChild(this.innerDiv);
     this.innerDiv.appendChild(this.buttonDiv);
     //$('#allUiPanels').append(this.panelDiv);
-    $('body').append(this.panelDiv);
+    $('#uiPanels').append(this.panelDiv);
 
     this.panelDiv.style.right = this.innerDiv.offsetWidth+"px";
 };

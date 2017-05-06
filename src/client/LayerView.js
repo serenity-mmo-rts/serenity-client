@@ -16,19 +16,22 @@ var LayerView = function(client){
     createjs.Ticker.framerate = 60;
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
-    this.itemContextMenu = new ItemContextMenu();
+    this.uiContainer = new UIContainer();
+
 
     /**
      * GUI Menu
      * @type {UiGlobalMenu}
      */
     this.uiGlobalMenu = new UiGlobalMenu( this );
-    this.uiGlobalMenuPanel = new UiSlidingPanel(0,3,this.uiGlobalMenu.content);
-    this.uiGlobalMenuPanel.show(0);
+    this.uiContainer.addContentPanel(this.uiGlobalMenu.content, {visible: true, barPos: 'topleft', posInBar: 0});
 
-    this.uiGlobalMenuPanel2 = new UiSlidingPanel(0,2,"gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk");
-    this.uiGlobalMenuPanel2.show(0);
-    this.uiGlobalMenuPanel.addNextPanel(this.uiGlobalMenuPanel2);
+    this.uiGlobalMenu2 = $('<div>gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk</div>');
+    this.uiContainer.addContentPanel(this.uiGlobalMenu2, {visible: true, barPos: 'topleft', posInBar: 1});
+
+    this.testComponent = new testComponent();
+    this.uiContainer.addKnockoutPanel(this.testComponent, 'testComponent', {visible: true, barPos: 'topleft', posInBar: 2});
+
 };
 
 LayerView.prototype.loadMap = function (mapId) {
