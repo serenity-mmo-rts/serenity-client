@@ -17,6 +17,7 @@ var LayerView = function(client){
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
     this.uiContainer = new UIContainer();
+    this.itemContextMenu = new ItemContextMenu();
 
 
     /**
