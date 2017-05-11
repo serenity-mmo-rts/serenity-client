@@ -6,6 +6,7 @@ var UiGlobalMenu = function ( layerView ) {
     this.layerView = layerView;
     this.client = layerView.client;
     this.userData = null;
+    this.parentLayerId = ko.observable(0);
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.empty();
@@ -36,7 +37,11 @@ UiGlobalMenu.prototype.setUserData = function (userData) {
 
 UiGlobalMenu.prototype.createDivs = function() {
 
-    if (this.client.userDataLoaded && this.layerView.mapLoaded){
+    //if (this.layerView.mapLoaded) {
+        this.createLayerUpButton();
+    //}
+
+    if (this.client.userDataLoaded){
         this.createUserInfo("not logged in");
         this.createLevelUpButton();
         this.createOccupation();
@@ -44,6 +49,28 @@ UiGlobalMenu.prototype.createDivs = function() {
         this.createCommanderStats();
         this.createCoins();
     }
+
+};
+
+UiGlobalMenu.prototype.createLayerUpButton = function() {
+
+    var self = this;
+
+    this.layerView.loadedMapId.subscribe(function(newValue) {
+        if(newValue) {
+            self.parentLayerId(game.layers.get(newValue).parentMapId);
+        }
+        else {
+            self.parentLayerId(0);
+        }
+    });
+
+        var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.container);
+        openParentLayerBtn.click(function (e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            uc.loadMap(self.parentLayerId());
+        });
 
 };
 
@@ -82,15 +109,6 @@ UiGlobalMenu.prototype.createLevelUpButton = function() {
     // layer up button
     this.levelUpContainer = $('<div id="levelUpContainer"></div>').appendTo(this.container);
     this.levelUpContainer.css({'top':0+'%','left':50+'%','display': 'inline-block'});
-    var parentLayerId = game.layers.get(uc.layerView.mapId).parentMapId;
-    if (parentLayerId) {
-        var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.levelUpContainer);
-        openParentLayerBtn.click(function (e) {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            uc.loadMap(parentLayerId);
-        });
-    }
 };
 
 UiGlobalMenu.prototype.createStats = function() {

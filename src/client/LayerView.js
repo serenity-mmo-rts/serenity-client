@@ -12,6 +12,8 @@ var LayerView = function(client){
     this.userData = null;
     this.mapLoaded = false;
 
+    this.loadedMapId = ko.observable(0);
+
     window.addEventListener('resize',function(){self.resize()}, false);
     createjs.Ticker.framerate = 60;
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
@@ -56,7 +58,7 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapContainerTempLoading = null;
     this.mapLoaded = true;
     this.mapId = this.mapContainer.mapId;
-
+    this.loadedMapId(this.mapContainer.mapId);
 
 
     this.minimap = new Minimap(this.mapContainer.mapControl);

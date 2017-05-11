@@ -1,9 +1,4 @@
-
-
-
-define(['knockout', 'text!./buildMenu.html'], function(ko, htmlString) {
-
-    var BuildMenu = function(params) {
+ var BuildMenu = function(params) {
         var self = this;
 
         this.game = params.game;
@@ -91,10 +86,10 @@ define(['knockout', 'text!./buildMenu.html'], function(ko, htmlString) {
     };
 
     // Return component definition
-    return { viewModel: BuildMenu, template: htmlString };
+    //return { viewModel: BuildMenu, template: htmlString };
 
 //ko.applyBindings();
-});
+
 
 /**
  $("#accordion").html('');
