@@ -67,13 +67,11 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     this.availableBox =  $('<div id="availableBox"></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
     var allItems= this.mapObj.getItems();
 
-    var countItems = 0;
     for (var itemId in allItems) {
         if (allItems.hasOwnProperty(itemId)) {
             var item = allItems[itemId];
             if (item.state() != itemStates.HIDDEN) {
                 var level = allItems[itemId].getLevel();
-                countItems=countItems+1;
                 if (item._itemType._blocks.hasOwnProperty("Feature")) {
                     var maxLevel = item._itemType._blocks.Feature.length;
                 }
@@ -87,21 +85,12 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 var img = spritesheet.images[spriteFrameIcon[4]];
                 var gap = 10;
 
-                var dispItemoffset = countItems*110;
-                var menuWrapper = $('<div class="context-menu-one box menu-1"></div>').css({
-                    'position': 'realative',
-                    'top': 0,
-                    'left':dispItemoffset,
-                    'display': 'inline-block',
-                    'padding-right': gap + 'px'
-                });
+                var menuWrapper = $('<div class="context-menu-one box menu-1"></div>');
 
                 var iconContainer = $('<div style="white-space:nowrap"></div>').css({
                     'width': 32,
                     'height': 32,
-                    'position': 'realative',
-                    'top': 0,
-                    'left':-dispItemoffset,
+                    'position': 'absolute',
                     'display': 'inline-block',
                     'padding-right': gap + 'px'
                 });
@@ -148,22 +137,18 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                         'top': -32 + 'px'
                     });
 
-                    this.levelUpgrade(upgradeContainer, item);
+                    //this.levelUpgrade(upgradeContainer, item);
                     upgradeContainer.css('cursor', 'pointer');
                     upgradeContainer.appendTo(iconContainer);
                 }
                 menuWrapper.appendTo(this.availableBox);
                 iconContainer.appendTo(menuWrapper);
 
-                iconContainer.on('mouseover', function(){
+                iconContainer.on('click', function(){
                     uc.layerView.itemContextMenu.setItem(item);
-                    $(".context-menu-one").contextMenu.toggle();
+
                 });
 
-                iconContainer.on('mouseout', function(){
-                    uc.layerView.itemContextMenu.setItem(null);
-                    $(".context-menu-one").contextMenu.toggle();
-                })
 
             }
         }
