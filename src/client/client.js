@@ -105,7 +105,11 @@ Client.prototype.init = function() {
         var event = EventFactory(game,data);
         //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
-        event.executeOnOthers();
+
+        // execute only if this event was initialized from another user:
+        if ( event._userId != self.userId) {
+            event.executeOnOthers();
+        }
     }));
 
     socket.emit('ready');
