@@ -33,9 +33,26 @@ var LayerView = function(client){
     this.uiContainer.addContentPanel(this.uiGlobalMenu2, {visible: true, barPos: 'topleft', posInBar: 1});
 
     this.testComponent = new testComponent();
-    this.uiContainer.addKnockoutPanel(this.testComponent, 'testComponent', {visible: true, barPos: 'topleft', posInBar: 2});
+    this.uiContainer.addContentPanel(this.createKnockoutPanel(this.testComponent, 'testComponent'), {visible: true, barPos: 'topleft', posInBar: 2});
 
 };
+
+/**
+ * Dynamically create a custom knockout component
+ * @param koViewModel
+ * @param viewModelName
+ * @returns {*|jQuery}
+ */
+LayerView.prototype.createKnockoutPanel = function (koViewModel, viewModelName) {
+    // register a new knockout component:
+    ko.components.register(viewModelName, {
+        viewModel: { instance: koViewModel },
+        template: { require: 'text!ui/'+viewModelName+'.html' }
+    });
+    var contentDiv = $('<div data-bind="component: \''+viewModelName+'\'"></div>').addClass("ui-widget");
+    ko.applyBindings(koViewModel, contentDiv[0]);
+    return contentDiv;
+}
 
 LayerView.prototype.loadMap = function (mapId) {
     var self = this;
