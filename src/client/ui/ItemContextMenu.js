@@ -2,7 +2,7 @@
 
 var ItemContextMenu =  function () {
 
-
+ var self = this;
     $(function(){
         $.contextMenu({
             selector: '.context-menu-one',
@@ -11,20 +11,32 @@ var ItemContextMenu =  function () {
             zIndex: 1,
             autoHide: false,
             callback: function(key, options) {
-                var m = "clicked: " + key;
-                window.console && console.log(m) || alert(m);
+                switch(key) {
+                    case "activate":
+                        self.activatePerClick();
+                        break;
+                    case "upgrade":
+                        self.levelUpgrade();
+                        break;
+                    case "moveToAttack":
+                        break;
+                    case "moveToDefense":
+                        break;
+                    case "moveToTarget":
+                        break;
+                }
             },
             items: {
-                "edit": {name: "activate", icon: "edit"},
-                "cut": {name: "upgrade", icon: "cut"},
+                "activate": {name: "activate", icon: "edit"},
+                "upgrade": {name: "upgrade", icon: "cut"},
                 "sep1": "---------",
 
                 "fold1": {
                     "name": "move to...",
                     "items": {
-                        "fold1-key1": {"name": "attack squad"},
-                        "fold1-key2": {"name": "defense squad"},
-                        "fold1-key3": {"name": "select target"}
+                        "moveToAtack": {"name": "attack squad"},
+                        "moveToDefense": {"name": "defense squad"},
+                        "moveToTarget": {"name": "select target"}
                     }
                 },
                 "fold1a": {
@@ -39,85 +51,61 @@ var ItemContextMenu =  function () {
         });
     });
     $(".context-menu-one").contextMenu();
-    $(".context-menu-one").hide();
-};
-
-ItemContextMenu.prototype.make = function () {
-
-};
-
-ItemContextMenu.prototype.setPosition = function (iconContainer) {
-
-    var contextMenu = $( ".context-menu-one" );
-    contextMenu.position({
-        my: "left top",
-        at: "right top",
-        of: iconContainer, //$( "#availableBox"),
-        collision: "fit"
-    });
+   // $(".context-menu-one").hide();
 };
 
 ItemContextMenu.prototype.setItem = function (item) {
    this.item= item;
 };
 
-ItemContextMenu.prototype.moveToAttackSquad = function (container) {
-    var self = this;
-    container.click(function (e) {
+ItemContextMenu.prototype.moveToAttackSquad = function () {
+
         // TODO fire event
-    });
+
 };
 
-ItemContextMenu.prototype.moveToDefenseSquad = function (container) {
-    var self = this;
-    container.click(function (e) {
+ItemContextMenu.prototype.moveToDefenseSquad = function () {
+
         // TODO fire event
-    });
+
 };
 
-ItemContextMenu.prototype.moveToOtherMapObject = function (container) {
-    var self = this;
-    container.click(function (e) {
+ItemContextMenu.prototype.moveToOtherMapObject = function () {
+
         // TODO fire event
-    });
+
 };
 
-ItemContextMenu.prototype.levelUpgrade = function (container) {
-    var self = this;
-    container.click(function (e) {
-        var evt = new LevelUpgradeEvent(game);
-        evt.setParameters(self.item);
+ItemContextMenu.prototype.levelUpgrade = function () {
+    var evt = new LevelUpgradeEvent(game);
+    evt.setParameters(this.item);
+    uc.addEvent(evt);
+};
+
+ItemContextMenu.prototype.activatePerClick = function () {
+
+    var evt = new ActivateFeatureEvent(game);
+    var operation = this.item._blocks.Feature._processedStack().currentOperation();
+    evt.setParameters(this.item,operation);
+    var targetType = this.item._blocks.Feature._processedStack().targetType();
+    if (targetType=="self"){
         uc.addEvent(evt);
-        //self.mapObj._blocks.UpgradeProduction.levelUpgrade(item);
-    });
-};
+    }
+    else if (targetType=="object"){
 
-ItemContextMenu.prototype.activatePerClick = function (container) {
-    container.click(function (e) {
-        var evt = new ActivateFeatureEvent(game);
-        var operation = self.item._blocks.Feature._processedStack().currentOperation();
-        evt.setParameters(self.item,operation);
-        var targetType = self.item._blocks.Feature._processedStack().targetType();
-        if (targetType=="self"){
+        function callbackOnSelect(){
             uc.addEvent(evt);
         }
-        else if (targetType=="object"){
-
-            function callbackOnSelect(){
-                uc.addEvent(evt);
-            }
-            function callbackCheckValidSelection(objId){
-                evt.setTarget(objId);
-                var valid = evt.isValid();
-                return valid;
-            }
-            function callbackCanceled(){
-                evt = null;
-            }
-            uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
+        function callbackCheckValidSelection(objId){
+            evt.setTarget(objId);
+            var valid = evt.isValid();
+            return valid;
         }
-
-    });
+        function callbackCanceled(){
+            evt = null;
+        }
+        uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
+    }
 };
 
 
