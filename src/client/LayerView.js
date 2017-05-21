@@ -35,6 +35,12 @@ var LayerView = function(client){
     this.testComponent = new testComponent();
     this.uiContainer.addContentPanel(this.createKnockoutPanel(this.testComponent, 'testComponent'), {visible: true, barPos: 'topleft', posInBar: 2});
 
+
+    this.buildMenu = new BuildMenu();
+    var buildMenuPanel = this.createKnockoutPanel(this.buildMenu, 'buildMenu');
+    $("#buildMenu").append(buildMenuPanel);
+
+
 };
 
 /**
@@ -76,7 +82,8 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapLoaded = true;
     this.mapId = this.mapContainer.mapId;
     this.loadedMapId(this.mapContainer.mapId);
-
+    this.buildMenu.mapId(this.mapContainer.mapId);
+    this.buildMenu.mapControl = this.mapContainer.mapControl;
 
     this.minimap = new Minimap(this.mapContainer.mapControl);
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
