@@ -40,23 +40,3 @@ UIContainer.prototype.addContentPanel = function(content, params) {
     }
 
 };
-
-/**
- * Dynamically insert a custom knockout component as a new panel:
- * @param koViewModel
- * @param viewModelName
- * @param params
- */
-UIContainer.prototype.addKnockoutPanel = function(koViewModel, viewModelName, params) {
-    // register a new knockout component:
-    ko.components.register(viewModelName, {
-        viewModel: { instance: koViewModel },
-        template: { require: 'text!ui/'+viewModelName+'.html' }
-    });
-
-    var contentDiv = $('<div data-bind="component: \''+viewModelName+'\'"></div>').addClass("ui-widget");
-    this.addContentPanel(contentDiv, params);
-
-    ko.applyBindings(koViewModel, contentDiv[0]);
-
-};

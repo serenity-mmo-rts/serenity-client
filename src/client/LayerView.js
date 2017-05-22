@@ -33,9 +33,32 @@ var LayerView = function(client){
     this.uiContainer.addContentPanel(this.uiGlobalMenu2, {visible: true, barPos: 'topleft', posInBar: 1});
 
     this.testComponent = new testComponent();
-    this.uiContainer.addKnockoutPanel(this.testComponent, 'testComponent', {visible: true, barPos: 'topleft', posInBar: 2});
+    this.uiContainer.addContentPanel(this.createKnockoutPanel(this.testComponent, 'testComponent'), {visible: true, barPos: 'topleft', posInBar: 2});
+
+
+    this.buildMenu = new BuildMenu();
+    var buildMenuPanel = this.createKnockoutPanel(this.buildMenu, 'buildMenu');
+    $("#buildMenu").append(buildMenuPanel);
+
 
 };
+
+/**
+ * Dynamically create a custom knockout component
+ * @param koViewModel
+ * @param viewModelName
+ * @returns {*|jQuery}
+ */
+LayerView.prototype.createKnockoutPanel = function (koViewModel, viewModelName) {
+    // register a new knockout component:
+    ko.components.register(viewModelName, {
+        viewModel: { instance: koViewModel },
+        template: { require: 'text!ui/'+viewModelName+'.html' }
+    });
+    var contentDiv = $('<div data-bind="component: \''+viewModelName+'\'"></div>').addClass("ui-widget");
+    ko.applyBindings(koViewModel, contentDiv[0]);
+    return contentDiv;
+}
 
 LayerView.prototype.loadMap = function (mapId) {
     var self = this;
@@ -59,7 +82,8 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapLoaded = true;
     this.mapId = this.mapContainer.mapId;
     this.loadedMapId(this.mapContainer.mapId);
-
+    this.buildMenu.mapId(this.mapContainer.mapId);
+    this.buildMenu.mapControl = this.mapContainer.mapControl;
 
     this.minimap = new Minimap(this.mapContainer.mapControl);
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
