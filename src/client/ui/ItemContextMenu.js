@@ -31,12 +31,12 @@ var ItemContextMenu =  function () {
                         name: "activate",
                         icon: "edit",
                         disabled: function() {
-                            var here =1;
+                            //self.setItem(item);
                             if (!self.item._blocks.Feature._processedStack().canBeActivated()) {
-                                return false;
+                                return true;
                             }
                             else {
-                                return true;
+                                return false;
                             }
 
                         }

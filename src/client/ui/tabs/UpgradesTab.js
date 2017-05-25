@@ -88,6 +88,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 var gap = 10;
 
                 var dispItemoffset = countItems*110;
+
                 var menuWrapper = $('<div class="context-menu-one box menu-1"></div>').css({
                     'position': 'relative',
                     'top': 0,
@@ -95,6 +96,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                     'display': 'inline-block',
                     'padding-right': gap + 'px'
                 });
+
 
                 var iconContainer = $('<div style="white-space:nowrap"></div>').css({
                     'width': 32,
@@ -149,12 +151,14 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                     upgradeContainer.css('cursor', 'pointer');
                     upgradeContainer.appendTo(iconContainer);
                 }
-                menuWrapper.appendTo(this.availableBox);
                 iconContainer.appendTo(menuWrapper);
+                menuWrapper.appendTo(this.availableBox);
+                var self = this;
+                this.triggerMenu(iconContainer, item);
 
-                iconContainer.on('click', function(){
-                    uc.layerView.itemContextMenu.setItem(item);
-                });
+                // iconContainer.on('click', function(){
+                //    uc.layerView.itemContextMenu.setItem(item);
+                // });
 
 
             }
@@ -174,41 +178,12 @@ UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
     });
 };
 
-UpgradesTab.prototype.levelUpgrade = function (container,item) {
+UpgradesTab.prototype.triggerMenu = function (container,item) {
     var self = this;
     container.click(function (e) {
-        var evt = new LevelUpgradeEvent(game);
-        evt.setParameters(item);
-        uc.addEvent(evt);
-        //self.mapObj._blocks.UpgradeProduction.levelUpgrade(item);
+        uc.layerView.itemContextMenu.setItem(item);
     });
 };
 
 
-UpgradesTab.prototype.activatePerClick = function (container,item) {
-    container.click(function (e) {
-        var evt = new ActivateFeatureEvent(game);
-        var operation = item._blocks.Feature._processedStack().currentOperation();
-        evt.setParameters(item,operation);
-        var targetType = item._blocks.Feature._processedStack().targetType();
-        if (targetType=="self"){
-            uc.addEvent(evt);
-        }
-        else if (targetType=="object"){
 
-            function callbackOnSelect(){
-                uc.addEvent(evt);
-            }
-            function callbackCheckValidSelection(objId){
-                evt.setTarget(objId);
-                var valid = evt.isValid();
-                return valid;
-            }
-            function callbackCanceled(){
-                evt = null;
-            }
-            uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
-        }
-
-    });
-};
