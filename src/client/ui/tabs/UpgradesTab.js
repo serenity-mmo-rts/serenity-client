@@ -121,12 +121,6 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
                 image.appendTo(iconContainer);
 
 
-                // check if item can be activated
-
-                /**
-
-                 **/
-
                 var levelShowContainer = $('<div><b>' + level + '</b></div>').css({
                     'width': 6,
                     'height': 6,

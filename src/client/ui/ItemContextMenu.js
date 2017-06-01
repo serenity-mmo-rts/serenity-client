@@ -32,7 +32,8 @@ var ItemContextMenu =  function () {
                         icon: "edit",
                         disabled: function() {
                             //self.setItem(item);
-                            if (!self.item._blocks.Feature._processedStack().canBeActivated()) {
+                            if (!self
+                                    .item._blocks.Feature._processedStack().canBeActivated()) {
                                 return true;
                             }
                             else {
@@ -43,17 +44,21 @@ var ItemContextMenu =  function () {
                     },
                     "upgrade": {
                         name: "upgrade",
-                        icon: "cut"
-                    },
+                        icon: "cut",
+                        disabled: function() {
+                            var currLvl = self.item.getLevel();
+                            var maxLvl = self.item._itemType._blocks.Feature.length;
+                            //self.setItem(item);
+                            if (currLvl >= maxLvl) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
 
-                    "toggle": {
-                        name: "Toggle",
-                        callback: function() {
-                            // this references the trigger element
-                            this.data('cutDisabled', !this.data('cutDisabled'));
-                            return false;
                         }
                     },
+
                     "sep1": "---------",
 
                     "fold1": {
