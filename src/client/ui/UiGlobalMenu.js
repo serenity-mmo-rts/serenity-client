@@ -24,6 +24,7 @@ var UiGlobalMenu = function ( layerView ) {
 UiGlobalMenu.prototype.setUserData = function (userData) {
     this.userData = userData;
 
+    this.createDivs();
     /*
     // @Caspar: guck hier mal drüber... irgendwie macht das wenig sinn, daher habe ich es auskommentiert:
 

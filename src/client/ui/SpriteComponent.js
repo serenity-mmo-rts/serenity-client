@@ -1,21 +1,22 @@
-var SpriteImg = function (spritesheetId, spriteFrame, width, height) {
+/**
+ *
+ * @param params
+ * @constructor
+ */
+var SpriteComponent = function(params) {
+
     var self = this;
 
-    this.content = $('<div/>');
-    this.content.css({
-        'width': width+'px',
-        'height': height+'px'
-    });
+    this.spritesheet = game.spritesheets.get(params.spritesheetId);
+    this.spriteFrameIcon = this.spritesheet.frames[params.spriteFrame];
+    this.width = params.width;
+    this.height = params.height;
+    this.imageElement = ko.observable('<div></div>');
 
-    this.spritesheet = game.spritesheets.get(spritesheetId);
-    this.spriteFrameIcon = this.spritesheet.frames[spriteFrame];
-    this.width = width;
-    this.height = height;
-
-    this.tmpImg = uc.loadqueue.getResult("sheet"+spritesheetId+"image"+this.spriteFrameIcon[4]);
+    this.tmpImg = uc.loadqueue.getResult("sheet"+params.spritesheetId+"image"+this.spriteFrameIcon[4]);
     if (this.tmpImg==null){
-        uc.onSpriteLoadedCallback["testImg"] = function() {
-            self.tmpImg = uc.loadqueue.getResult("sheet"+spritesheetId+"image"+self.spriteFrameIcon[4]);
+        uc.onSpriteLoadedCallback[Math.random()] = function() {
+            self.tmpImg = uc.loadqueue.getResult("sheet"+params.spritesheetId+"image"+self.spriteFrameIcon[4]);
             if (self.tmpImg==null){
                 console.log("error: preloadJS is still not finished with loading...?..")
             }
@@ -25,12 +26,14 @@ var SpriteImg = function (spritesheetId, spriteFrame, width, height) {
         };
     }
     else {
-         this.draw();
+        this.draw();
     }
 
-}
+};
 
-SpriteImg.prototype.draw = function() {
+
+
+SpriteComponent.prototype.draw = function() {
 
     // read the given spritesheet values:
     var imgW = this.tmpImg.naturalWidth;
@@ -54,17 +57,12 @@ SpriteImg.prototype.draw = function() {
     var shiftXScaledSheet = -posXinSheet * scale;
     var shiftYScaledSheet = -posYinSheet * scale;
 
-    // assemble the image:
-    this.imageDiv = $('<div/>');
-    this.imageDiv.css({
-        'background-image': 'url('+imgSrc+')' ,
-        'background-position-x': shiftXScaledSheet,
-        'background-position-y': shiftYScaledSheet,
-        'background-repeat':'no-repeat',
-        'background-size': widthTotalImage+'px ' + heightTotalImage+'px',
-        'width': actualWidth+'px',
-        'height': actualHeight+'px'
-    });
-    this.imageDiv.appendTo(this.content);
+    this.imageElement('<div style="'+
+        'width: '+actualWidth+'px; height: ' + actualHeight+'px; '+
+        'background-image: url('+imgSrc+'); '+
+        'background-size: '+widthTotalImage+'px '+heightTotalImage+'px; '+
+        'background-position: '+shiftXScaledSheet+'px '+shiftYScaledSheet+'px; '+
+        'background-repeat: no-repeat;'+
+        '"></div>');
 
-}
+};

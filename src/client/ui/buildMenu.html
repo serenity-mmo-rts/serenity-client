@@ -10,7 +10,12 @@
                     <ol class="build-menu-list"></ol>
 
                     <div data-bind="foreach: objectTypes">
-                        <li class="buildMenuItem"><a href="#" data-bind="{attr: { title: tooltip }, text: objectTypeId, click: clickHandler}"></a></li>
+                        <li class="buildMenuItem">
+                            <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
+                                <p class="buildMenuText" data-bind="text: objectTypeId"></p>
+                                <spritecomponent params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent>
+                            </a>
+                        </li>
                     </div>
 
                 </div>
