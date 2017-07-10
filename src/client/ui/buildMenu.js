@@ -66,7 +66,11 @@ var BuildMenu = function () {
 
             // now update the member variable:
             self.buildMenuData(objectTypes);
-
+            $("#buildMenu" ).accordion();
+            $("#buildMenu").accordion({
+                heightStyle: "fill"
+            });
+            $("#buildMenu").accordion( "refresh" );
 
         }
     });

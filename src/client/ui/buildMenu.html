@@ -1,26 +1,17 @@
+<div id="buildMenu" data-bind="foreach: buildMenuData"
+     class="ui-widget-content ui-accordion">
 
-<div id="build-menu-template" class="ui-widget-content ui-corner-all visible">
-    <div>
-        <div id="buildMenu" class="ui-widget-content ui-accordion">
+    <h3>
+        <a href="#" data-bind="text: name"></a>
+    </h3>
+    <ol data-bind="foreach: objectTypes" class="build-menu-list">
+        <li class="buildMenuItem">
+            <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
+                <p class="buildMenuText" data-bind="text: objectTypeId"></p>
+                <spritecomponent
+                        params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent>
+            </a>
+        </li>
+    </ol>
 
-                <div data-bind="foreach: buildMenuData, accordion: {}">
-                    <h3>
-                        <a href="#" data-bind="text: name"></a>
-                    </h3>
-                    <ol class="build-menu-list"></ol>
-
-                    <div data-bind="foreach: objectTypes">
-                        <li class="buildMenuItem">
-                            <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
-                                <p class="buildMenuText" data-bind="text: objectTypeId"></p>
-                                <spritecomponent params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent>
-                            </a>
-                        </li>
-                    </div>
-
-                </div>
-
-        </div>
-        <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
-    </div>
 </div>

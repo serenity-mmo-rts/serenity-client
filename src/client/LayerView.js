@@ -35,11 +35,9 @@ var LayerView = function(client){
     this.testComponent = new testComponent();
     this.uiContainer.addContentPanel(this.createKnockoutPanel(this.testComponent, 'testComponent'), {visible: true, barPos: 'topleft', posInBar: 2});
 
-
     this.buildMenu = new BuildMenu();
     var buildMenuPanel = this.createKnockoutPanel(this.buildMenu, 'buildMenu');
-    $("#buildMenu").append(buildMenuPanel);
-
+    $("#buildMenuPlaceholder").append(buildMenuPanel);
 
 };
 

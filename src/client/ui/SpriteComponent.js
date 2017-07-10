@@ -7,16 +7,36 @@ var SpriteComponent = function(params) {
 
     var self = this;
 
-    this.spritesheet = game.spritesheets.get(params.spritesheetId);
-    this.spriteFrameIcon = this.spritesheet.frames[params.spriteFrame];
     this.width = params.width;
     this.height = params.height;
+    this.spriteFrame = params.spriteFrame;
+    this.spritesheetId = params.spritesheetId;
+
     this.imageElement = ko.observable('<div></div>');
 
-    this.tmpImg = uc.loadqueue.getResult("sheet"+params.spritesheetId+"image"+this.spriteFrameIcon[4]);
+    this.spritesheet = game.spritesheets.get(params.spritesheetId);
+    if (this.spritesheet) {
+        this.loadTempImage();
+    }
+    else {
+        var uuid = Math.random();
+        uc.onGameDataLoaded[uuid] = function () {
+            self.spritesheet = game.spritesheets.get(params.spritesheetId);
+            self.loadTempImage();
+            delete uc.onGameDataLoaded[uuid];
+        };
+    }
+
+};
+
+SpriteComponent.prototype.loadTempImage = function() {
+    var self = this;
+
+    this.spriteFrameIcon = this.spritesheet.frames[this.spriteFrame];
+    this.tmpImg = uc.loadqueue.getResult("sheet"+this.spritesheetId+"image"+this.spriteFrameIcon[4]);
     if (this.tmpImg==null){
         uc.onSpriteLoadedCallback[Math.random()] = function() {
-            self.tmpImg = uc.loadqueue.getResult("sheet"+params.spritesheetId+"image"+self.spriteFrameIcon[4]);
+            self.tmpImg = uc.loadqueue.getResult("sheet"+self.spritesheetId+"image"+self.spriteFrameIcon[4]);
             if (self.tmpImg==null){
                 console.log("error: preloadJS is still not finished with loading...?..")
             }
@@ -30,7 +50,6 @@ var SpriteComponent = function(params) {
     }
 
 };
-
 
 
 SpriteComponent.prototype.draw = function() {
