@@ -143,9 +143,10 @@ Client.prototype.registerComponents = function(){
 
         });*/
 
+    /*
     ko.components.register('build-Menu', { require: 'ui/buildMenu' });
-
     var correctRegisterd = ko.components.isRegistered("build-menu");
+    */
 
     /*
     this.testComponentInstance = new testComponent();
@@ -166,6 +167,11 @@ Client.prototype.registerComponents = function(){
         template: {element: 'build-menu-template'}
     });
     */
+
+    ko.components.register('spritecomponent', {
+        viewModel: SpriteComponent,
+        template: { require: 'text!ui/SpriteComponent.html' }
+    });
 
 };
 
@@ -217,6 +223,7 @@ Client.prototype.onInitGameData = function(initGameData) {
             }
         }
     }
+    this.loadqueue.loadManifest(imagesToLoad);
     this.loadqueue.addEventListener("complete", function() {
         for (var spritesheetId in game.spritesheets.hashList) {
             self.spritesheets[spritesheetId] = new createjs.SpriteSheet(game.spritesheets.hashList[spritesheetId]);
@@ -226,8 +233,6 @@ Client.prototype.onInitGameData = function(initGameData) {
             self.onSpriteLoadedCallback[key]();
         }
     });
-    this.initMapId = initGameData.initMapId;
-    this.loadqueue.loadManifest(imagesToLoad);
     game.layerTypes.load(initGameData.layerTypes);
     game.objectTypes.load(initGameData.objectTypes);
     game.ressourceTypes.load(initGameData.ressourceTypes);

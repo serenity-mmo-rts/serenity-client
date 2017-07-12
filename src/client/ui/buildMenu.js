@@ -27,17 +27,14 @@ var BuildMenu = function () {
                 var numTypes = _buildCategories[i].objectTypeIds.length;
                 for (var k = 0; k < numTypes; k++) {
                     var objectTypeId = _buildCategories[i].objectTypeIds[k];
-
                     var objectType = game.objectTypes.hashList[objectTypeId];
-
-                    var sprite = new SpriteImg(objectType._iconSpritesheetId, objectType._iconSpriteFrame, 32, 32);
-
                     var objectEntry = {
                         tooltip: 'buildTime: '+objectType._buildTime,
                         buildMenuItemId: k,
                         objectTypeId: objectTypeId,
                         name: objectType._name,
-                        sprite: sprite.content,
+                        _iconSpritesheetId: objectType._iconSpritesheetId,
+                        _iconSpriteFrame: objectType._iconSpriteFrame,
                         clickHandler: function(data, event) {
                             self.initializeObject(data.objectTypeId);
                         }
@@ -69,7 +66,11 @@ var BuildMenu = function () {
 
             // now update the member variable:
             self.buildMenuData(objectTypes);
-
+            $("#buildMenu" ).accordion();
+            $("#buildMenu").accordion({
+                heightStyle: "fill"
+            });
+            $("#buildMenu").accordion( "refresh" );
 
         }
     });

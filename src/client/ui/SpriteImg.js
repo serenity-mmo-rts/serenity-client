@@ -15,8 +15,13 @@ var SpriteImg = function (spritesheetId, spriteFrame, width, height) {
     this.tmpImg = uc.loadqueue.getResult("sheet"+spritesheetId+"image"+this.spriteFrameIcon[4]);
     if (this.tmpImg==null){
         uc.onSpriteLoadedCallback["testImg"] = function() {
-            self.tmpImg = uc.loadqueue.getResult("sheet"+spritesheetId+"image"+spriteFrame);
-            self.draw();
+            self.tmpImg = uc.loadqueue.getResult("sheet"+spritesheetId+"image"+self.spriteFrameIcon[4]);
+            if (self.tmpImg==null){
+                console.log("error: preloadJS is still not finished with loading...?..")
+            }
+            else {
+                self.draw();
+            }
         };
     }
     else {

@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="css/Minimap.css">
     <link rel="stylesheet" href="css/jquery.contextMenu.css">
     <link rel="stylesheet" href="lib/jquery-ui-1.10.3.custom/css/cupertino/jquery-ui-1.10.3.custom.css" />
-    <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
-
+    <script src="lib/jquery-ui-1.10.3.custom/js/jquery-1.9.1.js"></script>
+    <script src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
     <script src="lib/jquery.contextMenu.js"></script>
     <script src="lib/jquery.ui.position.js"></script>
     <script src="lib/jquery.ui.touch-punch.js"></script>
-
+    <script src="lib/knockout-3.3.0.debug.js"></script>
+    <script src="lib/knockout-jqueryui.js"></script>
 
     <!-- client  -->
 
 
     <script type="text/javascript" src="ui/buildMenu.js"></script>
-    <script type="text/javascript" src="lib/knockout-3.3.0.debug.js"></script>
+
 
 
     <script type="text/javascript" src="lib/easeljs-0.8.0.combined.js"></script>
@@ -37,6 +37,7 @@
     <script type="text/javascript" src="http://localhost:8080/ntpClient/ntp.js"></script>
 
     <script type="text/javascript" src="ui/SpriteImg.js"></script>
+    <script type="text/javascript" src="ui/SpriteComponent.js"></script>
 
     <script type="text/javascript" src="ui/Button.js"></script>
     <script type="text/javascript" src="ui/ItemContextMenu.js"></script>
@@ -264,8 +265,7 @@
 
 <div id="bottomLeftUi" class="ui-widget-content ui-corner-all visible">
     <div>
-        <div id="buildMenu" class="ui-widget-content">
-            <!--   <div id="accordion" data-bind="component: 'build-menu'"></div> -->
+        <div id="buildMenuPlaceholder">
         </div>
         <div id="bottomLeftToggleButton" class="toggleButton ui-corner-all"></div>
     </div>
