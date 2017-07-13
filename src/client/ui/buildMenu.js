@@ -13,17 +13,15 @@ var BuildMenu = function () {
         }
     }, this);
 
-
     this.mapTypeId.subscribe(function (mapTypeId) {
         if (mapTypeId) {
             var _buildCategories = game.layerTypes.hashList[mapTypeId]._buildCategories;
             var objectTypes = [];
 
+            // Now create all menu entries of all categories:
             var numCat = _buildCategories.length;
             for (var i = 0; i < numCat; i++) {
                 var objectTypesOfThisCategory = [];
-                // $("#ui-accordion-accordion-header-"+i+"").text(BuildMenuData[i].name);
-
                 var numTypes = _buildCategories[i].objectTypeIds.length;
                 for (var k = 0; k < numTypes; k++) {
                     var objectTypeId = _buildCategories[i].objectTypeIds[k];
@@ -40,32 +38,14 @@ var BuildMenu = function () {
                         }
                     };
                     objectTypesOfThisCategory.push(objectEntry);
-
-                    /**   var spritesheet = game.spritesheets.hashList[objectType._iconSpritesheetId];
-                     var spriteFrameIcon = spritesheet.frames[objectType._iconSpriteFrame];
-                     var imgSrc = spritesheet.images[spriteFrameIcon[4]];
-                     var objectname = objectType._name;
-
-                     var buildMenuItemId = 'cat' + i + 'obj' + k;
-                     $("#ui-accordion-accordion-panel-"+i+"").append('<li class="buildMenuItem"><a href="#" id="'+buildMenuItemId+'" name="'+objectTypeId+'" title="buildTime: '+objectType._buildTime+'"></a></li>');
-                     $("#"+buildMenuItemId).append('<p class="buildMenuText">'+objectType._name+'</p>');
-
-                     var sprite = new SpriteImg(objectType._iconSpritesheetId, objectType._iconSpriteFrame, 32, 32);
-                     $("#"+buildMenuItemId).append(sprite.content);
-                     $("#"+buildMenuItemId).click(function()  {
-                        self.initializeObject(self.name);
-                    });
-                     **/
                 }
-
                 objectTypes.push({ name: _buildCategories[i].name, objectTypes: ko.observableArray(objectTypesOfThisCategory)});
-
-
-
             }
 
             // now update the member variable:
             self.buildMenuData(objectTypes);
+
+            // refresh the accordion:
             $("#buildMenu" ).accordion();
             $("#buildMenu").accordion({
                 heightStyle: "fill"
@@ -123,47 +103,4 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
 
     this.mapControl.setStateSelectCoord(callbackOnSelect, callbackCheckValidSelection, callbackCanceled);
 };
-
-// Return component definition
-//return { viewModel: BuildMenu, template: htmlString };
-
-//ko.applyBindings();
-
-
-/**
- $("#accordion").html('');
- for (var i = 0; i< this.nrOfCategories; i++) {
-        $("#accordion").append('<h3>Building Category</h3><ol class="build-menu-list"></ol>');
-    }
-
- // initialize correct one
- $( "#accordion" ).accordion({
-        heightStyle: "fill"
-    });
- //$("#buildMenu").hide();
-
- $( "#accordion" ).accordion( "refresh" );
-
-
-
-
- ko.bindingHandlers.accordion = {
-    init: function(element, valueAccessor) {
-        var options = valueAccessor() || {};
-        setTimeout(function() {
-            $(element).accordion(options);
-        }, 0);
-
-        //handle disposal (if KO removes by the template binding)
-        ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
-            $(element).accordion("destroy");
-        });
-    },
-    update: function(element, valueAccessor) {
-        var options = valueAccessor() || {};
-        $(element).accordion("destroy").accordion(options);
-    }
-}
- **/
-
 
