@@ -19,7 +19,7 @@ var LayerView = function(client){
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
     this.uiContainer = new UIContainer();
-    this.itemContextMenu = new ItemContextMenu();
+
 
 
     /**
@@ -38,6 +38,11 @@ var LayerView = function(client){
     this.buildMenu = new BuildMenu();
     var buildMenuPanel = this.createKnockoutPanel(this.buildMenu, 'buildMenu');
     $("#buildMenuPlaceholder").append(buildMenuPanel);
+
+    this.itemContextMenu = new ItemContextMenu();
+    var itemContextMenuPanel = this.createKnockoutPanel(this.itemContextMenu, 'itemContextMenu');
+    $("#itemContextMenuPlaceholder").append(itemContextMenuPanel);
+    this.itemContextMenu.init();
 
 };
 

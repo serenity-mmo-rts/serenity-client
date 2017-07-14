@@ -161,6 +161,9 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     this.availableTitle.appendTo(wrap2);
     this.availableBox.appendTo(wrap2);
     wrap2.appendTo(this.content);
+
+
+
 };
 
 UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
@@ -176,6 +179,13 @@ UpgradesTab.prototype.triggerMenu = function (container,item) {
     var self = this;
     container.click(function (e) {
         uc.layerView.itemContextMenu.setItem(item);
+        uc.layerView.itemContextMenu.init();
+        //$(document).contextmenu("open", $(container), item);
+        uc.layerView.itemContextMenu.menu.contextmenu({
+            position: {my: "left top", at: "center", of: e, collision: "fit"}
+        });
+        uc.layerView.itemContextMenu.menu.contextmenu("open", $(container), item);
+
     });
 };
 
