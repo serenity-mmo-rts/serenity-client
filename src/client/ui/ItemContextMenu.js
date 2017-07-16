@@ -3,13 +3,30 @@
 var ItemContextMenu =  function () {
 
  var self = this;
+
     this.item = ko.observable(false);
+
     this.activatedDisabled = ko.pureComputed(function() {
         if (this.item()) {
             return !this.item()._blocks.Feature._processedStack().canBeActivated();
         }
         else {
             return true;
+        }
+    }, this);
+
+    this.updateDisabled = ko.pureComputed(function() {
+        var foo = true;
+        if (this.item()) {
+            if (this.item()._level() < this.item()._itemType._blocks.Feature.length) {
+                return false
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return true
         }
     }, this);
 
@@ -71,7 +88,6 @@ ItemContextMenu.prototype.init = function () {
 
 ItemContextMenu.prototype.setItem = function (item) {
    this.item(item);
-    var itemType = item._itemType;
 };
 
 ItemContextMenu.prototype.moveToAttackSquad = function () {
