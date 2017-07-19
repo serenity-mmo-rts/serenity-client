@@ -16,9 +16,23 @@ var ItemContextMenu =  function () {
     }, this);
 
     this.updateDisabled = ko.pureComputed(function() {
-        var foo = true;
+
         if (this.item()) {
             if (this.item()._level() < this.item()._itemType._blocks.Feature.length) {
+                return false
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return true
+        }
+    }, this);
+
+    this.moveDisabled= ko.pureComputed(function() {
+        if (this.item()) {
+            if (this.item()._blocks.hasOwnProperty("Movable")) {
                 return false
             }
             else {
@@ -71,10 +85,13 @@ ItemContextMenu.prototype.init = function () {
                     self.levelUpgrade();
                     break;
                 case "moveToAttack":
+                    self.moveToAttackSquad();
                     break;
                 case "moveToDefense":
+                    self.moveToDefenseSquad();
                     break;
                 case "moveToTarget":
+                    self.moveToOtherMapObject();
                     break;
             }
         }
@@ -104,7 +121,22 @@ ItemContextMenu.prototype.moveToDefenseSquad = function () {
 
 ItemContextMenu.prototype.moveToOtherMapObject = function () {
 
-        // TODO fire event
+    var evt = new MoveItemEvent(game);
+    evt.setParameters(this.item());
+
+    function callbackOnSelect(){
+        uc.addEvent(evt);
+    }
+    function callbackCheckValidSelection(objId){
+        evt.setTarget(objId);
+        var valid = evt.isValid();
+        return valid;
+    }
+    function callbackCanceled(){
+        evt = null;
+    }
+    uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
+
 
 };
 
