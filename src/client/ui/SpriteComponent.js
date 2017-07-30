@@ -9,44 +9,78 @@ var SpriteComponent = function(params) {
 
     this.width = params.width;
     this.height = params.height;
-    this.spriteFrame = params.spriteFrame;
-    this.spritesheetId = params.spritesheetId;
+    this.spritesheetId = null;
+    this.spriteFrame = null;
 
+    this.uuid = null;
     this.imageElement = ko.observable('<div></div>');
 
-    this.spritesheet = game.spritesheets.get(params.spritesheetId);
+    if(ko.isObservable(params.spritesheetId)) {
+        params.spritesheetId.subscribe(function(spritesheetId) {
+            self.spritesheetId = spritesheetId;
+            self.loadSpritesheet();
+        });
+        this.spritesheetId = params.spritesheetId();
+    }
+    else {
+        this.spritesheetId = params.spritesheetId;
+    }
+
+    if(ko.isObservable(params.spriteFrame)) {
+        params.spriteFrame.subscribe(function(spriteFrame) {
+            self.spriteFrame = spriteFrame;
+            self.loadSpritesheet();
+        });
+        this.spriteFrame = params.spriteFrame();
+    }
+    else {
+        this.spriteFrame = params.spriteFrame;
+    }
+
+    this.loadSpritesheet();
+
+};
+
+SpriteComponent.prototype.loadSpritesheet = function() {
+    var self = this;
+    this.spritesheet = game.spritesheets.get(this.spritesheetId);
     if (this.spritesheet) {
         this.loadTempImage();
     }
     else {
-        var uuid = Math.random();
-        uc.onGameDataLoaded[uuid] = function () {
-            self.spritesheet = game.spritesheets.get(params.spritesheetId);
+        if (this.uuid) {
+            // remove old callback before adding a new one:
+            delete uc.onGameDataLoaded[self.uuid];
+        }
+        this.uuid = Math.random();
+        uc.onGameDataLoaded[this.uuid] = function () {
+            self.spritesheet = game.spritesheets.get(self.spritesheetId);
             self.loadTempImage();
-            delete uc.onGameDataLoaded[uuid];
+            delete uc.onGameDataLoaded[self.uuid];
         };
     }
-
 };
 
 SpriteComponent.prototype.loadTempImage = function() {
     var self = this;
 
-    this.spriteFrameIcon = this.spritesheet.frames[this.spriteFrame];
-    this.tmpImg = uc.loadqueue.getResult("sheet"+this.spritesheetId+"image"+this.spriteFrameIcon[4]);
-    if (this.tmpImg==null){
-        uc.onSpriteLoadedCallback[Math.random()] = function() {
-            self.tmpImg = uc.loadqueue.getResult("sheet"+self.spritesheetId+"image"+self.spriteFrameIcon[4]);
-            if (self.tmpImg==null){
-                console.log("error: preloadJS is still not finished with loading...?..")
-            }
-            else {
-                self.draw();
-            }
-        };
-    }
-    else {
-        this.draw();
+    if (this.spritesheetId && this.spriteFrame) {
+        this.spriteFrameIcon = this.spritesheet.frames[this.spriteFrame];
+        this.tmpImg = uc.loadqueue.getResult("sheet" + this.spritesheetId + "image" + this.spriteFrameIcon[4]);
+        if (this.tmpImg == null) {
+            uc.onSpriteLoadedCallback[Math.random()] = function () {
+                self.tmpImg = uc.loadqueue.getResult("sheet" + self.spritesheetId + "image" + self.spriteFrameIcon[4]);
+                if (self.tmpImg == null) {
+                    console.log("error: preloadJS is still not finished with loading...?..")
+                }
+                else {
+                    self.draw();
+                }
+            };
+        }
+        else {
+            this.draw();
+        }
     }
 
 };
@@ -82,6 +116,7 @@ SpriteComponent.prototype.draw = function() {
         'background-size: '+widthTotalImage+'px '+heightTotalImage+'px; '+
         'background-position: '+shiftXScaledSheet+'px '+shiftYScaledSheet+'px; '+
         'background-repeat: no-repeat;'+
+        'display: inline-block;'+
         '"></div>');
 
 };

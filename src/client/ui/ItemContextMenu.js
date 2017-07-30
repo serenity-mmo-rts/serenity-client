@@ -44,23 +44,33 @@ var ItemContextMenu =  function () {
         }
     }, this);
 
-    this._iconSpritesheetId = ko.pureComputed(function() {
+    this.iconSpritesheetId = ko.pureComputed(function() {
         if (this.item()) {
             var itemType = this.item()._itemType;
             return itemType._iconSpritesheetId;
         }
         else {
-            return "";
+            return false;
         }
     }, this);
 
-    this._iconSpriteFrame = ko.pureComputed(function() {
+    this.iconSpriteFrame = ko.pureComputed(function() {
         if (this.item()) {
             var itemType = this.item()._itemType;
             return itemType._iconSpriteFrame;
         }
         else {
-            return "";
+            return false;
+        }
+    }, this);
+
+
+    this.level = ko.pureComputed(function() {
+        if (this.item()) {
+            return this.item()._level();
+        }
+        else {
+            return false;
         }
     }, this);
 
