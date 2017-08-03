@@ -15,11 +15,12 @@ var Map = function(mapContainer, stage,mapId) {
     this.bg_container = new createjs.Container();
     this.obj_container = new createjs.Container();
     this.res_container = new createjs.Container();
+    this.mov_container = new createjs.Container();
 
     this.bg_container.mouseMoveOutside = true;
     this.obj_container.mouseMoveOutside = true;
     this.res_container.mouseMoveOutside = true;
-    this.main_container.addChild(this.bg_container,this.obj_container,this.res_container);
+    this.main_container.addChild(this.bg_container,this.obj_container,this.res_container,this.mov_container);
 
 
     this.res_container.alpha = 0.5;
