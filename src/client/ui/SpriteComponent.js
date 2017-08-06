@@ -64,7 +64,7 @@ SpriteComponent.prototype.loadSpritesheet = function() {
 SpriteComponent.prototype.loadTempImage = function() {
     var self = this;
 
-    if (this.spritesheetId && this.spriteFrame) {
+    if (this.spritesheetId && this.spriteFrame!==null) {
         this.spriteFrameIcon = this.spritesheet.frames[this.spriteFrame];
         this.tmpImg = uc.loadqueue.getResult("sheet" + this.spritesheetId + "image" + this.spriteFrameIcon[4]);
         if (this.tmpImg == null) {
