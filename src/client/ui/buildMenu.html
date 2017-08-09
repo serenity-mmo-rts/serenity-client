@@ -7,8 +7,7 @@
     <ol data-bind="foreach: objectTypes" class="build-menu-list">
         <li class="buildMenuItem">
             <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
-                <p class="buildMenuText" data-bind="text: objectTypeId"></p>
-                <spritecomponent params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent>
+                <span><spritecomponent params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent><span class="buildMenuText" data-bind="text: objectTypeId"></span></span>
             </a>
         </li>
     </ol>
