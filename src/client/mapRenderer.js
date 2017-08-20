@@ -119,6 +119,12 @@ Map.prototype.createMap = function() {
 Map.prototype.checkRendering = function(){
 
     var objectList = this.layer.mapData.mapObjects.hashList;
+    var itemList = this.layer.mapData.items.hashList;
+
+    for (var itemId in itemList) {
+        this.checkRenderingOfItem(itemList[itemId]);
+    }
+
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
     }
@@ -139,6 +145,74 @@ Map.prototype.checkRendering = function(){
         this.bgMap.checkRendering();
     }
 }
+
+Map.prototype.checkRenderingOfItem = function(item){
+
+    if (item._blocks.hasOwnProperty("Movable")){
+        // ToDO more checks whether item should be rendered or not
+
+     //   item.addCallback("render", function() {self.renderObj(item)});
+
+
+        if (item._blocks.Movable.isMoving()){
+            // get current position of item
+            var currentPosition = item._blocks.Movable.getCurrentPositionOfItem(new Date());
+            // render item on map
+            var movingItem = new createjs.Sprite(uc.spritesheets[item._itemType._iconSpritesheetId]);
+            movingItem.gotoAndStop(item._itemType._iconSpriteFrame);
+            movingItem.x = this.gameCoord2RenderX(currentPosition);
+            movingItem.y = this.gameCoord2RenderY(currentPosition);
+            movingItem.originId = item._blocks.Movable.originId();
+            movingItem.targetId = item._blocks.Movable.targetId();
+            movingItem.name = item._id();
+            movingItem.id = item._id();
+            this.mov_container.addChild(movingItem);
+
+            var target = this.layer.mapData.mapObjects.get(item._blocks.Movable.targetId());
+            var targetCoords = {
+                x: this.gameCoord2RenderX(target.x(),target.y()),
+                y: this.gameCoord2RenderY(target.x(),target.y())
+            };
+            createjs.Tween.get(movingItem,{override: true}).to(targetCoords,item._blocks.Movable.travelTime);
+
+            // TODO  create dashed line between origin and target ONLY on click
+            // var shape = new createjs.Shape();
+            // shape.graphics.setStrokeStyle(2).beginStroke("#ff0000").moveTo(origin.x(),origin.y()).lineTo(target.x(),target.y());
+            // shape.graphics.dashedLineTo(100,100,200,300, 4);
+            //  stage.addChild(shape);
+        }
+        else{
+              var toRemoveChild = this.mov_container.getChildByName(item._id());
+                if (toRemoveChild){
+                    this.mov_container.removeChild(toRemoveChild);
+                }
+        }
+    }
+};
+
+Map.prototype.renderItem =  function(item) {
+
+};
+
+
+Map.prototype.renderDashedLine =  function(x1, y1, x2, y2, dashLen) {
+    this.moveTo(x1, y1);
+
+    var dX = x2 - x1;
+    var dY = y2 - y1;
+    var dashes = Math.floor(Math.sqrt(dX * dX + dY * dY) / dashLen);
+    var dashX = dX / dashes;
+    var dashY = dY / dashes;
+
+    var q = 0;
+    while (q++ < dashes) {
+        x1 += dashX;
+        y1 += dashY;
+        this[q % 2 == 0 ? 'moveTo' : 'lineTo'](x1, y1);
+    }
+    this[q % 2 == 0 ? 'moveTo' : 'lineTo'](x2, y2);
+};
+
 
 Map.prototype.checkRenderingOfObject = function(mapObject){
 
