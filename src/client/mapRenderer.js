@@ -155,10 +155,10 @@ Map.prototype.checkRenderingOfItem = function(item){
             this.renderItem(item);
         }
         else{
-              var toRemoveChild = this.mov_container.getChildByName(item._id());
-                if (toRemoveChild){
-                    this.mov_container.removeChild(toRemoveChild);
-                }
+            var toRemoveChild = this.mov_container.getChildByName(item._id());
+            if (toRemoveChild){
+                this.mov_container.removeChild(toRemoveChild);
+            }
         }
     }
 };

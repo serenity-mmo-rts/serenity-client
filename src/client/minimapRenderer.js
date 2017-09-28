@@ -96,18 +96,24 @@ Minimap.prototype.draw= function() {
     this.mini_container.name = "miniM";
 
     */
+    if (this.layer.mapGenerator instanceof PlanetGenerator) {
+        this.bgMap = this.genBitmapFromPlanetGenerator(this.targetDepth);
+        this.bgMap.name = "minimap";
+        this.bgMap.x = 10;
+        this.bgMap.y = 10;
+        this.bgMap.regX = 0;
+        this.bgMap.regY = 0;
+        this.bgMap.scaleX = 1;
+        this.bgMap.scaleY = 1;
 
-    this.bgMap = this.genBitmapFromPlanetGenerator(this.targetDepth);
-    this.bgMap.name = "minimap";
-    this.bgMap.x = 10;
-    this.bgMap.y = 10;
-    this.bgMap.regX = 0;
-    this.bgMap.regY = 0;
-    this.bgMap.scaleX = 1;
-    this.bgMap.scaleY = 1;
+        this.mini_container.addChild(this.bgMap, this.gameContainer);
+        this.stage.addChild(this.mini_container);
+    }
 
-    this.mini_container.addChild(this.bgMap, this.gameContainer);
-    this.stage.addChild(this.mini_container);
+    else{
+
+        // TODO add minimap rendering of layer without DS map generation
+        }
 };
 
 
@@ -119,13 +125,13 @@ Minimap.prototype.genBitmapFromPlanetGenerator = function(targetDepth) {
     var height = Math.pow(2,targetDepth);
 
     var tmpMapGenerator = this.layer.mapGenerator.getSeededCopy();
-    var rgb = tmpMapGenerator.getMatrix(xpos,ypos,width,height,targetDepth,"rgb"); // x,y, width, height, depth
+    var rgb = tmpMapGenerator.getMatrix(xpos, ypos, width, height, targetDepth, "rgb"); // x,y, width, height, depth
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;
-    mycanvas.height = height/2;
+    mycanvas.height = height / 2;
     var ctx = mycanvas.getContext("2d");
-    var imgData = ctx.createImageData(width, height/2);
+    var imgData = ctx.createImageData(width, height / 2);
 
     var r = rgb.r;
     var g = rgb.g;
@@ -133,11 +139,11 @@ Minimap.prototype.genBitmapFromPlanetGenerator = function(targetDepth) {
     var sizeX = rgb.sizeX;
     var data = imgData.data;
 
-    for (var yDest = 0, ySource=0; yDest < height/2; yDest++, ySource+=2) {
+    for (var yDest = 0, ySource = 0; yDest < height / 2; yDest++, ySource += 2) {
         var startOfRowDest = width * yDest;
         var startOfRowSource = sizeX * ySource;
-        for (var xDest = 0, xSource=0; xDest < width; xDest++, xSource++) {
-            var startOfPixelDest = (startOfRowDest + xDest) *4;
+        for (var xDest = 0, xSource = 0; xDest < width; xDest++, xSource++) {
+            var startOfPixelDest = (startOfRowDest + xDest) * 4;
             var startOfPixelSource = (startOfRowSource + xSource);
             data[startOfPixelDest] = r[startOfPixelSource];
             data[startOfPixelDest + 1] = g[startOfPixelSource];
