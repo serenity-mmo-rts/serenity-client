@@ -16,12 +16,15 @@ var Map = function(mapContainer, stage,mapId) {
     this.obj_container = new createjs.Container();
     this.res_container = new createjs.Container();
     this.mov_container = new createjs.Container();
+    this.movUp_container = new createjs.Container();
 
     this.bg_container.mouseMoveOutside = true;
     this.obj_container.mouseMoveOutside = true;
     this.res_container.mouseMoveOutside = true;
-    this.main_container.addChild(this.bg_container,this.obj_container,this.res_container,this.mov_container);
+    this.main_container.addChild(this.bg_container,this.obj_container,this.res_container,this.mov_container,this.movUp_container);
 
+    this.moveUpSubscriptions = {};
+    this.moveSubscriptions = {};
 
     this.res_container.alpha = 0.5;
 
@@ -148,22 +151,70 @@ Map.prototype.checkRendering = function(){
 
 Map.prototype.checkRenderingOfItem = function(item){
 
+    // ToDO more checks whether item should be rendered or not (map listner, quadtree etc.)
+    // in case rendering is possible
     if (item._blocks.hasOwnProperty("Movable")){
-        // ToDO more checks whether item should be rendered or not (quadtree etc.)
-
-        if (item._blocks.Movable.isMoving()){
-            this.renderItem(item);
+        var self = this;
+        if (!this.moveSubscriptions.hasOwnProperty(item._id())) {
+            this.moveSubscriptions[item._id()]=item._blocks.Movable.isMoving.subscribe(function(newValue){
+                if (newValue){
+                    self.renderMovingItem(item);
+                }
+                else{
+                    var toRemoveChild = self.mov_container.getChildByName(item._id());
+                    if (toRemoveChild){
+                        self.mov_container.removeChild(toRemoveChild);
+                    }
+                }
+            });
         }
-        else{
-            var toRemoveChild = this.mov_container.getChildByName(item._id());
-            if (toRemoveChild){
-                this.mov_container.removeChild(toRemoveChild);
+
+        if (item._blocks.hasOwnProperty("SubObject")){
+            if (!this.moveUpSubscriptions.hasOwnProperty(item._id())) {
+                this.moveUpSubscriptions[item._id()]=item._blocks.Movable.isMovingUp.subscribe(function (newValue) {
+                    if (newValue) {
+                        self.renderMovingUpItem(item);
+                    }
+                    else {
+                        var toRemoveChild = self.movUp_container.getChildByName(item._id());
+                        if (toRemoveChild) {
+                            self.movUp_container.removeChild(toRemoveChild);
+                        }
+                    }
+                });
             }
         }
     }
 };
 
-Map.prototype.renderItem =  function(item) {
+
+Map.prototype.renderMovingUpItem =  function(item) {
+    // get current position of item
+    var mapObj= this.layer.mapData.mapObjects.get(item._objectId());
+    var currentPosition = {
+        x: mapObj.x(),
+        y: mapObj.y()
+    };
+    // render item on map
+    var movingItem = new createjs.Sprite(uc.spritesheets[item._itemType._iconSpritesheetId]);
+    movingItem.gotoAndStop(item._itemType._iconSpriteFrame);
+    movingItem.x = this.gameCoord2RenderX(currentPosition.x,currentPosition.y);
+    movingItem.y = this.gameCoord2RenderY(currentPosition.x,currentPosition.y);
+    movingItem.originId = item._blocks.Movable.originId();
+    movingItem.targetId = item._blocks.Movable.targetId();
+    movingItem.name = item._id();
+    movingItem.id = item._id();
+    this.movUp_container.addChild(movingItem);
+
+
+    var targetCoords = {
+        x: this.gameCoord2RenderX(currentPosition.x-200, currentPosition.y-200),
+        y: this.gameCoord2RenderY(currentPosition.x-200, currentPosition.y-200)
+    };
+    createjs.Tween.get(movingItem,{override: true}).to(targetCoords,5000);
+};
+
+Map.prototype.renderMovingItem =  function(item) {
     // get current position of item
     var currentPosition = item._blocks.Movable.getCurrentPositionOfItem(uc.layerView.lastTick);
     // render item on map

@@ -43,7 +43,7 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
         this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
         this.objetType = game.objectTypes.get(this.mapObj.objTypeId());
         this.className = this.objetType._className;
-        var self= this;
+        var self = this;
     }
 
     if (this.mapObj._blocks.hasOwnProperty("Environment")==false) {
@@ -70,6 +70,10 @@ UiObjectContext.prototype.update = function() {
         if (this.mapObj._blocks.hasOwnProperty("UserObject")) {
             this.mainInfo();
             this.createTabs();
+            var itemList = this.mapObj.getItems();
+            for (var item in itemList){
+                uc.layerView.mapContainer.map.checkRenderingOfItem(itemList[item]);
+            }
         }
     }
 
