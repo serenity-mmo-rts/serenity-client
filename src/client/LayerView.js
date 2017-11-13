@@ -144,12 +144,14 @@ LayerView.prototype.tick = function() {
 
             // set FPS display:
             var dateDiff = Date.now() - this.lastTick;
-            this.uiGlobalMenu.setFPS(Math.round(1000 / dateDiff));
+           // this.uiGlobalMenu.setFPS(Math.round(1000 / dateDiff));
+             this.testComponent.setFPS(Math.round(1000 / dateDiff));
 
             // set mouse coordinate display:
             if(this.mapContainer) {
                 mouseCoord = this.mapContainer.getMouseInGameCoord();
-                this.uiGlobalMenu.setMouseCoord(mouseCoord);
+               // this.uiGlobalMenu.setMouseCoord(mouseCoord);
+                this.testComponent.setMouseCoord(mouseCoord);
             }
 
         }

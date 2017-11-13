@@ -1,8 +1,11 @@
 
 <div>
-    The name is <span data-bind="text: personName"></span>
+    <span>The name is <span data-bind="text: personName"></span><button onclick="uc.layerView.testComponent.personName('Alice');">rename</button></span>
     <br>
-    <button onclick="uc.layerView.testComponent.personName('Alice');">rename</button>
+    <span>Framerate:<span data-bind="text: fps"></span></span>
     <br>
+    <span>Mouse X:<span data-bind="text: mouseCoordX"></span></span>
+    <br>
+    <span>Mouse Y:<span data-bind="text: mouseCoordY"></span></span>
     <!--<spritecomponent params='spritesheetId: "cityBuildingsSprite01", spriteFrame: 5, width: 50, height: 50'></spritecomponent> -->
 </div>

@@ -16,8 +16,6 @@ var UiGlobalMenu = function ( layerView ) {
     });
 
     this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'display': 'inline-block'}).appendTo(this.content);
-    this.createDebugInfo();
-    this.createDivs();
 
 };
 
@@ -38,11 +36,8 @@ UiGlobalMenu.prototype.setUserData = function (userData) {
 
 UiGlobalMenu.prototype.createDivs = function() {
 
-    //if (this.layerView.mapLoaded) {
-        this.createLayerUpButton();
-    //}
-
     if (this.client.userDataLoaded){
+        this.createLayerUpButton();
         this.createUserInfo("not logged in");
         this.createLevelUpButton();
         this.createOccupation();
@@ -75,12 +70,7 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
 
 };
 
-UiGlobalMenu.prototype.createDebugInfo = function() {
-    this.debugContainer = $('<div id="debugContainer"></div>').appendTo(this.container);
-    this.debugContainer.css({'top':50+'%','left':50%+'%','display': 'inline-block'});
-    this.fps = $('<div>fps: </div>').appendTo(this.debugContainer);
-    this.mouseCoord = $('<div>x: , y: </div>').appendTo(this.debugContainer);
-};
+
 
 
 
@@ -182,20 +172,6 @@ UiGlobalMenu.prototype.createCoins = function() {
     this.blackMarketFunds = $('<b>Black Market Funds:'+blackMarketFunds+'</b>').appendTo(this.coinContainer);
 };
 
-
-
-
-UiGlobalMenu.prototype.setFPS = function(fps) {
-    this.fps.text("fps: " + fps.toString());
-}
-
-UiGlobalMenu.prototype.setMouseCoord = function(mouseCoord) {
-    this.mouseCoord.text("x: " + Math.round(mouseCoord.x).toString() + ", y: " + Math.round(mouseCoord.y).toString());
-}
-
-UiGlobalMenu.prototype.setDebugText = function(debugText) {
-    this.debugText.text(debugText);
-}
 
 
 
