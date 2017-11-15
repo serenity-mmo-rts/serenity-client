@@ -190,10 +190,9 @@ Map.prototype.checkRenderingOfItem = function(item){
 
 Map.prototype.renderMovingUpItem =  function(item) {
     // get current position of item
-    var mapObj= this.layer.mapData.mapObjects.get(item._objectId());
     var currentPosition = {
-        x: mapObj.x(),
-        y: mapObj.y()
+        x: item.x(),
+        y: item.y()
     };
     // render item on map
     var movingItem = new createjs.Sprite(uc.spritesheets[item._itemType._iconSpritesheetId]);
@@ -206,12 +205,32 @@ Map.prototype.renderMovingUpItem =  function(item) {
     movingItem.id = item._id();
     this.movUp_container.addChild(movingItem);
 
-
-    var targetCoords = {
-        x: this.gameCoord2RenderX(currentPosition.x-200, currentPosition.y-200),
-        y: this.gameCoord2RenderY(currentPosition.x-200, currentPosition.y-200)
+    var targetCoords1 = {
+        x: this.gameCoord2RenderX(currentPosition.x-50, currentPosition.y-50),
+        y: this.gameCoord2RenderY(currentPosition.x-50, currentPosition.y-50)
     };
-    createjs.Tween.get(movingItem,{override: true}).to(targetCoords,5000);
+    var targetCoords2 = {
+        x: this.gameCoord2RenderX(currentPosition.x-150, currentPosition.y-150),
+        y: this.gameCoord2RenderY(currentPosition.x-150, currentPosition.y-150)
+    };
+    var targetCoords3 = {
+        x: this.gameCoord2RenderX(currentPosition.x-300, currentPosition.y-300),
+        y: this.gameCoord2RenderY(currentPosition.x-300, currentPosition.y-300)
+    };
+    var targetCoords3 = {
+        x: this.gameCoord2RenderX(currentPosition.x-600, currentPosition.y-600),
+        y: this.gameCoord2RenderY(currentPosition.x-600, currentPosition.y-600)
+    };
+    var targetCoords3 = {
+        x: this.gameCoord2RenderX(currentPosition.x-1200, currentPosition.y-1200),
+        y: this.gameCoord2RenderY(currentPosition.x-1200, currentPosition.y-1200)
+    };
+    createjs.Tween.get(movingItem,{override: true}).
+        to(targetCoords1,item._blocks.Movable.movingUpTime/5).
+        to(targetCoords2,item._blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item._blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item._blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item._blocks.Movable.movingUpTime/5);
 };
 
 Map.prototype.renderMovingItem =  function(item) {
