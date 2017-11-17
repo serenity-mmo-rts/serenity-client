@@ -39,6 +39,7 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.layer = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.layer.mapTypeId);
+
     this.layer.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
         self.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
@@ -125,7 +126,10 @@ Map.prototype.checkRendering = function(){
     var itemList = this.layer.mapData.items.hashList;
 
     for (var itemId in itemList) {
+        // ToDO more checks whether item should be rendered or not (map listner, quadtree etc.)
+
         this.checkRenderingOfItem(itemList[itemId]);
+
     }
 
     for (var mapObjectId in objectList) {
@@ -151,7 +155,7 @@ Map.prototype.checkRendering = function(){
 
 Map.prototype.checkRenderingOfItem = function(item){
 
-    // ToDO more checks whether item should be rendered or not (map listner, quadtree etc.)
+
     // in case rendering is possible
     if (item._blocks.hasOwnProperty("Movable")){
         var self = this;
@@ -164,6 +168,8 @@ Map.prototype.checkRenderingOfItem = function(item){
                     var toRemoveChild = self.mov_container.getChildByName(item._id());
                     if (toRemoveChild){
                         self.mov_container.removeChild(toRemoveChild);
+                        //  else deltefromsubscrioption this.subscribtion[itemId].dispose();
+                        //toRemoveChild.siubscription.dispose()
                     }
                 }
             });
@@ -480,16 +486,19 @@ Map.prototype.renderObj = function(mapObject) {
     else {
         if (objType._spriteAnimation !== null){
             var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId], "working");
+
         }
         else {
 
             if (mapObject.state() == mapObjectStates.TEMP) {
-                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);  // render object from database
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
+                // render object from database
                 // here could come a image cropping
                 objectBitmap.gotoAndStop(objType._spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
             else if (mapObject.state() == mapObjectStates.WORKING) {
+
                     var construction = game.objectTypes.get("constructionSite");
                     var objectBitmap = new createjs.Sprite(uc.spritesheets[construction._spritesheetId]);
                     objectBitmap.gotoAndStop(construction._spriteFrame);
@@ -506,11 +515,28 @@ Map.prototype.renderObj = function(mapObject) {
 
     objectBitmap.x = this.gameCoord2RenderX(mapObject.x(), mapObject.y());
     objectBitmap.y = this.gameCoord2RenderY(mapObject.x(), mapObject.y());
+    var self = this;
+    mapObject.x.subscribe(function(newValue){
+        objectBitmap.x = self.gameCoord2RenderX(mapObject.x(), mapObject.y());
+        objectBitmap.y = self.gameCoord2RenderY(mapObject.x(), mapObject.y());
+    });
+    mapObject.y.subscribe(function(newValue){
+        objectBitmap.x = self.gameCoord2RenderX(mapObject.x(), mapObject.y());
+        objectBitmap.y = self.gameCoord2RenderY(mapObject.x(), mapObject.y());
+    });
+
+    objectBitmap.mapObjectId = ko.computed(function() {
+        return mapObject._id();
+    }, this);
+
+    objectBitmap.name = mapObject._id();
 
     //TODO: set bitmap scaling proportional to objType._initWidth / mapObject._width
 
-    objectBitmap.mapObjectId = mapObject._id();
-    objectBitmap.name = mapObject._id();
+   // objectBitmap.mapObjectId = mapObject._id();
+  //  objectBitmap.name = mapObject._id();
+
+
     mapObject.objectBitmap = objectBitmap;
     this.obj_container.addChild(objectBitmap);
 
@@ -577,7 +603,7 @@ Map.prototype.getCurrentObject = function () {
         var child = this.obj_container.getChildAt(i);
         var pt = child.globalToLocal(this.stage.mouseX, this.stage.mouseY);
         if (child.hitTest(pt.x, pt.y)) {
-            return child.mapObjectId;
+            return child.mapObjectId();
         }
     }
     return false;

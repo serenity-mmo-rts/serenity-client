@@ -36,7 +36,7 @@ var HubTab = function (mapObj) {
         function callbackCheckValidSelection(objId){
             self.tmpEvent.setTargetConnection(objId);
             object._blocks.Connection.connectedTo(objId);
-            uc.layerView.mapContainer.mapControl.map.renderObj(object);
+            //uc.layerView.mapContainer.mapControl.map.renderObj(object);
             var valid = self.tmpEvent.isValid();
             if (valid) {
                 object.objectBitmap.alpha = 1;
