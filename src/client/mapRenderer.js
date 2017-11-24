@@ -40,10 +40,11 @@ var Map = function(mapContainer, stage,mapId) {
     this.layer = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.layer.mapTypeId);
 
+    /*
     this.layer.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
         self.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
-    };
+    };*/
 
     // create unique list of images to load:
     var imagesToLoadHashList = {};
@@ -120,7 +121,32 @@ Map.prototype.createMap = function() {
     if (this.callbackFinishedLoading) this.callbackFinishedLoading();
 };
 
+Map.prototype.mapAreaChangedCallback = function(evt, objectOrItem) {
+    if (objectOrItem instanceof MapObject) {
+        this.checkRenderingOfObject(objectOrItem);
+        this.obj_container.sortChildren(function (a, b) {
+            return a.y - b.y;
+        });
+    }
+};
+
 Map.prototype.checkRendering = function(){
+
+    var self = this;
+
+    if (this.mapAreaListener) {
+        this.layer.mapData.removeListenerForArea(this.mapAreaListener);
+    }
+
+    var listenX = this.renderCoord2GameX(this.main_container.x, this.main_container.y);
+    var listenY = this.renderCoord2GameY(this.main_container.x, this.main_container.y);
+    var radius = 0.5 * Math.max(window.innerWidth,window.innerHeight) / this.mapContainer.zoom;
+    // here we check for circle collision because this is much faster in comparison to collision detections using the rotated screen rectangle in game coordinates
+    var bounds = new Bounds().initCircle(listenX, listenY, radius);
+
+    this.mapAreaListener = this.layer.mapData.addListenerForArea(function(evt,mapObj){
+        self.mapAreaChangedCallback(evt,mapObj);
+    }, bounds, true, true, true);
 
     var objectList = this.layer.mapData.mapObjects.hashList;
     var itemList = this.layer.mapData.items.hashList;
@@ -132,9 +158,11 @@ Map.prototype.checkRendering = function(){
 
     }
 
+    /*
     for (var mapObjectId in objectList) {
         this.checkRenderingOfObject(objectList[mapObjectId]);
     }
+    */
 
     var worldObjectList = this.layer.mapGenerator.getWorldObjects();
     for (var worldObjectId in worldObjectList) {
