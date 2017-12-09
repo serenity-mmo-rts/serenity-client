@@ -71,7 +71,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
     for (var itemId in allItems) {
         if (allItems.hasOwnProperty(itemId)) {
             var item = allItems[itemId];
-            if (item.state() != itemStates.HIDDEN) {
+            if (item.state() != itemStates.HIDDEN && item.state() != itemStates.TEMP && item.state() != itemStates.WORKING) {
                 var level = allItems[itemId].getLevel();
                 countItems=countItems+1;
                 if (item._itemType._blocks.hasOwnProperty("Feature")) {
