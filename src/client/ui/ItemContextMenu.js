@@ -8,7 +8,7 @@ var ItemContextMenu =  function () {
 
     this.activatedDisabled = ko.pureComputed(function() {
         if (this.item()) {
-            return !this.item()._blocks.Feature._processedStack().canBeActivated();
+            return !this.item()._blocks.Feature.canBeActivated();
         }
         else {
             return true;
@@ -161,7 +161,7 @@ ItemContextMenu.prototype.activatePerClick = function () {
     var evt = new ActivateFeatureEvent(game);
     var operation = this.item()._blocks.Feature.getCurrentOp();
     evt.setParameters(this.item(),operation);
-    var targetType = this.item()._blocks.Feature._processedStack().targetType();
+    var targetType = this.item()._blocks.Feature.targetType();
     if (targetType=="self"){
         uc.addEvent(evt);
     }
