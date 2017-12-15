@@ -21,6 +21,8 @@ var Client = function() {
 
     this.spritesheets = {};
 
+    this.tempEvents = [];
+
 };
 
 // Init function
@@ -103,13 +105,54 @@ Client.prototype.init = function() {
 
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data);
+        var layer = game.layers.get(event._mapId);
+
         //game.layers.get(event._mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
 
-        // execute only if this event was initialized from another user:
-        if ( event._userId != self.userId) {
-            event.executeOnOthers();
+        // check if this is an event that was originating from this client:
+        var originalId = event.oldId;
+        //var originalEventPos = null;
+        for (var i = 0, len=self.tempEvents.length; i<len; i++) { // normally this event should be in the first position of the array, right?
+            if (self.tempEvents[i]._id == originalId){
+                // found the original event:
+                //originalEventPos = i;
+
+                // remove it:
+                self.tempEvents.splice(i, 1);
+
+                break;
+            }
         }
+
+        // revert to the last state that was broadcasted by the server:
+        layer.revertChanges();
+
+        // apply callbacks up to the new broadcasted event time:
+        layer.timeScheduler.finishAllTillTime(event.startedTime);
+
+        // apply the new event:
+        event.executeOnOthers();
+
+        // save new snapshot:
+        layer.newSnapshot();
+
+        // reapply all the other following temporary events:
+        var currentTime = event.startedTime;
+        for (var i = 0, len = self.tempEvents.length; i<len; i++){
+
+            // make sure that the other temp events have a time that is later than the last event broadcasted by the server:
+            if (self.tempEvents[i].startedTime <= currentTime) {
+                self.tempEvents[i].startedTime = currentTime+1;
+                currentTime++;
+            }
+
+            // apply callbacks:
+            layer.timeScheduler.finishAllTillTime(self.tempEvents[i].startedTime);
+            self.tempEvents[i].executeOnClient();
+        }
+
+
     }));
 
     socket.emit('ready');
@@ -249,35 +292,57 @@ Client.prototype.onInitGameData = function(initGameData) {
     this.loadMap(initGameData.initMapId);
 
 
-}
+};
 
 
 Client.prototype.addEvent = function(event) {
 
+    var self = this;
+
     // check if event is valid:
     if(event.isValid()) {
+
+        var layer = game.layers.get(event._mapId);
 
         // execute locally:
         event.executeOnClient();
 
         // add to event List:
-        game.layers.get(event._mapId).eventScheduler.addEvent(event);
+        this.tempEvents.push(event);
+        layer.eventScheduler.addEvent(event);
 
         // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
             if(response.success){
                 console.log("sent event was successfully applied by server.");
-                var updatedEvent = EventFactory(game,response.updatedEvent);
-                event.updateFromServer(updatedEvent);
+                //var updatedEvent = EventFactory(game,response.updatedEvent);
+                //event.updateFromServer(updatedEvent);
             }
             else {
-                console.log("sent event was not successful. server returned error! now revert the event...");
+                console.log("sent event was NOT successful. server returned error! now revert the event...");
+
+                // remove the invalid temp event:
+                var pos = self.tempEvents.indexOf(event);
+                self.tempEvents.splice(pos, 1);
+                layer.eventScheduler.removeEvent(event._id);
+
+                // revert to the last state that was broadcasted by the server:
+                layer.revertChanges();
+
+                // reapply all the other temporary events:
+                for (var i = 0, len=self.tempEvents.length; i<len; i++){
+                    layer.timeScheduler.finishAllTillTime(self.tempEvents[i].startedTime);
+                    self.tempEvents[i].executeOnClient();
+                }
+
+                /*
                 if(event.revert()) {
                     console.log("revert successful");
                 }
                 else {
                     console.log("... please reconnect ...");
                 }
+                */
             }
         });
     }
