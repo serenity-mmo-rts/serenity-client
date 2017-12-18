@@ -225,16 +225,16 @@ Client.prototype.loadMap = function(mapId) {
         var myNewMap = new Layer(game,mapData.initMap);
         game.layers.add(myNewMap);
 
-        myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
-        myNewMap.mapData.rebuildQuadTree();
-        myNewMap.mapData.items.load(mapData.initItems);
-        myNewMap.mapData.setPointers();
+        // TODO: this should be the same as in load db, or not?
+
+        // add all objects
         myNewMap.eventScheduler.setEvents(mapData.initMapEvents);
+        myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
+        myNewMap.mapData.items.load(mapData.initItems);
 
-        myNewMap.mapData.mapObjects.each(function(mapObject){
-            mapObject.setPointers();
-        });
 
+        // now set pointers and
+        myNewMap.initialize();
 
         if (self.spritesLoaded) {
             self.layerView.loadMap(myNewMap._id);
