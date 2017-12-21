@@ -6,7 +6,15 @@ var UiGlobalMenu = function ( layerView ) {
     this.layerView = layerView;
     this.client = layerView.client;
     this.userData = null;
-    this.parentLayerId = ko.observable(0);
+    this.parentLayerId = ko.computed(function(){
+        var myMapId = self.layerView.loadedMapId();
+        if (myMapId){
+            return game.layers.get(myMapId).parentMapId;
+        }
+        else {
+            return 0;
+        }
+    });
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.empty();
@@ -52,15 +60,6 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
 
     var self = this;
 
-    this.layerView.loadedMapId.subscribe(function(newValue) {
-        if(newValue) {
-            self.parentLayerId(game.layers.get(newValue).parentMapId);
-        }
-        else {
-            self.parentLayerId(0);
-        }
-    });
-
         var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.container);
         openParentLayerBtn.click(function (e) {
             e.stopImmediatePropagation();
@@ -69,9 +68,6 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
         });
 
 };
-
-
-
 
 
 UiGlobalMenu.prototype.createUserInfo= function(userName) {

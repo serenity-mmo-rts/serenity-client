@@ -1,0 +1,9 @@
+<span>ressource production:</span>
+<ol data-bind="foreach: resTypes" class="build-menu-list">
+    <li>
+        <span>
+            <spritecomponent params='spritesheetId: _iconSpritesheetId, spriteFrame: _iconSpriteFrame, width: 32, height: 32'></spritecomponent>
+            <span data-bind="text: id"></span> production rate: <span data-bind="text: productionRate"></span>
+        </span>
+    </li>
+</ol>
