@@ -493,7 +493,7 @@ Map.prototype.renderObj = function(mapObject) {
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
-            else if (mapObject.state() == mapObjectStates.WORKING) {
+            else if (mapObject.state() == mapObjectStates.CONSTRUCTION) {
                 objectBitmap.graphics
                     .beginStroke("rgba(130,130,130,1)")
                     .setStrokeStyle(10)
@@ -525,7 +525,7 @@ Map.prototype.renderObj = function(mapObject) {
                 objectBitmap.gotoAndStop(objType._spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
-            else if (mapObject.state() == mapObjectStates.WORKING) {
+            else if (mapObject.state() == mapObjectStates.CONSTRUCTION) {
 
                     var construction = game.objectTypes.get("constructionSite");
                     var objectBitmap = new createjs.Sprite(uc.spritesheets[construction._spritesheetId]);
