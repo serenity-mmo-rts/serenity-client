@@ -153,8 +153,21 @@ UiObjectContext.prototype.createTabs = function() {
     else if (this.mapObj._blocks.hasOwnProperty("ActivityPlace")) {
         var maintab = new LeisureBuildingTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("ResourceProduction") || this.mapObj._blocks.hasOwnProperty("SoilProduction")) {
-        var maintab = new ResourceProducerTab(this.mapObj);
+    else if (this.mapObj._blocks.hasOwnProperty("ResourceProduction")) {
+        var resourceProducerTabViewModel = new ResourceProducerTab(this.mapObj);
+        var somePanel = createKnockoutPanel(resourceProducerTabViewModel, 'ResourceProducerTab', 'ui/tabs/ResourceProducerTab.html');
+        var maintab = {
+            content: $('<div id="mainTab"></div>').css({'display': 'inline-block'})
+        };
+        somePanel.appendTo(maintab.content);
+    }
+    else if (this.mapObj._blocks.hasOwnProperty("SoilPuller")) {
+        var soilPullerTabViewModel = new SoilPullerTab(this.mapObj);
+        var somePanel = createKnockoutPanel(soilPullerTabViewModel, 'SoilPullerTab', 'ui/tabs/SoilPullerTab.html');
+        var maintab = {
+            content: $('<div id="mainTab"></div>').css({'display': 'inline-block'})
+        };
+        somePanel.appendTo(maintab.content);
     }
     else if (this.mapObj._blocks.hasOwnProperty("TechProduction")) {
         var maintab = new ScienceCenterTab(this.mapObj);
@@ -169,7 +182,12 @@ UiObjectContext.prototype.createTabs = function() {
         var maintab = new TowerTab(this.mapObj);
     }
     else if (this.mapObj._blocks.hasOwnProperty("ResourceStorage")) {
-        var maintab = new StorageTab(this.mapObj);
+        var storageTabViewModel = new StorageTab(this.mapObj);
+        var somePanel = createKnockoutPanel(storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
+        var maintab = {
+            content: $('<div id="mainTab"></div>').css({'display': 'inline-block'})
+        };
+        somePanel.appendTo(maintab.content);
     }
     else if (this.mapObj._blocks.hasOwnProperty("Unit"))  {
         var maintab = new UnitObjectTab(this.mapObj);

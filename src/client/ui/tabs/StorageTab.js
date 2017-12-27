@@ -1,6 +1,38 @@
 var StorageTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.content= $('<div id="mainTab">Resources in Hub System</div>');
+    this.resStorageBlock = this.mapObj._blocks.ResourceStorage;
 
-}
+    // type vars:
+    var resTypeIds = this.resStorageBlock.ressourceTypeIds;
+    var resCap = this.resStorageBlock.ressourceCapacity;
+
+    // state vars:
+    var resStored = this.resStorageBlock.ressourceStored();
+    var resLastUpdate = this.resStorageBlock.ressourceLastUpdated();
+    var resChangePerSec = this.resStorageBlock.ressourceChangePerSec();
+
+    var resObservables = [];
+    for (var i= 0, len=resTypeIds.length; i<len; i++){
+        var resType = game.ressourceTypes.hashList[resTypeIds[i]];
+        var storedAmount = resStored[i];
+        if (!storedAmount){
+            storedAmount = 0;
+        }
+        var res = {
+            id: ko.observable(resTypeIds[i]),
+            _iconSpritesheetId: resType._iconSpritesheetId,
+            _iconSpriteFrame: resType._iconSpriteFrame,
+            amount: storedAmount,
+            cap: resCap[i]
+        };
+        resObservables.push(res);
+    }
+    this.resTypes = ko.observableArray(resObservables);
+
+
+
+
+};
+
+
