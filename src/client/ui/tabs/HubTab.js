@@ -21,7 +21,7 @@ var HubTab = function (mapObj) {
 
         var connectionObjTypeId = self.mapObj._blocks.HubNode.canBuildConnectionTypeId;
 
-        var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: mapObjectStates.TEMP});
+        var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: State.TEMP});
         object._blocks.Connection.connectedFrom(self.mapObj._id());
 
         self.tmpEvent = new BuildObjectEvent(game);

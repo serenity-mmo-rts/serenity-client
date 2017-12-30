@@ -68,7 +68,7 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
         y: 0,
         objTypeId: objectTypeId,
         userId: uc.userId,
-        state: mapObjectStates.TEMP
+        state: State.TEMP
     });
     this.tmpEvent = new BuildObjectEvent(game);
     this.tmpEvent.setParameters(object);

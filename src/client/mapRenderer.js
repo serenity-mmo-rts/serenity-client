@@ -326,7 +326,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     //check if object is in gameData:
     if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id())) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
-           if (mapObject.state() != mapObjectStates.HIDDEN){
+           if (mapObject.state() != State.HIDDEN){
                shouldbeRendered = true;
            }
         }
@@ -485,7 +485,7 @@ Map.prototype.renderObj = function(mapObject) {
         else {
             var objectBitmap = new createjs.Shape();
 
-            if (mapObject.state() == mapObjectStates.TEMP) {
+            if (mapObject.state() == State.TEMP) {
                 objectBitmap.graphics
                     .beginStroke("rgba(0,50,0,0.5)")
                     .setStrokeStyle(10)
@@ -493,7 +493,7 @@ Map.prototype.renderObj = function(mapObject) {
                     .lineTo(tmpX, tmpY)
                     .closePath();
             }
-            else if (mapObject.state() == mapObjectStates.CONSTRUCTION) {
+            else if (mapObject.state() == State.CONSTRUCTION) {
                 objectBitmap.graphics
                     .beginStroke("rgba(130,130,130,1)")
                     .setStrokeStyle(10)
@@ -518,14 +518,14 @@ Map.prototype.renderObj = function(mapObject) {
         }
         else {
 
-            if (mapObject.state() == mapObjectStates.TEMP) {
+            if (mapObject.state() == State.TEMP) {
                 var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
                 // render object from database
                 // here could come a image cropping
                 objectBitmap.gotoAndStop(objType._spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
-            else if (mapObject.state() == mapObjectStates.CONSTRUCTION) {
+            else if (mapObject.state() == State.CONSTRUCTION) {
 
                     var construction = game.objectTypes.get("constructionSite");
                     var objectBitmap = new createjs.Sprite(uc.spritesheets[construction._spritesheetId]);
