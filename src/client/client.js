@@ -233,8 +233,14 @@ Client.prototype.loadMap = function(mapId) {
         myNewMap.mapData.items.load(mapData.initItems);
 
 
+
+
         // now set pointers and
         myNewMap.initialize();
+
+
+        myNewMap.newSnapshot();
+
 
         if (self.spritesLoaded) {
             self.layerView.loadMap(myNewMap._id);
@@ -304,12 +310,15 @@ Client.prototype.addEvent = function(event) {
 
         var layer = game.layers.get(event._mapId);
 
-        // execute locally:
-        event.executeOnClient();
 
         // add to event List:
         this.tempEvents.push(event);
         layer.eventScheduler.addEvent(event);
+
+        // execute locally:
+        event.executeOnClient();
+
+
 
         // transmit to server:
         socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
