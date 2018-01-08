@@ -28,6 +28,8 @@ var HubTab = function (mapObj) {
         self.tmpEvent.setParameters(object,self.mapObj._id());
         uc.layerView.mapContainer.mapControl.map.addTempObj(object);
 
+        var lastSelectedObjId = null;
+
         function callbackOnSelect(objId){
             uc.layerView.mapContainer.mapControl.map.deleteTempObj();
             uc.addEvent(self.tmpEvent);
@@ -36,14 +38,27 @@ var HubTab = function (mapObj) {
         function callbackCheckValidSelection(objId){
             self.tmpEvent.setTargetConnection(objId);
             object._blocks.Connection.connectedTo(objId);
-            //uc.layerView.mapContainer.mapControl.map.renderObj(object);
             var valid = self.tmpEvent.isValid();
-            if (valid) {
-                object.objectBitmap.alpha = 1;
+
+            if (objId) {
+                if (valid) {
+                    object.objectBitmap.alpha = 1;
+                }
+                else {
+                    object.objectBitmap.alpha = 0.2;
+                }
             }
             else {
-                object.objectBitmap.alpha = 0.2;
+                object.objectBitmap.alpha = 0;
             }
+
+
+            // rerender only if the selection has actually changed:
+            if (lastSelectedObjId != objId){
+                uc.layerView.mapContainer.mapControl.map.renderObj(object);
+            }
+            lastSelectedObjId = objId;
+
             return valid;
         }
         function callbackCanceled(){

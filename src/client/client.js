@@ -131,6 +131,9 @@ Client.prototype.init = function() {
         // apply callbacks up to the new broadcasted event time:
         layer.timeScheduler.finishAllTillTime(event.startedTime);
 
+        event._isFinished = false;
+        layer.eventScheduler.addEvent(event);
+
         // apply the new event:
         event.executeOnOthers();
 
