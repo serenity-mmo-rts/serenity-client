@@ -9,7 +9,7 @@ var UiGlobalMenu = function ( layerView ) {
     this.parentLayerId = ko.computed(function(){
         var myMapId = self.layerView.loadedMapId();
         if (myMapId){
-            return game.layers.get(myMapId).parentMapId;
+            return game.layers.get(myMapId).parentMapId();
         }
         else {
             return 0;

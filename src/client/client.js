@@ -126,7 +126,9 @@ Client.prototype.init = function() {
         }
 
         // revert to the last state that was broadcasted by the server:
+        layer.lockObject.isLocked = true;
         layer.revertChanges();
+        layer.lockObject.isLocked = false;
 
         // apply callbacks up to the new broadcasted event time:
         layer.timeScheduler.finishAllTillTime(event.startedTime);
@@ -246,11 +248,11 @@ Client.prototype.loadMap = function(mapId) {
 
 
         if (self.spritesLoaded) {
-            self.layerView.loadMap(myNewMap._id);
+            self.layerView.loadMap(myNewMap._id());
         }
         else {
             self.onSpriteLoadedCallback['loadMap'] = function() {
-                self.layerView.loadMap(myNewMap._id);
+                self.layerView.loadMap(myNewMap._id());
                 delete self.onSpriteLoadedCallback['loadMap'];
             };
         }
@@ -339,7 +341,9 @@ Client.prototype.addEvent = function(event) {
                 layer.eventScheduler.removeEvent(event._id);
 
                 // revert to the last state that was broadcasted by the server:
+                layer.lockObject.isLocked = true;
                 layer.revertChanges();
+                layer.lockObject.isLocked = false;
 
                 // reapply all the other temporary events:
                 for (var i = 0, len=self.tempEvents.length; i<len; i++){

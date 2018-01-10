@@ -35,7 +35,7 @@ var LayerView = function(client){
     this.testComponent = new testComponent();
     this.uiContainer.addContentPanel(createKnockoutPanel(this.testComponent, 'testComponent', 'ui/testComponent.html'), {visible: true, barPos: 'topleft', posInBar: 2});
 
-    this.buildMenu = new BuildMenu();
+    this.buildMenu = new BuildMenu( this );
     var buildMenuPanel = createKnockoutPanel(this.buildMenu, 'buildMenu', 'ui/buildMenu.html');
     $("#buildMenuPlaceholder").append(buildMenuPanel);
 
@@ -67,9 +67,11 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.mapContainer = this.mapContainerTempLoading;
     this.mapContainerTempLoading = null;
     this.mapLoaded = true;
-    this.mapId = this.mapContainer.mapId;
-    this.loadedMapId(this.mapContainer.mapId);
-    this.buildMenu.mapId(this.mapContainer.mapId);
+
+    var mapId = this.mapContainer.mapId;
+    this.mapId = mapId;
+    this.loadedMapId(this.mapId);
+
     this.buildMenu.mapControl = this.mapContainer.mapControl;
 
     this.minimap = new Minimap(this.mapContainer.mapControl);
@@ -92,15 +94,7 @@ LayerView.prototype.finishedLoadingMap = function () {
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
     this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
-    var params = {
-        mapId: this.mapId,
-        mapContainer: this.mapContainer
-    };
 
-
-
-    var tut =1;
-    //this.buildMenu = new BuildMenu(this.mapId,this.mapContainer.mapControl);
 };
 
 LayerView.prototype.setUserData = function (userData) {

@@ -1,12 +1,15 @@
-var BuildMenu = function () {
+var BuildMenu = function ( layerView ) {
     var self = this;
 
-    this.mapId = ko.observable(0);
+    this.layerView = layerView;
+    this.mapId = ko.computed(function () {
+        return self.layerView.loadedMapId();
+    });
     this.mapControl = null;
     this.buildMenuData = ko.observableArray([]);
     this.mapTypeId = ko.computed(function () {
         if (this.mapId()) {
-            return game.layers.hashList[this.mapId()].mapTypeId;
+            return game.layers.hashList[this.mapId()].mapTypeId();
         }
         else {
             return 0;

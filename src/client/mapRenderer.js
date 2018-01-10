@@ -38,7 +38,7 @@ var Map = function(mapContainer, stage,mapId) {
     this.tempObjBitmap;
 
     this.layer = game.layers.get(this.mapId);
-    this.mapType = game.layerTypes.get(this.layer.mapTypeId);
+    this.mapType = game.layerTypes.get(this.layer.mapTypeId());
 
     /*
     this.layer.mapData.objectChangedCallback = function(mapObject) {
@@ -92,8 +92,8 @@ Map.prototype.createMap = function() {
     background.beginBitmapFill ( this.bgImg, repetition='repeat' );
 
 
-    var halfMapWidth = this.layer.width/2;
-    var halfMapHeight = this.layer.height/2;
+    var halfMapWidth = this.layer.width()/2;
+    var halfMapHeight = this.layer.height()/2;
     var x = this.gameCoord2RenderX(-halfMapWidth,-halfMapHeight);
     var y = this.gameCoord2RenderY(-halfMapWidth,-halfMapHeight);
    // background.drawEllipse(x,y,this.layer.width,this.layer.height);
