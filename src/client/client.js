@@ -166,12 +166,13 @@ Client.prototype.init = function() {
 Client.prototype.loadUserdata = function() {
     var self = this;
     socket.emit('getUserData',{}, function(user) {
-        var userObj = new User(game,user.internal);
-        game.users.add(userObj);
-        self.userDataLoaded = true;
-        console.log("userdata was loaded...");
-        self.layerView.setUserData(userObj);
-
+        if (user) {
+            var userObj = new User(game, user.internal);
+            game.users.add(userObj);
+            self.userDataLoaded = true;
+            console.log("userdata was loaded...");
+            self.layerView.setUserData(userObj);
+        }
     });
 };
 
