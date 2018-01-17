@@ -32,26 +32,26 @@ var MapControl = function (map) {
     this.callbackCanceled = null;
 
     // event listener for main container
-    this.mapContainer.map_container.addEventListener("mousedown", (function (evt) {
+    this.mapContainer.mapContainer.addEventListener("mousedown", (function (evt) {
         self.handleMousedownMain(evt)
     }));
 
     this.screenMoved = false;
 
-    this.mapContainer.map_container.addEventListener("pressmove", function (ev) {
+    this.mapContainer.mapContainer.addEventListener("pressmove", function (ev) {
         if (self.startDragAt != null) {
             self.screenMoved = true;
-            var mouseAt = self.map.main_container.globalToLocal(ev.stageX, ev.stageY);
-            self.map.main_container.x += mouseAt.x - self.startDragAt.x;
-            self.map.main_container.y += mouseAt.y - self.startDragAt.y;
+            var mouseAt = self.map.mainContainer.globalToLocal(ev.stageX, ev.stageY);
+            self.map.mainContainer.x += mouseAt.x - self.startDragAt.x;
+            self.map.mainContainer.y += mouseAt.y - self.startDragAt.y;
 
-            var groundDragScaling = self.map.mapType._groundDragScaling;
-            self.map.bgImage_container.x = groundDragScaling * self.map.main_container.x;
-            self.map.bgImage_container.y = groundDragScaling * self.map.main_container.y;
+            var groundDragScaling = self.map.mapType.groundDragScaling;
+            self.map.bgImageContainer.x = groundDragScaling * self.map.mainContainer.x;
+            self.map.bgImageContainer.y = groundDragScaling * self.map.mainContainer.y;
         }
     });
 
-    this.mapContainer.map_container.addEventListener("pressup", function (ev) {
+    this.mapContainer.mapContainer.addEventListener("pressup", function (ev) {
         self.startDragAt = null;
         if (self.screenMoved) {
             self.map.checkRendering();
@@ -75,7 +75,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
             }
             else {
                 // start dragging:
-                this.startDragAt = this.map.main_container.globalToLocal(evt.stageX, evt.stageY);
+                this.startDragAt = this.map.mainContainer.globalToLocal(evt.stageX, evt.stageY);
             }
 
             break;
@@ -121,7 +121,7 @@ MapControl.prototype.handleMousedownMain = function (evt) {
             break;
 
         case this.controlState.SELECTCOORD:
-            var pt = this.map.main_container.globalToLocal(this.map.stage.mouseX, this.map.stage.mouseY);
+            var pt = this.map.mainContainer.globalToLocal(this.map.stage.mouseX, this.map.stage.mouseY);
             var gameCoord = {
                 x: this.map.renderCoord2GameX(pt.x, pt.y),
                 y: this.map.renderCoord2GameY(pt.x, pt.y)
@@ -157,9 +157,9 @@ MapControl.prototype.setStateBuild = function (objTypeId) {
     this.cancelState();
     this.state = this.controlState.INITOBJ;
 
-    //this.map.addTempObj(new MapObject(game, {_id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP}));
+    //this.map.addTempObj(new MapObject(game, {: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP}));
 
-    var object = new MapObject(game, {_id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP});
+    var object = new MapObject(game, {id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP});
 
     this.map.tempGameEvent = new BuildObjectEvent(game);
     this.map.tempGameEvent.setMapObject(object);
@@ -230,7 +230,7 @@ MapControl.prototype.tick = function () {
 
 
     if (this.state == this.controlState.SELECTCOORD) {
-        var pt = this.map.main_container.globalToLocal(this.map.stage.mouseX, this.map.stage.mouseY);
+        var pt = this.map.mainContainer.globalToLocal(this.map.stage.mouseX, this.map.stage.mouseY);
         var gameCoord = {
             x: this.map.renderCoord2GameX(pt.x, pt.y),
             y: this.map.renderCoord2GameY(pt.x, pt.y)

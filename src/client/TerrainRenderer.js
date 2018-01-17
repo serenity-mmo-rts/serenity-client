@@ -1,9 +1,9 @@
-var TerrainRenderer = function (mapRenderer, resMap, mapId, res_container, type) {
+var TerrainRenderer = function (mapRenderer, resMap, mapId, resContainer, type) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.map = resMap;
-    this.container = res_container;
+    this.container = resContainer;
 
     this.type = type;
 
@@ -61,8 +61,8 @@ TerrainRenderer.prototype.checkRendering = function () {
 
 
     var zoom = this.mapRenderer.mapContainer.zoom;
-    var xoff = this.mapRenderer.main_container.x;
-    var yoff = this.mapRenderer.main_container.y;
+    var xoff = this.mapRenderer.mainContainer.x;
+    var yoff = this.mapRenderer.mainContainer.y;
 
 
 

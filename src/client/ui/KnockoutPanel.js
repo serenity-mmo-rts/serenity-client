@@ -8,7 +8,7 @@
 createKnockoutPanel = function (koViewModel, compRegName, viewPath) {
 
     if(ko.components.isRegistered(compRegName)){
-        ko.components.unregister(compRegName)
+        ko.components.unregister(compRegName);
         //console.log("warning: knockout component was already registered... TODO: maybe directly unregister after use?...")
     }
     // register a new knockout component:

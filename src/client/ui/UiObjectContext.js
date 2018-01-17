@@ -42,11 +42,11 @@ UiObjectContext.prototype.loadObjectById = function(mapObjId) {
         this.map = game.layers.get(uc.layerView.mapId);
         this.mapObj = this.map.mapData.mapObjects.get(mapObjId);
         this.objetType = game.objectTypes.get(this.mapObj.objTypeId());
-        this.className = this.objetType._className;
+        this.className = this.objetType.className;
         var self = this;
     }
 
-    if (this.mapObj._blocks.hasOwnProperty("Environment")==false) {
+    if (this.mapObj.blocks.hasOwnProperty("Environment")==false) {
         this.mapObj.addCallback("renderUI", function(){self.update();});
         this.update();
         uc.layerView.uiObjectContextPanel.show(200);
@@ -67,7 +67,7 @@ UiObjectContext.prototype.update = function() {
     this.header.empty();
     this.tabs.empty();
     if (this.mapObj) {
-        if (this.mapObj._blocks.hasOwnProperty("UserObject")) {
+        if (this.mapObj.blocks.hasOwnProperty("UserObject")) {
             this.mainInfo();
             this.createTabs();
             var itemList = this.mapObj.getItems();
@@ -85,12 +85,12 @@ UiObjectContext.prototype.mainInfo = function(mapObj) {
    var headerContent = $('<div></div>');
 
     // get numeric Information //
-    var points = this.mapObj._blocks.UserObject.getPoints();
-    var level = this.mapObj._blocks.UserObject.getLevel(points);
-    var maxHp = this.mapObj._blocks.UserObject.getMaxHealthPoints();
-    var Hp = this.mapObj._blocks.UserObject.getHealthPoints();
+    var points = this.mapObj.blocks.UserObject.getPoints();
+    var level = this.mapObj.blocks.UserObject.getLevel(points);
+    var maxHp = this.mapObj.blocks.UserObject.getMaxHealthPoints();
+    var Hp = this.mapObj.blocks.UserObject.getHealthPoints();
     var title = $('<div style="white-space:nowrap;">' + this.mapObj.objTypeId() + ' Level: ' + level+ '</div>').css({'text-align': 'center'});
-    var pointDisplay = $('<div style="white-space:nowrap;">' + 'Points: ' + points+ '</div>').css({'text-align': 'left'})
+    var pointDisplay = $('<div style="white-space:nowrap;">' + 'Points: ' + points+ '</div>').css({'text-align': 'left'});
     var HealthDisplay = $('<div style="white-space:nowrap;">' + 'Health Points: ' +Hp+ '/'+maxHp+ '</div>').css({'text-align': 'left'});
     var percentHP  = (Hp/maxHp) *100;
     var healthPoints = $('<div  style="white-space:nowrap; id="healthPoints"></div>');
@@ -107,8 +107,8 @@ UiObjectContext.prototype.mainInfo = function(mapObj) {
     pointDisplay.appendTo(headerContent);
 
     // Graphics //
-    var spritesheet = game.spritesheets.get(this.objetType._spritesheetId);
-    var spriteFrameIcon = spritesheet.frames[this.objetType._spriteFrame];
+    var spritesheet = game.spritesheets.get(this.objetType.spritesheetId);
+    var spriteFrameIcon = spritesheet.frames[this.objetType.spriteFrame];
     var x = spriteFrameIcon[0];
     var y = spriteFrameIcon[1];
     var breite = spriteFrameIcon[2];
@@ -147,13 +147,13 @@ UiObjectContext.prototype.createTabs = function() {
     this.tabs.html(tabsHeaders);
 
     // select special Tab
-    if (this.mapObj._blocks.hasOwnProperty("Gate")) {
+    if (this.mapObj.blocks.hasOwnProperty("Gate")) {
         var maintab = new GateTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("ActivityPlace")) {
+    else if (this.mapObj.blocks.hasOwnProperty("ActivityPlace")) {
         var maintab = new LeisureBuildingTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("ResourceProduction")) {
+    else if (this.mapObj.blocks.hasOwnProperty("ResourceProduction")) {
         var resourceProducerTabViewModel = new ResourceProducerTab(this.mapObj);
         var somePanel = createKnockoutPanel(resourceProducerTabViewModel, 'ResourceProducerTab', 'ui/tabs/ResourceProducerTab.html');
         var maintab = {
@@ -161,7 +161,7 @@ UiObjectContext.prototype.createTabs = function() {
         };
         somePanel.appendTo(maintab.content);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("SoilPuller")) {
+    else if (this.mapObj.blocks.hasOwnProperty("SoilPuller")) {
         var soilPullerTabViewModel = new SoilPullerTab(this.mapObj);
         var somePanel = createKnockoutPanel(soilPullerTabViewModel, 'SoilPullerTab', 'ui/tabs/SoilPullerTab.html');
         var maintab = {
@@ -169,19 +169,19 @@ UiObjectContext.prototype.createTabs = function() {
         };
         somePanel.appendTo(maintab.content);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("TechProduction")) {
+    else if (this.mapObj.blocks.hasOwnProperty("TechProduction")) {
         var maintab = new ScienceCenterTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Sublayer")) {
+    else if (this.mapObj.blocks.hasOwnProperty("Sublayer")) {
         var maintab = new SublayerTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("HubNode")) {
+    else if (this.mapObj.blocks.hasOwnProperty("HubNode")) {
         var maintab = new HubTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Tower")) {
+    else if (this.mapObj.blocks.hasOwnProperty("Tower")) {
         var maintab = new TowerTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("ResourceStorage")) {
+    else if (this.mapObj.blocks.hasOwnProperty("ResourceStorage")) {
         var storageTabViewModel = new StorageTab(this.mapObj);
         var somePanel = createKnockoutPanel(storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
         var maintab = {
@@ -189,10 +189,10 @@ UiObjectContext.prototype.createTabs = function() {
         };
         somePanel.appendTo(maintab.content);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Unit"))  {
+    else if (this.mapObj.blocks.hasOwnProperty("Unit"))  {
         var maintab = new UnitObjectTab(this.mapObj);
     }
-    else if (this.mapObj._blocks.hasOwnProperty("Field")) {
+    else if (this.mapObj.blocks.hasOwnProperty("Field")) {
         var maintab = new FieldTab(this.mapObj);
     }
 
@@ -230,10 +230,10 @@ UiObjectContext.prototype.tick = function() {
 
     if (this.mapObj!=undefined) {
 
-        if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")) {
+        if (this.mapObj.blocks.hasOwnProperty("UpgradeProduction")) {
 
-            if (this.mapObj._blocks["UpgradeProduction"].buildQueueIds().length > 0) {
-                this.updateProgress(this.mapObj._blocks["UpgradeProduction"].progress());
+            if (this.mapObj.blocks["UpgradeProduction"].buildQueueIds().length > 0) {
+                this.updateProgress(this.mapObj.blocks["UpgradeProduction"].progress());
             }
             else {
                 this.updateProgress(0);

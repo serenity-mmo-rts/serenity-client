@@ -105,16 +105,16 @@ Client.prototype.init = function() {
 
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data);
-        var layer = game.layers.get(event._mapId);
+        var layer = game.layers.get(event.mapId);
 
-        //game.layers.get(event._mapId).eventScheduler.addEvent(event);
+        //game.layers.get(event.mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
 
         // check if this is an event that was originating from this client:
         var originalId = event.oldId;
         //var originalEventPos = null;
         for (var i = 0, len=self.tempEvents.length; i<len; i++) { // normally this event should be in the first position of the array, right?
-            if (self.tempEvents[i]._id == originalId){
+            if (self.tempEvents[i].id == originalId){
                 // found the original event:
                 //originalEventPos = i;
 
@@ -133,7 +133,7 @@ Client.prototype.init = function() {
         // apply callbacks up to the new broadcasted event time:
         layer.timeScheduler.finishAllTillTime(event.startedTime);
 
-        event._isFinished = false;
+        event.isFinished = false;
         layer.eventScheduler.addEvent(event);
 
         // apply the new event:
@@ -249,11 +249,11 @@ Client.prototype.loadMap = function(mapId) {
 
 
         if (self.spritesLoaded) {
-            self.layerView.loadMap(myNewMap._id());
+            self.layerView.loadMap(myNewMap.id());
         }
         else {
             self.onSpriteLoadedCallback['loadMap'] = function() {
-                self.layerView.loadMap(myNewMap._id());
+                self.layerView.loadMap(myNewMap.id());
                 delete self.onSpriteLoadedCallback['loadMap'];
             };
         }
@@ -314,7 +314,7 @@ Client.prototype.addEvent = function(event) {
     // check if event is valid:
     if(event.isValid()) {
 
-        var layer = game.layers.get(event._mapId);
+        var layer = game.layers.get(event.mapId);
 
 
         // add to event List:
@@ -327,7 +327,7 @@ Client.prototype.addEvent = function(event) {
 
 
         // transmit to server:
-        socket.emit("newGameEvent", [event._mapId , event.save()], function(response) {
+        socket.emit("newGameEvent", [event.mapId , event.save()], function(response) {
             if(response.success){
                 console.log("sent event was successfully applied by server.");
                 //var updatedEvent = EventFactory(game,response.updatedEvent);
@@ -339,7 +339,7 @@ Client.prototype.addEvent = function(event) {
                 // remove the invalid temp event:
                 var pos = self.tempEvents.indexOf(event);
                 self.tempEvents.splice(pos, 1);
-                layer.eventScheduler.removeEvent(event._id);
+                layer.eventScheduler.removeEvent(event.id);
 
                 // revert to the last state that was broadcasted by the server:
                 layer.lockObject.isLocked = true;

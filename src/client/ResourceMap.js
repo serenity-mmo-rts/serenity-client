@@ -1,9 +1,9 @@
-var ResourceMap = function (mapRenderer, resMap, mapId, res_container, type) {
+var ResourceMap = function (mapRenderer, resMap, mapId, resContainer, type) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.map = resMap;
-    this.container = res_container;
+    this.container = resContainer;
 
     this.type = type;
 
@@ -94,8 +94,8 @@ ResourceMap.prototype.checkRendering = function () {
         this.disableProgressBar();
     }
     else {
-        var xoff = this.mapRenderer.main_container.x;
-        var yoff = this.mapRenderer.main_container.y;
+        var xoff = this.mapRenderer.mainContainer.x;
+        var yoff = this.mapRenderer.mainContainer.y;
 
         var centerBmpX = Math.round(-xoff / this.bmpRenderSizeX);
         var centerBmpY = Math.round(-yoff / this.bmpRenderSizeY);
@@ -251,9 +251,9 @@ ResourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax)
     ressourceItems = _.uniq(ressourceItems);
     //console.log("num ressource Items retrieved for bitmap"+ressourceItems.length)
 
-    var mapTypeScale = this.mapRenderer.mapType._scale;
+    var mapTypeScale = this.mapRenderer.mapType.scale;
     var mapTypeScaleSq = mapTypeScale*mapTypeScale;
-    var mapTypeRatio = this.mapRenderer.mapType._ratioWidthHeight;
+    var mapTypeRatio = this.mapRenderer.mapType.ratioWidthHeight;
 
 
     for (var i = 0; i < ressourceItems.length; i++) {

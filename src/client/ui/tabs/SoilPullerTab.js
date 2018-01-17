@@ -1,7 +1,7 @@
 var SoilPullerTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.soilPullerBlock = this.mapObj._blocks.SoilPuller;
+    this.soilPullerBlock = this.mapObj.blocks.SoilPuller;
 
     // type vars:
     var resTypeIds = this.soilPullerBlock.ressourceTypeIds;
@@ -18,8 +18,8 @@ var SoilPullerTab = function (mapObj) {
         }
         var res = {
             id: ko.observable(resTypeIds[i]),
-            _iconSpritesheetId: resType._iconSpritesheetId,
-            _iconSpriteFrame: resType._iconSpriteFrame,
+            iconSpritesheetId: resType.iconSpritesheetId,
+            iconSpriteFrame: resType.iconSpriteFrame,
             productionRate: effectiveIn
         }
         resObservables.push(res);

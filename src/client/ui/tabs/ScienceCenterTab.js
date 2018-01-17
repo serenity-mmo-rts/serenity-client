@@ -3,7 +3,7 @@ var ScienceCenterTab = function (mapObj) {
 
     this.mapObj = mapObj;
     this.content= $('<div id="mainTab"></div>').css({'display': 'inline-block'});
-    if (this.mapObj._blocks.hasOwnProperty("TechProduction")){
+    if (this.mapObj.blocks.hasOwnProperty("TechProduction")){
         this.listProduceableTechnologies();
     }
 
@@ -15,13 +15,13 @@ ScienceCenterTab.prototype.listProduceableTechnologies = function () {
     var wrap1 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px'});
     this.creationTitle =  $('<div>Technologies</div>').css({});
     this.creationBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
-    var allowedTechnologies = this.mapObj._blocks.TechProduction.type.producableTechnologies;
+    var allowedTechnologies = this.mapObj.blocks.TechProduction.type.producableTechnologies;
 
     for (var i = 0; i<allowedTechnologies.length; i++){
         var techId = allowedTechnologies[i];
         var techType =  game.technologyTypes.get(techId);
-        var spritesheet = game.spritesheets.get(techType._iconSpritesheetId);
-        var spriteFrameIcon = spritesheet.frames[techType._iconSpriteFrame];
+        var spritesheet = game.spritesheets.get(techType.iconSpritesheetId);
+        var spriteFrameIcon = spritesheet.frames[techType.iconSpriteFrame];
         var x = spriteFrameIcon[0];
         var y = spriteFrameIcon[1];
         var breite = spriteFrameIcon[2];

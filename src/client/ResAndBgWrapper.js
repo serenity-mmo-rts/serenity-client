@@ -77,7 +77,7 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
                 console.log("canceled loading new map")
             }
             else {
-                console.log("finished background-loading of ressource overlay in screen area. now add it to res_container.");
+                console.log("finished background-loading of ressource overlay in screen area. now add it to resContainer.");
                 resMap.finishedLoadingCallback = null;
                 resMap.finishedScreenLoadingCallback = null;
 

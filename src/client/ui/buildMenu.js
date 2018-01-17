@@ -18,31 +18,31 @@ var BuildMenu = function ( layerView ) {
 
     this.mapTypeId.subscribe(function (mapTypeId) {
         if (mapTypeId) {
-            var _buildCategories = game.layerTypes.hashList[mapTypeId]._buildCategories;
+            var buildCategories = game.layerTypes.hashList[mapTypeId].buildCategories;
             var objectTypes = [];
 
             // Now create all menu entries of all categories:
-            var numCat = _buildCategories.length;
+            var numCat = buildCategories.length;
             for (var i = 0; i < numCat; i++) {
                 var objectTypesOfThisCategory = [];
-                var numTypes = _buildCategories[i].objectTypeIds.length;
+                var numTypes = buildCategories[i].objectTypeIds.length;
                 for (var k = 0; k < numTypes; k++) {
-                    var objectTypeId = _buildCategories[i].objectTypeIds[k];
+                    var objectTypeId = buildCategories[i].objectTypeIds[k];
                     var objectType = game.objectTypes.hashList[objectTypeId];
                     var objectEntry = {
-                        tooltip: 'buildTime: '+objectType._buildTime,
+                        tooltip: 'buildTime: '+objectType.buildTime,
                         buildMenuItemId: k,
                         objectTypeId: objectTypeId,
-                        name: objectType._name,
-                        _iconSpritesheetId: objectType._iconSpritesheetId,
-                        _iconSpriteFrame: objectType._iconSpriteFrame,
+                        name: objectType.name,
+                        iconSpritesheetId: objectType.iconSpritesheetId,
+                        iconSpriteFrame: objectType.iconSpriteFrame,
                         clickHandler: function(data, event) {
                             self.initializeObject(data.objectTypeId);
                         }
                     };
                     objectTypesOfThisCategory.push(objectEntry);
                 }
-                objectTypes.push({ name: _buildCategories[i].name, objectTypes: ko.observableArray(objectTypesOfThisCategory)});
+                objectTypes.push({ name: buildCategories[i].name, objectTypes: ko.observableArray(objectTypesOfThisCategory)});
             }
 
             // now update the member variable:
@@ -65,7 +65,7 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
     $("#bottomLeftUi").toggleClass("hidden", 500, "easeOutSine");
 
     var object = new MapObject(game, {
-        _id: 'tempObject',
+        id: 'tempObject',
         mapId: this.mapId(),
         x: 0,
         y: 0,

@@ -3,7 +3,7 @@ var UpgradesTab = function (mapObj) {
 
     this.mapObj = mapObj;
     this.content= $('<div id="upgradeTab"></div>').css({'display': 'inline-block'});
-    if (this.mapObj._blocks.hasOwnProperty("UpgradeProduction")){
+    if (this.mapObj.blocks.hasOwnProperty("UpgradeProduction")){
         this.listAvailableUpgrades();
         this.listProducedUpgrades();
     }
@@ -16,13 +16,13 @@ UpgradesTab.prototype.listAvailableUpgrades = function () {
     var wrap1 = $('<div></div>').css({'display': 'inline-block','padding-right':'20px'});
     this.creationTitle =  $('<div>Available Upgrades</div>').css({});
     this.creationBox =  $('<div></div>').css({'display': 'inline-block','border':'1px solid blue','width':160, 'height':130, 'position': 'relative','white-space':'pre-line'});
-    var allowedItemIds = this.mapObj._blocks.UpgradeProduction.itemTypeIds;
+    var allowedItemIds = this.mapObj.blocks.UpgradeProduction.itemTypeIds;
 
     for (var i = 0; i<allowedItemIds.length; i++){
         var itemId = allowedItemIds[i];
         var itemType =  game.itemTypes.get(itemId);
-        var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
-        var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
+        var spritesheet = game.spritesheets.get(itemType.iconSpritesheetId);
+        var spriteFrameIcon = spritesheet.frames[itemType.iconSpriteFrame];
         var x = spriteFrameIcon[0];
         var y = spriteFrameIcon[1];
         var breite = spriteFrameIcon[2];
@@ -39,20 +39,6 @@ UpgradesTab.prototype.listAvailableUpgrades = function () {
         container.css('cursor', 'pointer');
         container.appendTo(this.creationBox);
 
-        // check which properties will be changed to on hover
-        /**
-         for (var i = 0; i<itemType._blocks.Feature[0]._stack.length; i++){
-           if(Object.keys(itemType._blocks.Feature[0]._stack[i])[0]=="AddToProp"){
-               var varnames = itemType._blocks.Feature[0]._stack[i].AddToProp.vars;
-               var varvalues = itemType._blocks.Feature[0]._stack[i].AddToProp.values;
-               var varoperator = itemType._blocks.Feature[0]._stack[i].AddToProp.operators;
-           }
-        }
-
-        $(container).tooltip({
-            content: "Awesome title!"
-        });
-         **/
     }
     this.creationTitle.appendTo(wrap1);
     this.creationBox.appendTo(wrap1);
@@ -74,12 +60,12 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
             if (item.state() != State.HIDDEN && item.state() != State.TEMP && item.state() != State.CONSTRUCTION) {
                 var level = allItems[itemId].getLevel();
                 countItems=countItems+1;
-                if (item._itemType._blocks.hasOwnProperty("Feature")) {
-                    var maxLevel = item._itemType._blocks.Feature.length;
+                if (item.itemType.blocks.hasOwnProperty("Feature")) {
+                    var maxLevel = item.itemType.blocks.Feature.length;
                 }
-                var itemType = allItems[itemId]._itemType;
-                var spritesheet = game.spritesheets.get(itemType._iconSpritesheetId);
-                var spriteFrameIcon = spritesheet.frames[itemType._iconSpriteFrame];
+                var itemType = allItems[itemId].itemType;
+                var spritesheet = game.spritesheets.get(itemType.iconSpritesheetId);
+                var spriteFrameIcon = spritesheet.frames[itemType.iconSpriteFrame];
                 var x = spriteFrameIcon[0];
                 var y = spriteFrameIcon[1];
                 var breite = spriteFrameIcon[2];

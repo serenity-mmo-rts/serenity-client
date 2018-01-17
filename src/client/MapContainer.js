@@ -14,42 +14,42 @@ var MapContainer = function(mapId){
     createjs.Touch.enable(this.stage);
 
     // Containers
-    this.map_container = new createjs.Container();
-    this.map_container.name = "map_container";
-    this.map_container.mouseMoveOutside = true;
+    this.mapContainer = new createjs.Container();
+    this.mapContainer.name = "mapContainer";
+    this.mapContainer.mouseMoveOutside = true;
 
-    this.zoom_container = new createjs.Container();
-    this.zoom_container.name = "zoom_container";
-    this.zoom_container.mouseMoveOutside = true;
+    this.zoomContainer = new createjs.Container();
+    this.zoomContainer.name = "zoomContainer";
+    this.zoomContainer.mouseMoveOutside = true;
 
-    this.main_container = new createjs.Container();
-    this.main_container.name = "main_container";
-    this.main_container.mouseMoveOutside = true;
+    this.mainContainer = new createjs.Container();
+    this.mainContainer.name = "mainContainer";
+    this.mainContainer.mouseMoveOutside = true;
 
-    this.zoomBgImage_container = new createjs.Container();
-    this.zoomBgImage_container.name = "zoomBgImage_container";
-    this.zoomBgImage_container.mouseMoveOutside = true;
+    this.zoomBgImageContainer = new createjs.Container();
+    this.zoomBgImageContainer.name = "zoomBgImageContainer";
+    this.zoomBgImageContainer.mouseMoveOutside = true;
 
-    this.bgImage_container = new createjs.Container();
-    this.bgImage_container.name = "bgImage_container";
-    this.bgImage_container.mouseMoveOutside = true;
+    this.bgImageContainer = new createjs.Container();
+    this.bgImageContainer.name = "bgImageContainer";
+    this.bgImageContainer.mouseMoveOutside = true;
 
-    this.menu_container = new createjs.Container();
-    this.menu_container.name = "menu_container";
-    this.menu_container.mouseMoveOutside = true;
-    this.background_container = new createjs.Container();
-    this.background_container.name = "background_container";
-    this.background_container.mouseMoveOutside = true;
+    this.menuContainer = new createjs.Container();
+    this.menuContainer.name = "menuContainer";
+    this.menuContainer.mouseMoveOutside = true;
+    this.backgroundContainer = new createjs.Container();
+    this.backgroundContainer.name = "backgroundContainer";
+    this.backgroundContainer.mouseMoveOutside = true;
 
     // compose containers:
-    this.zoom_container.addChild(this.main_container,this.background_container);
-    this.zoomBgImage_container.addChild(this.bgImage_container);
-    this.map_container.addChild(this.zoomBgImage_container, this.zoom_container);
-    this.stage.addChild(this.map_container,this.menu_container);
+    this.zoomContainer.addChild(this.mainContainer,this.backgroundContainer);
+    this.zoomBgImageContainer.addChild(this.bgImageContainer);
+    this.mapContainer.addChild(this.zoomBgImageContainer, this.zoomContainer);
+    this.stage.addChild(this.mapContainer,this.menuContainer);
 
     // zoom levels
-    this.zoom_level = 0;
-    this.zoom = 1; //this.zoomFactors[this.zoom_level];
+    this.zoomLevel = 0;
+    this.zoom = 1; //this.zoomFactors[this.zoomLevel];
 
     // Initialize Map
     this.map = new Map(this, this.stage,this.mapId);
@@ -81,7 +81,7 @@ var MapContainer = function(mapId){
  };
 
  MapContainer.prototype.getMouseInGameCoord = function() {
-     var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+     var pt = this.mainContainer.globalToLocal(this.stage.mouseX, this.stage.mouseY);
      var gameCoord = {
          x: this.map.renderCoord2GameX(pt.x, pt.y),
          y: this.map.renderCoord2GameY(pt.x, pt.y)
@@ -95,15 +95,15 @@ var MapContainer = function(mapId){
      var changedZoom = false;
      if(Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))>0)   {
 
-         if (this.zoom_level < 30) {
-             this.zoom_level+=1;
+         if (this.zoomLevel < 30) {
+             this.zoomLevel+=1;
              changedZoom = true;
          }
      }
 
      else {
-         if (this.zoom_level > -30) {
-             this.zoom_level-= 1;
+         if (this.zoomLevel > -30) {
+             this.zoomLevel-= 1;
              changedZoom = true;
          }
      }
@@ -116,13 +116,13 @@ var MapContainer = function(mapId){
 
  MapContainer.prototype.updateZoom = function () {
 
-     this.zoom = Math.pow(1.1, this.zoom_level);
-     this.zoom_container.scaleX = this.zoom;
-     this.zoom_container.scaleY = this.zoom;
+     this.zoom = Math.pow(1.1, this.zoomLevel);
+     this.zoomContainer.scaleX = this.zoom;
+     this.zoomContainer.scaleY = this.zoom;
 
-     var zoomGround = Math.pow(1.1, this.zoom_level * this.map.mapType._groundDragScaling);
-     this.zoomBgImage_container.scaleX = zoomGround;
-     this.zoomBgImage_container.scaleY = zoomGround;
+     var zoomGround = Math.pow(1.1, this.zoomLevel * this.map.mapType.groundDragScaling);
+     this.zoomBgImageContainer.scaleX = zoomGround;
+     this.zoomBgImageContainer.scaleY = zoomGround;
 
      this.map.resourceMap.addOverlay();
      this.map.bgMap.addOverlay();
@@ -142,25 +142,25 @@ var MapContainer = function(mapId){
      this.stage.x = window.innerWidth / 2;
      this.stage.y = window.innerHeight / 2;
 
-     this.map_container.regX = window.innerWidth / 2;
-     this.map_container.regY = window.innerHeight/ 2;
-     this.map_container.x = window.innerWidth / 2;
-     this.map_container.y = window.innerHeight / 2;
+     this.mapContainer.regX = window.innerWidth / 2;
+     this.mapContainer.regY = window.innerHeight/ 2;
+     this.mapContainer.x = window.innerWidth / 2;
+     this.mapContainer.y = window.innerHeight / 2;
 
-     this.zoom_container.regX = window.innerWidth / 2;
-     this.zoom_container.regY = window.innerHeight/ 2;
-     this.zoom_container.x = window.innerWidth / 2;
-     this.zoom_container.y = window.innerHeight / 2;
+     this.zoomContainer.regX = window.innerWidth / 2;
+     this.zoomContainer.regY = window.innerHeight/ 2;
+     this.zoomContainer.x = window.innerWidth / 2;
+     this.zoomContainer.y = window.innerHeight / 2;
 
-     this.zoomBgImage_container.regX = window.innerWidth / 2;
-     this.zoomBgImage_container.regY = window.innerHeight/ 2;
-     this.zoomBgImage_container.x = window.innerWidth / 2;
-     this.zoomBgImage_container.y = window.innerHeight / 2;
+     this.zoomBgImageContainer.regX = window.innerWidth / 2;
+     this.zoomBgImageContainer.regY = window.innerHeight/ 2;
+     this.zoomBgImageContainer.x = window.innerWidth / 2;
+     this.zoomBgImageContainer.y = window.innerHeight / 2;
 
-     this.main_container.regX = -window.innerWidth / 2;
-     this.main_container.regY = -window.innerHeight / 2;
-     this.bgImage_container.regX = -window.innerWidth / 2;
-     this.bgImage_container.regY = -window.innerHeight / 2;
+     this.mainContainer.regX = -window.innerWidth / 2;
+     this.mainContainer.regY = -window.innerHeight / 2;
+     this.bgImageContainer.regX = -window.innerWidth / 2;
+     this.bgImageContainer.regY = -window.innerHeight / 2;
 
      this.map.resize();
  };

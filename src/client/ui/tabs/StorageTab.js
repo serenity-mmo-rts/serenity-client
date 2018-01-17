@@ -1,7 +1,7 @@
 var StorageTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.resStorageBlock = this.mapObj._blocks.ResourceStorage;
+    this.resStorageBlock = this.mapObj.blocks.ResourceStorage;
 
     // type vars:
     var resTypeIds = this.resStorageBlock.ressourceTypeIds;
@@ -21,8 +21,8 @@ var StorageTab = function (mapObj) {
         }
         var res = {
             id: ko.observable(resTypeIds[i]),
-            _iconSpritesheetId: resType._iconSpritesheetId,
-            _iconSpriteFrame: resType._iconSpriteFrame,
+            iconSpritesheetId: resType.iconSpritesheetId,
+            iconSpriteFrame: resType.iconSpriteFrame,
             amount: storedAmount,
             cap: resCap[i]
         };

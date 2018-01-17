@@ -4,7 +4,7 @@ var HubTab = function (mapObj) {
     var self = this;
     this.content= $('<div id="mainTab"></div>');
 
-    var freePorts = this.mapObj._blocks.HubConnectivity.getFreePorts();
+    var freePorts = this.mapObj.blocks.HubConnectivity.getFreePorts();
     if (freePorts>0) {
         var buildConnectionBtn = $('<input id="buildConn" type="button" value="Build Connection"/>').appendTo(this.content);
     }
@@ -19,13 +19,13 @@ var HubTab = function (mapObj) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        var connectionObjTypeId = self.mapObj._blocks.HubNode.canBuildConnectionTypeId;
+        var connectionObjTypeId = self.mapObj.blocks.HubNode.canBuildConnectionTypeId;
 
-        var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: State.TEMP});
-        object._blocks.Connection.connectedFrom(self.mapObj._id());
+        var object = new MapObject(game, {id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: State.TEMP});
+        object.blocks.Connection.connectedFrom(self.mapObj.id());
 
         self.tmpEvent = new BuildObjectEvent(game);
-        self.tmpEvent.setParameters(object,self.mapObj._id());
+        self.tmpEvent.setParameters(object,self.mapObj.id());
         uc.layerView.mapContainer.mapControl.map.addTempObj(object);
 
         var lastSelectedObjId = null;
@@ -37,7 +37,7 @@ var HubTab = function (mapObj) {
         }
         function callbackCheckValidSelection(objId){
             self.tmpEvent.setTargetConnection(objId);
-            object._blocks.Connection.connectedTo(objId);
+            object.blocks.Connection.connectedTo(objId);
             var valid = self.tmpEvent.isValid();
 
             if (objId) {

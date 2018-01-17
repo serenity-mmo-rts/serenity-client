@@ -8,7 +8,7 @@ var ItemContextMenu =  function () {
 
     this.activatedDisabled = ko.pureComputed(function() {
         if (this.item()) {
-            return !this.item()._blocks.Feature.canBeActivated();
+            return !this.item().blocks.Feature.canBeActivated();
         }
         else {
             return true;
@@ -18,7 +18,7 @@ var ItemContextMenu =  function () {
     this.updateDisabled = ko.pureComputed(function() {
 
         if (this.item()) {
-            if (this.item()._level() < this.item()._itemType._blocks.Feature.length) {
+            if (this.item().level() < this.item().itemType.blocks.Feature.length) {
                 return false
             }
             else {
@@ -32,7 +32,7 @@ var ItemContextMenu =  function () {
 
     this.moveDisabled= ko.pureComputed(function() {
         if (this.item()) {
-            if (this.item()._blocks.hasOwnProperty("Movable")) {
+            if (this.item().blocks.hasOwnProperty("Movable")) {
                 return false
             }
             else {
@@ -46,8 +46,8 @@ var ItemContextMenu =  function () {
 
     this.iconSpritesheetId = ko.pureComputed(function() {
         if (this.item()) {
-            var itemType = this.item()._itemType;
-            return itemType._iconSpritesheetId;
+            var itemType = this.item().itemType;
+            return itemType.iconSpritesheetId;
         }
         else {
             return false;
@@ -56,8 +56,8 @@ var ItemContextMenu =  function () {
 
     this.iconSpriteFrame = ko.pureComputed(function() {
         if (this.item()) {
-            var itemType = this.item()._itemType;
-            return itemType._iconSpriteFrame;
+            var itemType = this.item().itemType;
+            return itemType.iconSpriteFrame;
         }
         else {
             return false;
@@ -67,7 +67,7 @@ var ItemContextMenu =  function () {
 
     this.level = ko.pureComputed(function() {
         if (this.item()) {
-            return this.item()._level();
+            return this.item().level();
         }
         else {
             return false;
@@ -159,9 +159,9 @@ ItemContextMenu.prototype.levelUpgrade = function () {
 ItemContextMenu.prototype.activatePerClick = function () {
 
     var evt = new ActivateFeatureEvent(game);
-    var operation = this.item()._blocks.Feature.getCurrentOp();
+    var operation = this.item().blocks.Feature.getCurrentOp();
     evt.setParameters(this.item(),operation);
-    var targetType = this.item()._blocks.Feature.targetType();
+    var targetType = this.item().blocks.Feature.targetType();
     if (targetType=="self"){
         uc.addEvent(evt);
     }

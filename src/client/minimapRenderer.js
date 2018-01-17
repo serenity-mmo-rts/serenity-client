@@ -78,7 +78,7 @@ Minimap.prototype.draw= function() {
      */
 
 
-    this.mini_container = new createjs.Container();
+    this.miniContainer = new createjs.Container();
     this.gameContainer = new createjs.Container();
     this.gameContainer.scaleX = 1/this.factor;
     this.gameContainer.scaleY = 1/this.factor;
@@ -92,8 +92,8 @@ Minimap.prototype.draw= function() {
     this.location = new createjs.Shape(this.dot);
 
 
-    this.mini_container.addChild(this.background,this.map,this.location);
-    this.mini_container.name = "miniM";
+    this.miniContainer.addChild(this.background,this.map,this.location);
+    this.miniContainer.name = "miniM";
 
     */
     if (this.layer.mapGenerator instanceof PlanetGenerator) {
@@ -106,8 +106,8 @@ Minimap.prototype.draw= function() {
         this.bgMap.scaleX = 1;
         this.bgMap.scaleY = 1;
 
-        this.mini_container.addChild(this.bgMap, this.gameContainer);
-        this.stage.addChild(this.mini_container);
+        this.miniContainer.addChild(this.bgMap, this.gameContainer);
+        this.stage.addChild(this.miniContainer);
     }
 
     else{
@@ -191,8 +191,8 @@ Minimap.prototype.moveOnMinimap = function(evt){
     var DistanceY = ypos-minimapCenter.y;
     this.location.x = DistanceX;
     this.location.y = DistanceY;
-    this.mapControl.main_container.x = -DistanceX;
-    this.mapControl.main_container.y = -DistanceY;
+    this.mapControl.mainContainer.x = -DistanceX;
+    this.mapControl.mainContainer.y = -DistanceY;
     this.mapControl.map.checkRendering()
     //var offset = this.mini2RenderCoords(DistanceX,DistanceY);
 

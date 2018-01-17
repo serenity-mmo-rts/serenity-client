@@ -5,33 +5,33 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.stage = stage;
     this.mapContainer = mapContainer;
-    this.main_container = mapContainer.main_container;
-    this.bgImage_container = this.mapContainer.bgImage_container;
+    this.mainContainer = mapContainer.mainContainer;
+    this.bgImageContainer = this.mapContainer.bgImageContainer;
 
     this.mapId = mapId;
-    this.callbackFinishedLoading = null
+    this.callbackFinishedLoading = null;
     this.tickCounter = 0;
 
-    this.bg_container = new createjs.Container();
-    this.obj_container = new createjs.Container();
-    this.res_container = new createjs.Container();
-    this.mov_container = new createjs.Container();
-    this.movUp_container = new createjs.Container();
+    this.bgContainer = new createjs.Container();
+    this.objContainer = new createjs.Container();
+    this.resContainer = new createjs.Container();
+    this.movContainer = new createjs.Container();
+    this.movUpContainer = new createjs.Container();
 
-    this.bg_container.mouseMoveOutside = true;
-    this.obj_container.mouseMoveOutside = true;
-    this.res_container.mouseMoveOutside = true;
-    this.main_container.addChild(this.bg_container,this.obj_container,this.res_container,this.mov_container,this.movUp_container);
+    this.bgContainer.mouseMoveOutside = true;
+    this.objContainer.mouseMoveOutside = true;
+    this.resContainer.mouseMoveOutside = true;
+    this.mainContainer.addChild(this.bgContainer,this.objContainer,this.resContainer,this.movContainer,this.movUpContainer);
 
     this.moveUpSubscriptions = {};
     this.moveSubscriptions = {};
 
-    this.res_container.alpha = 0.5;
+    this.resContainer.alpha = 0.5;
 
 
-    this.bgMap = new ResAndBgWrapper(this,this.bg_container,this.mapId,"background");
+    this.bgMap = new ResAndBgWrapper(this,this.bgContainer,this.mapId,"background");
 
-    this.resourceMap = new ResAndBgWrapper(this,this.res_container,this.mapId,"resource");
+    this.resourceMap = new ResAndBgWrapper(this,this.resContainer,this.mapId,"resource");
 
 
     this.tempObj;
@@ -43,7 +43,7 @@ var Map = function(mapContainer, stage,mapId) {
     /*
     this.layer.mapData.objectChangedCallback = function(mapObject) {
         self.checkRenderingOfObject(mapObject);
-        self.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+        self.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
     };*/
 
     // create unique list of images to load:
@@ -51,7 +51,7 @@ var Map = function(mapContainer, stage,mapId) {
     var imagesToLoad = [];
 
     // load background image:
-    var bgFile = this.mapType._groundImage;
+    var bgFile = this.mapType.groundImage;
     imagesToLoad.push({id: "bgimage", src:bgFile} );
     this.bgImg = null;
 
@@ -87,7 +87,7 @@ Map.prototype.createMap = function() {
 
     this.bgImg = this.loadqueue.getResult("bgimage");
 
-    // add background object to bgImage_container
+    // add background object to bgImageContainer
     var background = new createjs.Graphics();
     background.beginBitmapFill ( this.bgImg, repetition='repeat' );
 
@@ -114,7 +114,7 @@ Map.prototype.createMap = function() {
     var backgroundShape = new createjs.Shape(background);
     backgroundShape.x = 0;
     backgroundShape.y = 0;
-    this.bgImage_container.addChild(backgroundShape);
+    this.bgImageContainer.addChild(backgroundShape);
 
     this.checkRendering();
 
@@ -124,7 +124,7 @@ Map.prototype.createMap = function() {
 Map.prototype.mapAreaChangedCallback = function(evt, objectOrItem) {
     if (objectOrItem instanceof MapObject) {
         this.checkRenderingOfObject(objectOrItem);
-        this.obj_container.sortChildren(function (a, b) {
+        this.objContainer.sortChildren(function (a, b) {
             return a.y - b.y;
         });
     }
@@ -138,8 +138,8 @@ Map.prototype.checkRendering = function(){
         this.layer.mapData.removeListenerForArea(this.mapAreaListener);
     }
 
-    var listenX = this.renderCoord2GameX(this.main_container.x, this.main_container.y);
-    var listenY = this.renderCoord2GameY(this.main_container.x, this.main_container.y);
+    var listenX = this.renderCoord2GameX(this.mainContainer.x, this.mainContainer.y);
+    var listenY = this.renderCoord2GameY(this.mainContainer.x, this.mainContainer.y);
     var radius = 0.5 * Math.max(window.innerWidth,window.innerHeight) / this.mapContainer.zoom;
     // here we check for circle collision because this is much faster in comparison to collision detections using the rotated screen rectangle in game coordinates
     var bounds = new Bounds().initCircle(listenX, listenY, radius);
@@ -169,7 +169,7 @@ Map.prototype.checkRendering = function(){
         this.checkRenderingOfObject(worldObjectList[worldObjectId]);
     }
 
-    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+    this.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
 
 
     if (this.resourceMap != null) {
@@ -185,17 +185,17 @@ Map.prototype.checkRenderingOfItem = function(item){
 
 
     // in case rendering is possible
-    if (item._blocks.hasOwnProperty("Movable")){
+    if (item.blocks.hasOwnProperty("Movable")){
         var self = this;
-        if (!this.moveSubscriptions.hasOwnProperty(item._id())) {
-            this.moveSubscriptions[item._id()]=item._blocks.Movable.isMoving.subscribe(function(newValue){
+        if (!this.moveSubscriptions.hasOwnProperty(item.id())) {
+            this.moveSubscriptions[item.id()]=item.blocks.Movable.isMoving.subscribe(function(newValue){
                 if (newValue){
                     self.renderMovingItem(item);
                 }
                 else{
-                    var toRemoveChild = self.mov_container.getChildByName(item._id());
+                    var toRemoveChild = self.movContainer.getChildByName(item.id());
                     if (toRemoveChild){
-                        self.mov_container.removeChild(toRemoveChild);
+                        self.movContainer.removeChild(toRemoveChild);
                         //  else deltefromsubscrioption this.subscribtion[itemId].dispose();
                         //toRemoveChild.siubscription.dispose()
                     }
@@ -203,16 +203,16 @@ Map.prototype.checkRenderingOfItem = function(item){
             });
         }
 
-        if (item._blocks.hasOwnProperty("SubObject")){
-            if (!this.moveUpSubscriptions.hasOwnProperty(item._id())) {
-                this.moveUpSubscriptions[item._id()]=item._blocks.Movable.isMovingUp.subscribe(function (newValue) {
+        if (item.blocks.hasOwnProperty("SubObject")){
+            if (!this.moveUpSubscriptions.hasOwnProperty(item.id())) {
+                this.moveUpSubscriptions[item.id()]=item.blocks.Movable.isMovingUp.subscribe(function (newValue) {
                     if (newValue) {
                         self.renderMovingUpItem(item);
                     }
                     else {
-                        var toRemoveChild = self.movUp_container.getChildByName(item._id());
+                        var toRemoveChild = self.movUpContainer.getChildByName(item.id());
                         if (toRemoveChild) {
-                            self.movUp_container.removeChild(toRemoveChild);
+                            self.movUpContainer.removeChild(toRemoveChild);
                         }
                     }
                 });
@@ -229,15 +229,15 @@ Map.prototype.renderMovingUpItem =  function(item) {
         y: item.y()
     };
     // render item on map
-    var movingItem = new createjs.Sprite(uc.spritesheets[item._itemType._iconSpritesheetId]);
-    movingItem.gotoAndStop(item._itemType._iconSpriteFrame);
+    var movingItem = new createjs.Sprite(uc.spritesheets[item.itemType.iconSpritesheetId]);
+    movingItem.gotoAndStop(item.itemType.iconSpriteFrame);
     movingItem.x = this.gameCoord2RenderX(currentPosition.x,currentPosition.y);
     movingItem.y = this.gameCoord2RenderY(currentPosition.x,currentPosition.y);
-    movingItem.originId = item._blocks.Movable.originId();
-    movingItem.targetId = item._blocks.Movable.targetId();
-    movingItem.name = item._id();
-    movingItem.id = item._id();
-    this.movUp_container.addChild(movingItem);
+    movingItem.originId = item.blocks.Movable.originId();
+    movingItem.targetId = item.blocks.Movable.targetId();
+    movingItem.name = item.id();
+    movingItem.id = item.id();
+    this.movUpContainer.addChild(movingItem);
 
     var targetCoords1 = {
         x: this.gameCoord2RenderX(currentPosition.x-50, currentPosition.y-50),
@@ -260,33 +260,33 @@ Map.prototype.renderMovingUpItem =  function(item) {
         y: this.gameCoord2RenderY(currentPosition.x-1200, currentPosition.y-1200)
     };
     createjs.Tween.get(movingItem,{override: true}).
-        to(targetCoords1,item._blocks.Movable.movingUpTime/5).
-        to(targetCoords2,item._blocks.Movable.movingUpTime/5).
-        to(targetCoords3,item._blocks.Movable.movingUpTime/5).
-        to(targetCoords3,item._blocks.Movable.movingUpTime/5).
-        to(targetCoords3,item._blocks.Movable.movingUpTime/5);
+        to(targetCoords1,item.blocks.Movable.movingUpTime/5).
+        to(targetCoords2,item.blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item.blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item.blocks.Movable.movingUpTime/5).
+        to(targetCoords3,item.blocks.Movable.movingUpTime/5);
 };
 
 Map.prototype.renderMovingItem =  function(item) {
     // get current position of item
-    var currentPosition = item._blocks.Movable.getCurrentPositionOfItem(uc.layerView.lastTick);
+    var currentPosition = item.blocks.Movable.getCurrentPositionOfItem(uc.layerView.lastTick);
     // render item on map
-    var movingItem = new createjs.Sprite(uc.spritesheets[item._itemType._iconSpritesheetId]);
-    movingItem.gotoAndStop(item._itemType._iconSpriteFrame);
+    var movingItem = new createjs.Sprite(uc.spritesheets[item.itemType.iconSpritesheetId]);
+    movingItem.gotoAndStop(item.itemType.iconSpriteFrame);
     movingItem.x = this.gameCoord2RenderX(currentPosition.x,currentPosition.y);
     movingItem.y = this.gameCoord2RenderY(currentPosition.x,currentPosition.y);
-    movingItem.originId = item._blocks.Movable.originId();
-    movingItem.targetId = item._blocks.Movable.targetId();
-    movingItem.name = item._id();
-    movingItem.id = item._id();
-    this.mov_container.addChild(movingItem);
+    movingItem.originId = item.blocks.Movable.originId();
+    movingItem.targetId = item.blocks.Movable.targetId();
+    movingItem.name = item.id();
+    movingItem.id = item.id();
+    this.movContainer.addChild(movingItem);
 
-    var target = this.layer.mapData.mapObjects.get(item._blocks.Movable.targetId());
+    var target = this.layer.mapData.mapObjects.get(item.blocks.Movable.targetId());
     var targetCoords = {
         x: this.gameCoord2RenderX(target.x(),target.y()),
         y: this.gameCoord2RenderY(target.x(),target.y())
     };
-    createjs.Tween.get(movingItem,{override: true}).to(targetCoords,item._blocks.Movable.travelTime);
+    createjs.Tween.get(movingItem,{override: true}).to(targetCoords,item.blocks.Movable.travelTime);
 
     // TODO  create dashed line between origin and target ONLY on click
     // var shape = new createjs.Shape();
@@ -318,13 +318,13 @@ Map.prototype.renderDashedLine =  function(x1, y1, x2, y2, dashLen) {
 
 Map.prototype.checkRenderingOfObject = function(mapObject){
 
-    var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x(),mapObject.y()) +this.main_container.x);
-    var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x(),mapObject.y()) +this.main_container.y);
+    var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x(),mapObject.y()) +this.mainContainer.x);
+    var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x(),mapObject.y()) +this.mainContainer.y);
     var isalreadyRendered  = false;
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id())) {
+    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject.id())) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
            if (mapObject.state() != State.HIDDEN){
                shouldbeRendered = true;
@@ -332,11 +332,11 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         }
     }
 
-    var checkedObj = this.obj_container.getChildByName(mapObject._id());
-    isalreadyRendered = this.obj_container.contains(checkedObj);
+    var checkedObj = this.objContainer.getChildByName(mapObject.id());
+    isalreadyRendered = this.objContainer.contains(checkedObj);
 
     if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
-        this.obj_container.removeChild(checkedObj);
+        this.objContainer.removeChild(checkedObj);
         //mapObject.onChangeCallback = [];
         mapObject.removeCallback("renderObj");
         mapObject.objectBitmap = [];
@@ -353,18 +353,18 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
 
 Map.prototype.renderObj = function(mapObject) {
     //remove if already in container:
-    var checkedObj = this.obj_container.getChildByName(mapObject._id());
+    var checkedObj = this.objContainer.getChildByName(mapObject.id());
     if (checkedObj) {
-        this.obj_container.removeChild(checkedObj);
+        this.objContainer.removeChild(checkedObj);
     }
 
     if (mapObject.objectBitmap) {
-        this.obj_container.removeChild(mapObject.objectBitmap);
+        this.objContainer.removeChild(mapObject.objectBitmap);
     }
 
     var objType = game.objectTypes.get(mapObject.objTypeId());
 
-    if (mapObject._blocks.hasOwnProperty("Connection")) {
+    if (mapObject.blocks.hasOwnProperty("Connection")) {
 
         var dx = 0.5 * mapObject.width() * Math.cos(-mapObject.ori());
         var dy = 0.5 * mapObject.width() * Math.sin(-mapObject.ori());
@@ -374,7 +374,7 @@ Map.prototype.renderObj = function(mapObject) {
 
         var objectBitmap = new createjs.Shape();
 
-        if (objType._spriteFrame instanceof Array){
+        if (objType.spriteFrame instanceof Array){
             // mapObject.ori is between -pi to pi
 
             var pi = Math.PI;
@@ -418,8 +418,8 @@ Map.prototype.renderObj = function(mapObject) {
             singleImg.width = 100;
             singleImg.height = 50;
             var ctx = singleImg.getContext("2d");
-            var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
-            singleSpriteBitmap.gotoAndStop(objType._spriteFrame[orientation]);
+            var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId]);
+            singleSpriteBitmap.gotoAndStop(objType.spriteFrame[orientation]);
             singleSpriteBitmap.x = 50;
             singleSpriteBitmap.y = 25;
             var tmpstage = new createjs.Stage(singleImg);
@@ -429,21 +429,21 @@ Map.prototype.renderObj = function(mapObject) {
             */
 
             /* method 2: not working ... deprecated... use method below instead...
-             var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
+             var singleSpriteBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId]);
             singleSpriteBitmap.cache(-50, -25, 100, 50);
              var singleImg = singleSpriteBitmap.cacheCanvas;
              */
 
             /* method 3: easier by directly accessing the image field in the spritesheet: */
-            //var singleImg = uc.spritesheets[objType._spritesheetId]._frames[orientation].image;
-            //var singleImg = uc.spritesheets[objType._spritesheetId].getFrame(orientation).image;
+            //var singleImg = uc.spritesheets[objType.spritesheetId].frames[orientation].image;
+            //var singleImg = uc.spritesheets[objType.spritesheetId].getFrame(orientation).image;
 
 
 
             var singleImg = new Image();
-            singleImg.src = uc.spritesheets[objType._spritesheetId].getFrame(orientation).image.src;
+            singleImg.src = uc.spritesheets[objType.spritesheetId].getFrame(orientation).image.src;
 
-            var test = this.IsImageOk(uc.spritesheets[objType._spritesheetId].getFrame(orientation).image);
+            var test = this.IsImageOk(uc.spritesheets[objType.spritesheetId].getFrame(orientation).image);
             //console.log("image loaded:" + test.toString());
 
             if (!test){
@@ -512,30 +512,30 @@ Map.prototype.renderObj = function(mapObject) {
         }
     }
     else {
-        if (objType._spriteAnimation !== null){
-            var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId], "working");
+        if (objType.spriteAnimation !== null){
+            var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId], "working");
 
         }
         else {
 
             if (mapObject.state() == State.TEMP) {
-                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId]);
                 // render object from database
                 // here could come a image cropping
-                objectBitmap.gotoAndStop(objType._spriteFrame);
+                objectBitmap.gotoAndStop(objType.spriteFrame);
                 objectBitmap.alpha = 0.7;
             }
             else if (mapObject.state() == State.CONSTRUCTION) {
 
                     var construction = game.objectTypes.get("constructionSite");
-                    var objectBitmap = new createjs.Sprite(uc.spritesheets[construction._spritesheetId]);
-                    objectBitmap.gotoAndStop(construction._spriteFrame);
+                    var objectBitmap = new createjs.Sprite(uc.spritesheets[construction.spritesheetId]);
+                    objectBitmap.gotoAndStop(construction.spriteFrame);
                     objectBitmap.alpha = 1;
 
             }
             else {
-                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType._spritesheetId]);  // render object from database
-                objectBitmap.gotoAndStop(objType._spriteFrame);
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId]);  // render object from database
+                objectBitmap.gotoAndStop(objType.spriteFrame);
             }
             objectBitmap.tickEnabled = false;
         }
@@ -554,19 +554,19 @@ Map.prototype.renderObj = function(mapObject) {
     });
 
     objectBitmap.mapObjectId = ko.computed(function() {
-        return mapObject._id();
+        return mapObject.id();
     }, this);
 
-    objectBitmap.name = mapObject._id();
+    objectBitmap.name = mapObject.id();
 
-    //TODO: set bitmap scaling proportional to objType._initWidth / mapObject._width
+    //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
-   // objectBitmap.mapObjectId = mapObject._id();
-  //  objectBitmap.name = mapObject._id();
+   // objectBitmap.mapObjectId = mapObject.id();
+  //  objectBitmap.name = mapObject.id();
 
 
     mapObject.objectBitmap = objectBitmap;
-    this.obj_container.addChild(objectBitmap);
+    this.objContainer.addChild(objectBitmap);
 
     return objectBitmap;
 }
@@ -590,45 +590,45 @@ Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
 }
 
 Map.prototype.gameCoord2RenderX = function(gameX,gameY) {
-    var renderX = this.mapType._scale * this.mapType._ratioWidthHeight * (gameX - gameY);
+    var renderX = this.mapType.scale * this.mapType.ratioWidthHeight * (gameX - gameY);
     return renderX;
 }
 
 Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
-    var renderY = this.mapType._scale * (gameX + gameY);
+    var renderY = this.mapType.scale * (gameX + gameY);
     return renderY;
 }
 
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
-    var gameX = (renderY + renderX/this.mapType._ratioWidthHeight) / (2*this.mapType._scale);
+    var gameX = (renderY + renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
-    var gameY = (renderY - renderX/this.mapType._ratioWidthHeight) / (2*this.mapType._scale);
+    var gameY = (renderY - renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
     return gameY;
 }
 
 
 // move object
 Map.prototype.moveTempObject = function () {
-    var pt = this.main_container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
+    var pt = this.mainContainer.globalToLocal(this.stage.mouseX, this.stage.mouseY);
     this.moveObjectToRenderCoord(this.tempObj, pt.x, pt.y);
     this.resortObjects();
 };
 
 
 Map.prototype.resortObjects = function () {
-    this.obj_container.sortChildren(function (a, b){ return a.y - b.y; });
+    this.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
 }
 
 
 
 // get object under mouse position
 Map.prototype.getCurrentObject = function () {
-    var l = this.obj_container.getNumChildren(); // Number of Objects
+    var l = this.objContainer.getNumChildren(); // Number of Objects
     for (var i = 0; i < l; i++) { // loop through all objects
-        var child = this.obj_container.getChildAt(i);
+        var child = this.objContainer.getChildAt(i);
         var pt = child.globalToLocal(this.stage.mouseX, this.stage.mouseY);
         if (child.hitTest(pt.x, pt.y)) {
             return child.mapObjectId();
@@ -653,8 +653,8 @@ Map.prototype.deleteTempObj= function () {
 
     if (this.tempObj != undefined) {
         this.tempObj = null;
-        var child =  this.obj_container.getChildByName('tempObject');
-        this.obj_container.removeChild(child);
+        var child =  this.objContainer.getChildByName('tempObject');
+        this.objContainer.removeChild(child);
     }
 
 };
