@@ -141,7 +141,7 @@ UiObjectContext.prototype.createTabs = function() {
     $('<li><a href="#mainTab">Main</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     $('<li><a href="#upgradeTab">Upgrades</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     $('<li><a href="#laborTab">Labor</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
-    $('<li><a href="#resourceTab">Resources</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
+    $('<li><a href="#resourcesTab">Resources</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     $('<li><a href="#unitTab">Units</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     $('<li><a href="#defenseTab">Defense</a></li>').css({'width':15.8+'%'}).appendTo(tabsHeaders);
     this.tabs.html(tabsHeaders);
@@ -185,7 +185,7 @@ UiObjectContext.prototype.createTabs = function() {
         var storageTabViewModel = new StorageTab(this.mapObj);
         var somePanel = createKnockoutPanel(storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
         var maintab = {
-            content: $('<div id="mainTab"></div>').css({'display': 'inline-block'})
+            content: $('<div id="mainTab"></div>')
         };
         somePanel.appendTo(maintab.content);
     }
@@ -198,9 +198,15 @@ UiObjectContext.prototype.createTabs = function() {
 
     var upgradestab = new UpgradesTab(this.mapObj);
     var labortab = new LaborTab(this.mapObj);
-    var resourcestab = new ResourcesTab(this.mapObj);
     var unitstab = new UnitsTab(this.mapObj);
     var defensetab = new DefenseTab(this.mapObj);
+
+    var resourcesTabViewModel = new ResourcesTab(this.mapObj);
+    var somePanel2 = createKnockoutPanel(resourcesTabViewModel, 'resourcesTab', 'ui/tabs/ResourcesTab.html');
+    var resourcestab = {
+        content: $('<div id="resourcesTab"></div>')
+    };
+    somePanel2.appendTo(resourcestab.content);
 
     maintab.content.appendTo(this.tabs);
     upgradestab.content.appendTo(this.tabs);
