@@ -127,16 +127,21 @@ Client.prototype.init = function() {
 
         // revert to the last state that was broadcasted by the server:
         layer.lockObject.isLocked = true;
+        console.log("starting revert...");
         layer.revertChanges();
+        console.log("revert finished...");
         layer.lockObject.isLocked = false;
 
         // apply callbacks up to the new broadcasted event time:
+        console.log("starting finishing all timeScheduler events up to current event time...");
         layer.timeScheduler.finishAllTillTime(event.startedTime);
+        console.log("finished all timeScheduler events up to current event time...");
 
         event.isFinished = false;
         layer.eventScheduler.addEvent(event);
 
         // apply the new event:
+        console.log("start executing event from server");
         event.executeOnOthers();
 
         // save new snapshot:
