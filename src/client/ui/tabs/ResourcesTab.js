@@ -11,9 +11,9 @@ var ResourcesTab = function (mapObj) {
         var resCap = this.resStorageBlock.ressourceCapacity;
 
         // state vars:
-        var resStored = this.resStorageBlock.ressourceStoredAmount();
-        var resLastUpdate = this.resStorageBlock.ressourceLastUpdated();
-        var resChangePerSec = this.resStorageBlock.ressourceChangePerSec();
+        var resStored = this.resStorageBlock.storedAmount();
+        var resLastUpdate = this.resStorageBlock.storedLastUpdated();
+        var resChangePerSec = this.resStorageBlock.storedChangePerSec();
 
 
         for (var i = 0, len = resTypeIds.length; i < len; i++) {
