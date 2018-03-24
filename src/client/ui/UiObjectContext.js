@@ -181,7 +181,7 @@ UiObjectContext.prototype.createTabs = function() {
     else if (this.mapObj.blocks.hasOwnProperty("Tower")) {
         var maintab = new TowerTab(this.mapObj);
     }
-    else if (this.mapObj.blocks.hasOwnProperty("ResourceStorage")) {
+    else if (this.mapObj.blocks.hasOwnProperty("ResourceStorageManager")) {
         var storageTabViewModel = new StorageTab(this.mapObj);
         var somePanel = createKnockoutPanel(storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
         var maintab = {

@@ -1,7 +1,7 @@
 var StorageTab = function (mapObj) {
 
     this.mapObj = mapObj;
-    this.resStorageBlock = this.mapObj.blocks.ResourceStorage;
+    this.resStorageBlock = this.mapObj.blocks.ResourceStorageManager;
 
     // type vars:
     var resTypeIds = this.resStorageBlock.ressourceTypeIds;

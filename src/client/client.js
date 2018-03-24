@@ -105,6 +105,7 @@ Client.prototype.init = function() {
 
     socket.on('newGameEvent', (function(data){
         var event = EventFactory(game,data);
+        event.setPointers();
         var layer = game.layers.get(event.mapId);
 
         //game.layers.get(event.mapId).eventScheduler.addEvent(event);
@@ -142,6 +143,7 @@ Client.prototype.init = function() {
 
         // apply the new event:
         console.log("start executing event from server");
+        layer.currentTime = event.startedTime;
         event.executeOnOthers();
 
         // save new snapshot:
@@ -159,6 +161,7 @@ Client.prototype.init = function() {
 
             // apply callbacks:
             layer.timeScheduler.finishAllTillTime(self.tempEvents[i].startedTime);
+            layer.currentTime = self.tempEvents[i].startedTime;
             self.tempEvents[i].executeOnClient();
         }
 
@@ -315,12 +318,14 @@ Client.prototype.onInitGameData = function(initGameData) {
 Client.prototype.addEvent = function(event) {
 
     var self = this;
+    var currentTime = Date.now() + ntp.offset();
+    event.startedTime = currentTime;
 
     // check if event is valid:
     if(event.isValid()) {
 
         var layer = game.layers.get(event.mapId);
-
+        layer.currentTime = currentTime;
 
         // add to event List:
         this.tempEvents.push(event);
@@ -354,6 +359,7 @@ Client.prototype.addEvent = function(event) {
                 // reapply all the other temporary events:
                 for (var i = 0, len=self.tempEvents.length; i<len; i++){
                     layer.timeScheduler.finishAllTillTime(self.tempEvents[i].startedTime);
+                    layer.currentTime = self.tempEvents[i].startedTime;
                     self.tempEvents[i].executeOnClient();
                 }
 
