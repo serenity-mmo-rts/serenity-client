@@ -10,15 +10,20 @@ var ResourcesTab = function (mapObj) {
         var resTypeIds = this.resStorageBlock.ressourceTypeIds;
         var resCap = this.resStorageBlock.ressourceCapacity;
 
-        // state vars:
-        var resStored = this.resStorageBlock.storedAmount();
-        var resLastUpdate = this.resStorageBlock.storedLastUpdated();
-        var resChangePerSec = this.resStorageBlock.storedChangePerSec();
+
 
 
         for (var i = 0, len = resTypeIds.length; i < len; i++) {
+
+            var res = this.resStorageBlock.resList.get(resTypeIds[i]);
+
+            // state vars:
+            var resStored = res.storedAmount();
+            var resLastUpdate = res.lastUpdated();
+            var resChangePerSec = res.changePerSec();
+
             var resType = game.ressourceTypes.hashList[resTypeIds[i]];
-            var storedAmount = resStored[i];
+            var storedAmount = resStored;
             if (!storedAmount) {
                 storedAmount = 0;
             }
