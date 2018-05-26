@@ -247,6 +247,7 @@ Client.prototype.loadMap = function(mapId) {
         myNewMap.mapData.mapObjects.load(mapData.initMapObjects);
         myNewMap.mapData.items.load(mapData.initItems);
 
+        myNewMap.currentTime = mapData.currentTime;
 
 
 

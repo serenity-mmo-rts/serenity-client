@@ -3,6 +3,7 @@ var UiObjectContext = function () {
 
     this.mapObjId = null;
     this.mapObj = null;
+    this.lastUpdateTime = 0;
 
     var mapObjectMenuX = canvas.width/2;
     var mapObjectMenuY = canvas.height/3;
@@ -26,7 +27,11 @@ var UiObjectContext = function () {
 
     // move the nav to the bottom
     $( ".tabs-bottom .ui-tabs-nav" ).appendTo( ".tabs-bottom" );
-}
+
+
+    this.resourcesTabViewModel = null;
+
+};
 
 UiObjectContext.prototype.loadObjectById = function(mapObjId) {
 
@@ -201,8 +206,8 @@ UiObjectContext.prototype.createTabs = function() {
     var unitstab = new UnitsTab(this.mapObj);
     var defensetab = new DefenseTab(this.mapObj);
 
-    var resourcesTabViewModel = new ResourcesTab(this.mapObj);
-    var somePanel2 = createKnockoutPanel(resourcesTabViewModel, 'resourcesTab', 'ui/tabs/ResourcesTab.html');
+    this.resourcesTabViewModel = new ResourcesTab(this.mapObj);
+    var somePanel2 = createKnockoutPanel(this.resourcesTabViewModel, 'resourcesTab', 'ui/tabs/ResourcesTab.html');
     var resourcestab = {
         content: $('<div id="resourcesTab"></div>')
     };
@@ -236,15 +241,26 @@ UiObjectContext.prototype.tick = function() {
 
     if (this.mapObj!=undefined) {
 
-        if (this.mapObj.blocks.hasOwnProperty("UpgradeProduction")) {
+        // limit update to 4 Hz:
+        var currentTime = Date.now();
+        if (currentTime > this.lastUpdateTime + 250) {
+            this.lastUpdateTime = currentTime;
 
-            if (this.mapObj.blocks["UpgradeProduction"].buildQueueIds().length > 0) {
-                this.updateProgress(this.mapObj.blocks["UpgradeProduction"].progress());
+            if (this.mapObj.blocks.hasOwnProperty("UpgradeProduction")) {
+                if (this.mapObj.blocks["UpgradeProduction"].buildQueueIds().length > 0) {
+                    this.updateProgress(this.mapObj.blocks["UpgradeProduction"].progress());
+                }
+                else {
+                    this.updateProgress(0);
+                }
             }
-            else {
-                this.updateProgress(0);
+
+            if (this.resourcesTabViewModel) {
+                this.resourcesTabViewModel.tick();
             }
+
         }
+
     }
 
 };

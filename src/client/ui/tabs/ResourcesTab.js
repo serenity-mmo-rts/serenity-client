@@ -1,4 +1,43 @@
+var ResourceViewModel = function(resStorage){
+
+    var self = this;
+
+    var resTypeId = resStorage.id();
+    var resType = game.ressourceTypes.hashList[resTypeId];
+
+    this.resStorage = resStorage;
+    this.name = resTypeId;
+    this.iconSpritesheetId = resType.iconSpritesheetId;
+    this.iconSpriteFrame = resType.iconSpriteFrame;
+    this.amount = ko.observable(0);
+    this.cap = resStorage.capacity;
+
+    this.timeIntervalMillisecond = ko.computed(function() {
+        var resChangePerHour = self.resStorage.changePerHour();
+        return 3600000 / Math.abs(resChangePerHour);
+    });
+    resStorage.lastUpdated.subscribe(function(){
+        self.refresh();
+    }, this);
+
+    this.lastRefreshTime = 0;
+    this.refresh();
+
+};
+
+ResourceViewModel.prototype.refresh = function() {
+    var currentTime = Date.now();
+    var resStoredAmount = this.resStorage.getCurrentAmount(currentTime);
+    this.amount(resStoredAmount);
+};
+
+
+
+
+
 var ResourcesTab = function (mapObj) {
+
+    var self = this;
 
     this.mapObj = mapObj;
     var resObservables = [];
@@ -9,41 +48,22 @@ var ResourcesTab = function (mapObj) {
         // type vars:
         var resTypeIds = this.resStorageBlock.ressourceTypeIds;
         var resCap = this.resStorageBlock.ressourceCapacity;
+        var resList = this.resStorageBlock.resList;
 
+        resList.each(function(resStorage) {
+            var resViewModel = new ResourceViewModel(resStorage);
+            resObservables.push(resViewModel);
+        });
 
-
-
-        for (var i = 0, len = resTypeIds.length; i < len; i++) {
-
-            var res = this.resStorageBlock.resList.get(resTypeIds[i]);
-
-            // state vars:
-            var resStored = res.storedAmount();
-            var resLastUpdate = res.lastUpdated();
-            var resChangePerSec = res.changePerSec();
-
-            var resType = game.ressourceTypes.hashList[resTypeIds[i]];
-            var storedAmount = resStored;
-            if (!storedAmount) {
-                storedAmount = 0;
-            }
-            var res = {
-                id: ko.observable(resTypeIds[i]),
-                iconSpritesheetId: resType.iconSpritesheetId,
-                iconSpriteFrame: resType.iconSpriteFrame,
-                amount: storedAmount,
-                cap: resCap[i]
-            };
-            resObservables.push(res);
-        }
     }
 
 
     this.resTypes = ko.observableArray(resObservables);
 
-
-
-
 };
 
-
+ResourcesTab.prototype.tick = function() {
+    ko.utils.arrayForEach(this.resTypes(), function(resType) {
+        resType.refresh();
+    });
+};
