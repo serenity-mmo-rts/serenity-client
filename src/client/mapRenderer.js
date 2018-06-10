@@ -326,7 +326,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     //check if object is in gameData:
     if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject.id())) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
-           if (mapObject.state() != State.HIDDEN){
+           if (mapObject.state() != State.HIDDEN && mapObject.activeOnLayer){
                shouldbeRendered = true;
            }
         }
