@@ -17,7 +17,7 @@ var SoilPullerTab = function (mapObj) {
             effectiveIn = 0;
         }
         var res = {
-            id: ko.observable(resTypeIds[i]),
+            _id: ko.observable(resTypeIds[i]),
             iconSpritesheetId: resType.iconSpritesheetId,
             iconSpriteFrame: resType.iconSpriteFrame,
             productionRate: effectiveIn

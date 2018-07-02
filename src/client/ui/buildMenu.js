@@ -65,7 +65,7 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
     $("#bottomLeftUi").toggleClass("hidden", 500, "easeOutSine");
 
     var object = new MapObject(game, {
-        id: 'tempObject',
+        _id: 'tempObject',
         mapId: this.mapId(),
         x: 0,
         y: 0,

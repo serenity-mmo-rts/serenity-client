@@ -52,7 +52,7 @@ var Map = function(mapContainer, stage,mapId) {
 
     // load background image:
     var bgFile = this.mapType.groundImage;
-    imagesToLoad.push({id: "bgimage", src:bgFile} );
+    imagesToLoad.push({_id: "bgimage", src:bgFile} );
     this.bgImg = null;
 
     // use preloadJS to load the images:
@@ -187,13 +187,13 @@ Map.prototype.checkRenderingOfItem = function(item){
     // in case rendering is possible
     if (item.blocks.hasOwnProperty("Movable")){
         var self = this;
-        if (!this.moveSubscriptions.hasOwnProperty(item.id())) {
-            this.moveSubscriptions[item.id()]=item.blocks.Movable.isMoving.subscribe(function(newValue){
+        if (!this.moveSubscriptions.hasOwnProperty(item._id())) {
+            this.moveSubscriptions[item._id()]=item.blocks.Movable.isMoving.subscribe(function(newValue){
                 if (newValue){
                     self.renderMovingItem(item);
                 }
                 else{
-                    var toRemoveChild = self.movContainer.getChildByName(item.id());
+                    var toRemoveChild = self.movContainer.getChildByName(item._id());
                     if (toRemoveChild){
                         self.movContainer.removeChild(toRemoveChild);
                         //  else deltefromsubscrioption this.subscribtion[itemId].dispose();
@@ -204,13 +204,13 @@ Map.prototype.checkRenderingOfItem = function(item){
         }
 
         if (item.blocks.hasOwnProperty("SubObject")){
-            if (!this.moveUpSubscriptions.hasOwnProperty(item.id())) {
-                this.moveUpSubscriptions[item.id()]=item.blocks.Movable.isMovingUp.subscribe(function (newValue) {
+            if (!this.moveUpSubscriptions.hasOwnProperty(item._id())) {
+                this.moveUpSubscriptions[item._id()]=item.blocks.Movable.isMovingUp.subscribe(function (newValue) {
                     if (newValue) {
                         self.renderMovingUpItem(item);
                     }
                     else {
-                        var toRemoveChild = self.movUpContainer.getChildByName(item.id());
+                        var toRemoveChild = self.movUpContainer.getChildByName(item._id());
                         if (toRemoveChild) {
                             self.movUpContainer.removeChild(toRemoveChild);
                         }
@@ -235,8 +235,8 @@ Map.prototype.renderMovingUpItem =  function(item) {
     movingItem.y = this.gameCoord2RenderY(currentPosition.x,currentPosition.y);
     movingItem.originId = item.blocks.Movable.originId();
     movingItem.targetId = item.blocks.Movable.targetId();
-    movingItem.name = item.id();
-    movingItem.id = item.id();
+    movingItem.name = item._id();
+    movingItem._id = item._id();
     this.movUpContainer.addChild(movingItem);
 
     var targetCoords1 = {
@@ -277,8 +277,8 @@ Map.prototype.renderMovingItem =  function(item) {
     movingItem.y = this.gameCoord2RenderY(currentPosition.x,currentPosition.y);
     movingItem.originId = item.blocks.Movable.originId();
     movingItem.targetId = item.blocks.Movable.targetId();
-    movingItem.name = item.id();
-    movingItem.id = item.id();
+    movingItem.name = item._id();
+    movingItem._id = item._id();
     this.movContainer.addChild(movingItem);
 
     var target = this.layer.mapData.mapObjects.get(item.blocks.Movable.targetId());
@@ -324,7 +324,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
     var shouldbeRendered = false;
 
     //check if object is in gameData:
-    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject.id())) {
+    if (this.layer.mapData.mapObjects.hashList.hasOwnProperty(mapObject._id())) {
         if(DistanceX <= 1.5*window.innerWidth/this.mapContainer.zoom && DistanceY <= 1.5*window.innerHeight/this.mapContainer.zoom) {
            if (mapObject.state() != State.HIDDEN && mapObject.activeOnLayer){
                shouldbeRendered = true;
@@ -332,7 +332,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         }
     }
 
-    var checkedObj = this.objContainer.getChildByName(mapObject.id());
+    var checkedObj = this.objContainer.getChildByName(mapObject._id());
     isalreadyRendered = this.objContainer.contains(checkedObj);
 
     if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
@@ -353,7 +353,7 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
 
 Map.prototype.renderObj = function(mapObject) {
     //remove if already in container:
-    var checkedObj = this.objContainer.getChildByName(mapObject.id());
+    var checkedObj = this.objContainer.getChildByName(mapObject._id());
     if (checkedObj) {
         this.objContainer.removeChild(checkedObj);
     }
@@ -554,15 +554,15 @@ Map.prototype.renderObj = function(mapObject) {
     });
 
     objectBitmap.mapObjectId = ko.computed(function() {
-        return mapObject.id();
+        return mapObject._id();
     }, this);
 
-    objectBitmap.name = mapObject.id();
+    objectBitmap.name = mapObject._id();
 
     //TODO: set bitmap scaling proportional to objType.initWidth / mapObject.width
 
-   // objectBitmap.mapObjectId = mapObject.id();
-  //  objectBitmap.name = mapObject.id();
+   // objectBitmap.mapObjectId = mapObject._id();
+  //  objectBitmap.name = mapObject._id();
 
 
     mapObject.objectBitmap = objectBitmap;

@@ -159,7 +159,7 @@ MapControl.prototype.setStateBuild = function (objTypeId) {
 
     //this.map.addTempObj(new MapObject(game, {: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP}));
 
-    var object = new MapObject(game, {id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP});
+    var object = new MapObject(game, {_id: 'tempObject', mapId: this.map.mapId, x: 0, y: 0, objTypeId: objTypeId, userId: uc.userId, state: State.TEMP});
 
     this.map.tempGameEvent = new BuildObjectEvent(game);
     this.map.tempGameEvent.setMapObject(object);

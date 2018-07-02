@@ -10,7 +10,7 @@ var UiBgMap = function (resourceMapWrapper) {
 
     $('<option />', {value: 'off', text: 'Off'}).appendTo(this.s);
     for (var i in this.resTypes) {
-        $('<option />', {value: this.resTypes[i].id, text: this.resTypes[i].name}).appendTo(this.s);
+        $('<option />', {value: this.resTypes[i]._id, text: this.resTypes[i].name}).appendTo(this.s);
     }
 
     // set standard value:

@@ -115,7 +115,7 @@ Client.prototype.init = function() {
         var originalId = event.oldId;
         //var originalEventPos = null;
         for (var i = 0, len=self.tempEvents.length; i<len; i++) { // normally this event should be in the first position of the array, right?
-            if (self.tempEvents[i].id == originalId){
+            if (self.tempEvents[i]._id == originalId){
                 // found the original event:
                 //originalEventPos = i;
 
@@ -259,11 +259,11 @@ Client.prototype.loadMap = function(mapId) {
 
 
         if (self.spritesLoaded) {
-            self.layerView.loadMap(myNewMap.id());
+            self.layerView.loadMap(myNewMap._id());
         }
         else {
             self.onSpriteLoadedCallback['loadMap'] = function() {
-                self.layerView.loadMap(myNewMap.id());
+                self.layerView.loadMap(myNewMap._id());
                 delete self.onSpriteLoadedCallback['loadMap'];
             };
         }
@@ -283,7 +283,7 @@ Client.prototype.onInitGameData = function(initGameData) {
         var spritesheet = game.spritesheets.hashList[spritesheetId];
         for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
             if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
-                imagesToLoad.push({id: "sheet"+spritesheetId+"image"+i, src:spritesheet.images[i]});
+                imagesToLoad.push({_id: "sheet"+spritesheetId+"image"+i, src:spritesheet.images[i]});
                 imagesToLoadHashList[spritesheet.images[i]] = 1;
             }
         }
@@ -351,7 +351,7 @@ Client.prototype.addEvent = function(event) {
                 // remove the invalid temp event:
                 var pos = self.tempEvents.indexOf(event);
                 self.tempEvents.splice(pos, 1);
-                layer.eventScheduler.removeEvent(event.id);
+                layer.eventScheduler.removeEvent(event._id);
 
                 // revert to the last state that was broadcasted by the server:
                 layer.lockObject.isLocked = true;

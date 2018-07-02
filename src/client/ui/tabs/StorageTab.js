@@ -20,7 +20,7 @@ var StorageTab = function (mapObj) {
             storedAmount = 0;
         }
         var res = {
-            id: ko.observable(resTypeIds[i]),
+            _id: ko.observable(resTypeIds[i]),
             iconSpritesheetId: resType.iconSpritesheetId,
             iconSpriteFrame: resType.iconSpriteFrame,
             amount: storedAmount,

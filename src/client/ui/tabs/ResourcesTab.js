@@ -2,7 +2,7 @@ var ResourceViewModel = function(resStorage){
 
     var self = this;
 
-    var resTypeId = resStorage.id();
+    var resTypeId = resStorage._id();
     var resType = game.ressourceTypes.hashList[resTypeId];
 
     this.resStorage = resStorage;
