@@ -283,7 +283,7 @@ Client.prototype.onInitGameData = function(initGameData) {
         var spritesheet = game.spritesheets.hashList[spritesheetId];
         for (var i=0, l=spritesheet.images.length; i<l; i++ ) {
             if(!imagesToLoadHashList.hasOwnProperty(spritesheet.images[i])) {
-                imagesToLoad.push({_id: "sheet"+spritesheetId+"image"+i, src:spritesheet.images[i]});
+                imagesToLoad.push({id: "sheet"+spritesheetId+"image"+i, src:spritesheet.images[i]});
                 imagesToLoadHashList[spritesheet.images[i]] = 1;
             }
         }

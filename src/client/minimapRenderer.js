@@ -9,7 +9,7 @@ var Minimap = function(mapControl){
 
     this.canvas = document.createElement('canvas');
     this.canvas.style.width = this.w + "px";
-    this.canvas._id = "minimap";
+    this.canvas.id = "minimap";
     this.canvas.border = "none";
 
     this.mapControl = mapControl;

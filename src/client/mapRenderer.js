@@ -52,7 +52,7 @@ var Map = function(mapContainer, stage,mapId) {
 
     // load background image:
     var bgFile = this.mapType.groundImage;
-    imagesToLoad.push({_id: "bgimage", src:bgFile} );
+    imagesToLoad.push({id: "bgimage", src:bgFile} );
     this.bgImg = null;
 
     // use preloadJS to load the images:
