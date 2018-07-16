@@ -5,8 +5,8 @@ var UiObjectContext = function () {
     this.mapObj = null;
     this.lastUpdateTime = 0;
 
-    var mapObjectMenuX = canvas.width/2;
-    var mapObjectMenuY = canvas.height/3;
+    var mapObjectMenuX = window.innerWidth/2;
+    var mapObjectMenuY = window.innerHeight/3;
 
     this.content = $('<div>').addClass("ui-widget");
     this.content.css({

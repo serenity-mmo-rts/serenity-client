@@ -44,6 +44,28 @@ var LayerView = function(client){
     $("#itemContextMenuPlaceholder").append(itemContextMenuPanel);
     this.itemContextMenu.init();
 
+
+
+    this.uiObjectContext = new UiObjectContext();
+    this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
+    this.uiObjectContextPanel.hide(0);
+
+
+    this.minimap = new Minimap();
+    this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
+    this.minimap.init();
+
+    this.uiRessourceMap = new UiRessourceMap();
+    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
+    this.uiRessourceMapPanel.show(0);
+
+    this.uiBgMap = new UiBgMap();
+    this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
+    this.uiBgMapPanel.show(0);
+
+    this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
+    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
+
 };
 
 
@@ -74,27 +96,10 @@ LayerView.prototype.finishedLoadingMap = function () {
 
     this.buildMenu.mapControl = this.mapContainer.mapControl;
 
-    this.minimap = new Minimap(this.mapContainer.mapControl);
-    this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
-    this.minimap.init();
 
-    this.uiRessourceMap = new UiRessourceMap(this.mapContainer.map.resourceMap);
-    this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
-    this.uiRessourceMapPanel.show(0);
-
-    this.uiBgMap = new UiBgMap(this.mapContainer.map.bgMap);
-    this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
-    this.uiBgMapPanel.show(0);
-
-    this.uiObjectContext = new UiObjectContext();
-    this.uiObjectContextPanel = new UiSlidingPanelRightBottom(0,2,this.uiObjectContext.content );
-    this.uiObjectContextPanel.hide(0);
-
-
-    this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
-    this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
-    this.uiBgMapPanel.addNextPanel(this.uiObjectContextPanel);
-
+    this.minimap.setMapControl(this.mapContainer.mapControl);
+    this.uiRessourceMap.setResMap(this.mapContainer.map.resourceMap);
+    this.uiBgMap.setResMap(this.mapContainer.map.bgMap);
 };
 
 LayerView.prototype.setUserData = function (userData) {
