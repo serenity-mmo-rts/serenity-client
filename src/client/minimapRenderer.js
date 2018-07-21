@@ -1,10 +1,8 @@
-var Minimap = function(mapControl){
-
-    var self = this;
+var Minimap = function(){
 
     this.targetDepth = 8;
 
-    this.w = Math.pow(2,this.targetDepth);
+    this.w = 256;
     this.h = this.w/2;
 
     this.canvas = document.createElement('canvas');
@@ -12,11 +10,12 @@ var Minimap = function(mapControl){
     this.canvas.id = "minimap";
     this.canvas.border = "none";
 
-    this.mapControl = mapControl;
-
 };
 
 
+/**
+ * call this function only after the canvas in the constructor was added to the DOM!!!
+ */
 Minimap.prototype.init = function() {
 
     this.stage = new createjs.Stage("minimap");
@@ -26,13 +25,23 @@ Minimap.prototype.init = function() {
     this.stage.y = 0;
     this.stage.x = 0;
     this.stage.mouseMoveOutside = true;
+}
+
+Minimap.prototype.setMapControl = function(mapControl) {
+
+    this.mapControl = mapControl;
 
     this.draw();
     this.addEvents();
-}
+};
+
+
 
 
 Minimap.prototype.draw= function() {
+
+    // first remove everything from the minimap:
+    this.stage.removeAllChildren();
 
     this.mapId  = this.mapControl.map.mapId;
     this.layer = game.layers.get(this.mapId);
@@ -45,57 +54,11 @@ Minimap.prototype.draw= function() {
     this.factor =(MapWidth/this.w);
 
 
-
-    /*
-    this.frame = new createjs.Graphics();
-    this.frame.setStrokeStyle(3);
-    this.frame.beginFill("#F5F7C4").drawRect(this.x,this.y,(this.w-error)*broswersize*this.factor,this.h*broswersize*this.factor) ;
-
-    this.diamond = new createjs.Graphics();
-    this.diamond.setStrokeStyle(1);
-    this.diamond.beginFill("#C0C0C0") ;
-
-
-    this.halfMapWidth = ((this.w-error)*broswersize*this.factor)/2;
-    this.halfMapHeight = this.halfMapWidth/2;
-    var x2 = this.halfMapWidth;
-    var y2 = 0;
-
-    this.diamond .moveTo(x2,y2);
-    var x2 = x2 - this.halfMapWidth;
-    var y2 = y2 + this.halfMapHeight;
-    this.diamond .lineTo(x2,y2);
-    var x2 = x2 + this.halfMapWidth;
-    var y2 = y2 + this.halfMapHeight;
-    this.diamond.lineTo(x2,y2);
-    var x2 = x2 + this.halfMapWidth;
-    var y2 = y2 - this.halfMapHeight;
-    this.diamond .lineTo(x2,y2);
-    var x2 = x2 - this.halfMapWidth;
-    var y2 = y2 - this.halfMapHeight;
-    this.diamond .lineTo(x2,y2);
-     this.map = new createjs.Shape(this.diamond);
-     */
-
-
     this.miniContainer = new createjs.Container();
     this.gameContainer = new createjs.Container();
     this.gameContainer.scaleX = 1/this.factor;
     this.gameContainer.scaleY = 1/this.factor;
 
-    /*
-    this.dot = new createjs.Graphics();
-    this.dot.setStrokeStyle(3);
-    this.dot.beginFill("#ff0000").drawCircle(this.halfMapWidth,this.halfMapHeight,3*this.factor);
-
-    this.background= new createjs.Shape(this.frame);
-    this.location = new createjs.Shape(this.dot);
-
-
-    this.miniContainer.addChild(this.background,this.map,this.location);
-    this.miniContainer.name = "miniM";
-
-    */
     if (this.layer.mapGenerator instanceof PlanetGenerator) {
         this.bgMap = this.genBitmapFromPlanetGenerator(this.targetDepth);
         this.bgMap.name = "minimap";
@@ -109,11 +72,10 @@ Minimap.prototype.draw= function() {
         this.miniContainer.addChild(this.bgMap, this.gameContainer);
         this.stage.addChild(this.miniContainer);
     }
-
-    else{
-
+    else {
         // TODO add minimap rendering of layer without DS map generation
-        }
+
+    }
 };
 
 
