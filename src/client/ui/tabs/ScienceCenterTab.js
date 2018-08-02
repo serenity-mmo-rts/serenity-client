@@ -49,7 +49,7 @@ ScienceCenterTab.prototype.listProduceableTechnologies = function () {
 ScienceCenterTab.prototype.initResearch = function (container,techTypeId) {
     var self = this;
     container.click(function (e) {
-        var evt = new ResearchEvent(game);
+        var evt = new ResearchEvent(this.mapObj.getMap().eventScheduler.events);
         evt.setParameters(techTypeId,self.mapObj);
         uc.addEvent(evt);
     });

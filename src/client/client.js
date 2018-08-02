@@ -104,9 +104,12 @@ Client.prototype.init = function() {
     }));*/
 
     socket.on('newGameEvent', (function(data){
-        var event = EventFactory(game,data);
+
+        var layer = game.layers.get(data.mapId);
+
+        var event = EventFactory(layer.eventScheduler.events,data);
         event.setPointers();
-        var layer = game.layers.get(event.mapId);
+        //var layer = game.layers.get(event.mapId);
 
         //game.layers.get(event.mapId).eventScheduler.addEvent(event);
         console.info("received a new event from server via "+socket.socket.transport.name);
@@ -237,7 +240,7 @@ Client.prototype.loadMap = function(mapId) {
     var self = this;
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
-        var myNewMap = new Layer(game,mapData.initMap);
+        var myNewMap = new Layer(game.layers ,mapData.initMap);
         game.layers.add(myNewMap);
 
         // TODO: this should be the same as in load db, or not?

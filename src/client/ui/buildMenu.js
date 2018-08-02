@@ -64,7 +64,7 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
 
     $("#bottomLeftUi").toggleClass("hidden", 500, "easeOutSine");
 
-    var object = new MapObject(game, {
+    var object = new MapObject(game.layers.hashList[this.mapId()].mapData.mapObjects, {
         _id: 'tempObject',
         mapId: this.mapId(),
         x: 0,
@@ -73,7 +73,7 @@ BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID mi
         userId: uc.userId,
         state: State.TEMP
     });
-    this.tmpEvent = new BuildObjectEvent(game);
+    this.tmpEvent = new BuildObjectEvent(game.layers.hashList[this.mapId()].eventScheduler.events);
     this.tmpEvent.setParameters(object);
     this.mapControl.map.addTempObj(object);
     var self = this;

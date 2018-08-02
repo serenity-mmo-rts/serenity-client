@@ -155,7 +155,7 @@ UpgradesTab.prototype.listProducedUpgrades = function () {
 UpgradesTab.prototype.buildUpgrade = function (container,itemTypeId) {
     var self = this;
     container.click(function (e) {
-        var evt = new BuildUpgradeEvent(game);
+        var evt = new BuildUpgradeEvent(self.mapObj.getMap().eventScheduler.events);
         evt.setParameters(itemTypeId,self.mapObj);
         uc.addEvent(evt);
     });

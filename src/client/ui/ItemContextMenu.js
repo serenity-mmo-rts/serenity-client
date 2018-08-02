@@ -131,7 +131,7 @@ ItemContextMenu.prototype.moveToDefenseSquad = function () {
 
 ItemContextMenu.prototype.moveToOtherMapObject = function () {
 
-    var evt = new MoveItemEvent(game);
+    var evt = new MoveItemEvent(this.item().getMap().eventScheduler.events);
     evt.setParameters(this.item());
 
     function callbackOnSelect(){
@@ -151,14 +151,14 @@ ItemContextMenu.prototype.moveToOtherMapObject = function () {
 };
 
 ItemContextMenu.prototype.levelUpgrade = function () {
-    var evt = new LevelUpgradeEvent(game);
+    var evt = new LevelUpgradeEvent(this.item().getMap().eventScheduler.events);
     evt.setParameters(this.item());
     uc.addEvent(evt);
 };
 
 ItemContextMenu.prototype.activatePerClick = function () {
 
-    var evt = new ActivateFeatureEvent(game);
+    var evt = new ActivateFeatureEvent(this.item().getMap().eventScheduler.events);
     var operation = this.item().blocks.Feature.getCurrentOp();
     evt.setParameters(this.item(),operation);
     var targetType = this.item().blocks.Feature.targetType();

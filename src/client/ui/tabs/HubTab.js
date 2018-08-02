@@ -21,10 +21,10 @@ var HubTab = function (mapObj) {
 
         var connectionObjTypeId = self.mapObj.blocks.HubNode.canBuildConnectionTypeId;
 
-        var object = new MapObject(game, {_id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: State.TEMP});
+        var object = new MapObject(self.mapObj.getMap().mapData.mapObjects, {_id: 'tempObject', mapId: self.mapObj.mapId(), x: 0, y: 0, objTypeId: connectionObjTypeId, userId: uc.userId, state: State.TEMP});
         object.blocks.Connection.connectedFrom(self.mapObj._id());
 
-        self.tmpEvent = new BuildObjectEvent(game);
+        self.tmpEvent = new BuildObjectEvent(self.mapObj.getMap().eventScheduler.events);
         self.tmpEvent.setParameters(object,self.mapObj._id());
         uc.layerView.mapContainer.mapControl.map.addTempObj(object);
 
