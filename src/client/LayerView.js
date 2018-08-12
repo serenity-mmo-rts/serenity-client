@@ -29,8 +29,13 @@ var LayerView = function(client){
     this.uiGlobalMenu = new UiGlobalMenu( this );
     this.uiContainer.addContentPanel(this.uiGlobalMenu.content, {visible: true, barPos: 'topleft', posInBar: 0});
 
-    this.uiGlobalMenu2 = $('<div>gsdfgk jafkldg klsdjafkj klgj fj klgj sdfkljglk sdfk</div>');
-    this.uiContainer.addContentPanel(this.uiGlobalMenu2, {visible: true, barPos: 'topleft', posInBar: 1});
+    //  this.UiPlaceItemMenu = new UiPlaceItemMenu(this);
+   // this.uiContainer.addContentPanel(this.UiPlaceItemMenu.content, {visible: true, barPos: 'topleft', posInBar: 1});
+    this.uiPlaceItemMenu = new UiPlaceItemMenu( this );
+    this.uiContainer.addContentPanel(createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/uiPlaceItemMenu.html'), {visible: true, barPos: 'topleft', posInBar: 1});
+
+   // var uiPlaceItemMenuPanel = createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/uiPlaceItemMenu.html');
+   // $("#uiPlaceItemMenuPlaceholder").append(uiPlaceItemMenuPanel);
 
     this.testComponent = new testComponent();
     this.uiContainer.addContentPanel(createKnockoutPanel(this.testComponent, 'testComponent', 'ui/testComponent.html'), {visible: true, barPos: 'topleft', posInBar: 2});

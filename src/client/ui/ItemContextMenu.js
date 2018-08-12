@@ -8,7 +8,13 @@ var ItemContextMenu =  function () {
 
     this.activatedDisabled = ko.pureComputed(function() {
         if (this.item()) {
-            return !this.item().blocks.Feature.canBeActivated();
+            if (this.item().hasOwnProperty("Feature")){
+                return !this.item().blocks.Feature.canBeActivated();
+            }
+            else{
+                return true;
+            }
+
         }
         else {
             return true;
@@ -18,10 +24,15 @@ var ItemContextMenu =  function () {
     this.updateDisabled = ko.pureComputed(function() {
 
         if (this.item()) {
-            if (this.item().level() < this.item().itemType.blocks.Feature.length) {
-                return false
+            if (this.item().hasOwnProperty("Feature")){
+                if (this.item().level() < this.item().itemType.blocks.Feature.length) {
+                    return false
+                }
+                else {
+                    return true;
+                }
             }
-            else {
+            else{
                 return true;
             }
         }
@@ -38,6 +49,7 @@ var ItemContextMenu =  function () {
             else {
                 return true;
             }
+
         }
         else{
             return true
@@ -94,6 +106,9 @@ ItemContextMenu.prototype.init = function () {
                 case "upgrade":
                     self.levelUpgrade();
                     break;
+                case "moveDown":
+                    self.moveLayerDown();
+                    break;
                 case "moveToAttack":
                     self.moveToAttackSquad();
                     break;
@@ -129,6 +144,13 @@ ItemContextMenu.prototype.moveToDefenseSquad = function () {
 
 };
 
+ItemContextMenu.prototype.moveDown = function () {
+
+    var evt = new MoveItemDownEvent(this.item().getMap().eventScheduler.events);
+    evt.setParameters(this.item());
+};
+
+
 ItemContextMenu.prototype.moveToOtherMapObject = function () {
 
     var evt = new MoveItemEvent(this.item().getMap().eventScheduler.events);
@@ -146,8 +168,6 @@ ItemContextMenu.prototype.moveToOtherMapObject = function () {
         evt = null;
     }
     uc.layerView.mapContainer.mapControl.setStateSelectObj(callbackOnSelect,callbackCheckValidSelection,callbackCanceled);
-
-
 };
 
 ItemContextMenu.prototype.levelUpgrade = function () {
