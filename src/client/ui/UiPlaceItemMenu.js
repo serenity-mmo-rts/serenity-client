@@ -7,7 +7,6 @@ var UiPlaceItemMenu = function ( layerView ) {
     this.mapId = ko.computed(function () {
         return self.layerView.loadedMapId();
     });
-    this.mapControl = null;
     this.objectsToPlace =  ko.observableArray([]);
     this.mapObjects = ko.computed(function () {
         if (this.mapId()) {
@@ -22,23 +21,24 @@ var UiPlaceItemMenu = function ( layerView ) {
 
         if (mapTypeId) {
             var tempArr = [];
-            for (var id in self.mapObjects()  ) {
+            var count = 0;
+            for (var id in self.mapObjects()) {
                 if (self.mapObjects()[id].needsTobePlaced()){
                     var object = self.mapObjects()[id];
-                    var objectTypeId = object.objectTypeId();
+                    var objectTypeId = object.objTypeId();
                     var objectType = game.objectTypes.hashList[objectTypeId];
                     var objectEntry = {
-                        tooltip: 'buildTime: '+objectType.buildTime,
-                        buildMenuItemId: k,
+                        _id: object._id(),
+                        buildMenuItemId: count,
                         objectTypeId: objectTypeId,
-                        name: objectType.name,
                         iconSpritesheetId: objectType.iconSpritesheetId,
                         iconSpriteFrame: objectType.iconSpriteFrame,
                         clickHandler: function(data, event) {
-                            self.initializeObject(data.object);
+                            self.initializeObject(data);
                         }
                     };
                     tempArr.push(objectEntry);
+                    count ++;
                 }
             }
 
@@ -53,12 +53,15 @@ var UiPlaceItemMenu = function ( layerView ) {
 
 
 
-UiPlaceItemMenu.prototype.initializeObject = function (object) {  // ObjectID missing
-    $("#buttonPlaceItemMenuUi").toggleClass("hidden", 500, "easeOutSine");
+UiPlaceItemMenu.prototype.initializeObject = function (objectParams) {  // ObjectID missing
 
+    this.tmpEvent = new PlaceObjectEvent(game.layers.hashList[this.mapId()].eventScheduler.events);
+    this.tmpEvent.setParameters(objectParams);
 
-    this.tmpEvent = new BuildObjectEvent(game.layers.hashList[this.mapId()].eventScheduler.events);
-    this.tmpEvent.setParameters(object);
+    var object = game.layers.get(this.mapId()).mapData.mapObjects.get(objectParams._id);
+    object.state(State.TEMP);
+
+    this.mapControl = this.layerView.mapContainer.mapControl;
     this.mapControl.map.addTempObj(object);
     var self = this;
 

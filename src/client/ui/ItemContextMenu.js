@@ -8,7 +8,7 @@ var ItemContextMenu =  function () {
 
     this.activatedDisabled = ko.pureComputed(function() {
         if (this.item()) {
-            if (this.item().hasOwnProperty("Feature")){
+            if (this.item().blocks.hasOwnProperty("Feature")){
                 return !this.item().blocks.Feature.canBeActivated();
             }
             else{
@@ -24,7 +24,7 @@ var ItemContextMenu =  function () {
     this.updateDisabled = ko.pureComputed(function() {
 
         if (this.item()) {
-            if (this.item().hasOwnProperty("Feature")){
+            if (this.item().blocks.hasOwnProperty("Feature")){
                 if (this.item().level() < this.item().itemType.blocks.Feature.length) {
                     return false
                 }
