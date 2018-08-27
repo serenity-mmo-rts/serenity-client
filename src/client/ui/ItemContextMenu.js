@@ -56,6 +56,20 @@ var ItemContextMenu =  function () {
         }
     }, this);
 
+    this.moveDownDisabled= ko.pureComputed(function() {
+        if (this.item()) {
+            if (this.item().blocks.hasOwnProperty("SubObject")) {
+                return false
+            }
+            else {
+                return true;
+            }
+        }
+        else{
+            return true
+        }
+    }, this);
+
     this.iconSpritesheetId = ko.pureComputed(function() {
         if (this.item()) {
             var itemType = this.item().itemType;
@@ -107,7 +121,7 @@ ItemContextMenu.prototype.init = function () {
                     self.levelUpgrade();
                     break;
                 case "moveDown":
-                    self.moveLayerDown();
+                    self.moveDown();
                     break;
                 case "moveToAttack":
                     self.moveToAttackSquad();
@@ -148,6 +162,7 @@ ItemContextMenu.prototype.moveDown = function () {
 
     var evt = new MoveItemDownEvent(this.item().getMap().eventScheduler.events);
     evt.setParameters(this.item());
+    uc.addEvent(evt);
 };
 
 
