@@ -133,6 +133,7 @@ Client.prototype.init = function() {
         layer.lockObject.isLocked = true;
         console.log("********************** starting revert ****************************");
         layer.revertChanges();
+        layer.revertChangesDone();
         console.log("********************** revert finished ****************************");
         layer.lockObject.isLocked = false;
 
@@ -359,6 +360,7 @@ Client.prototype.addEvent = function(event) {
                 // revert to the last state that was broadcasted by the server:
                 layer.lockObject.isLocked = true;
                 layer.revertChanges();
+                layer.revertChangesDone();
                 layer.lockObject.isLocked = false;
 
                 // reapply all the other temporary events:
