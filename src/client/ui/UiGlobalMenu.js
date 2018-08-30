@@ -24,6 +24,11 @@ var UiGlobalMenu = function ( layerView ) {
     });
 
     this.container = $('<div id="container"></div>').css({'top':0, 'left': 0,'display': 'inline-block'}).appendTo(this.content);
+    this.userContainer = $('<div id="container"></div>').appendTo(this.content);
+
+    this.createLayerUpButton();
+
+
 
 };
 
@@ -45,7 +50,6 @@ UiGlobalMenu.prototype.setUserData = function (userData) {
 UiGlobalMenu.prototype.createDivs = function() {
 
     if (this.client.userDataLoaded){
-        this.createLayerUpButton();
         this.createUserInfo("not logged in");
         this.createLevelUpButton();
         this.createOccupation();
@@ -71,9 +75,9 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
 
 
 UiGlobalMenu.prototype.createUserInfo= function(userName) {
-    this.imageContainer = $('<div id="imageContainer"></div>').appendTo(this.container);
+    this.imageContainer = $('<div id="imageContainer"></div>').appendTo(this.userContainer);
     this.imageContainer.css({'top':0+'%','left':0%+'%','display': 'inline-block'});
-    this.nameContainer = $('<div id="nameContainer"></div>').appendTo(this.container);
+    this.nameContainer = $('<div id="nameContainer"></div>').appendTo(this.userContainer);
     this.nameContainer.css({'top':0+'%','left':25+'%','display': 'inline-block'});
     // commander image
     this.commanderImage = new SpriteImg('cityBuildingsSprite01',5,50,50);
@@ -94,12 +98,12 @@ UiGlobalMenu.prototype.updateUserName = function(userName) {
 
 UiGlobalMenu.prototype.createLevelUpButton = function() {
     // layer up button
-    this.levelUpContainer = $('<div id="levelUpContainer"></div>').appendTo(this.container);
+    this.levelUpContainer = $('<div id="levelUpContainer"></div>').appendTo(this.userContainer);
     this.levelUpContainer.css({'top':0+'%','left':50+'%','display': 'inline-block'});
 };
 
 UiGlobalMenu.prototype.createStats = function() {
-    this.statsContainer = $('<div id="statsContainer"></div>').appendTo(this.container);
+    this.statsContainer = $('<div id="statsContainer"></div>').appendTo(this.userContainer);
     this.statsContainer.css({'top':25+'%','left':25+'%','display': 'inline-block'});
     //var parentLayerId = game.users.get(this.client.userId).parentMapId;
     this.stats = $('<b>'+this.userName+'</b>');
@@ -107,7 +111,7 @@ UiGlobalMenu.prototype.createStats = function() {
 
 
 UiGlobalMenu.prototype.createOccupation = function() {
-    this.occupationContainer = $('<div id="occupationContainer"></div>').appendTo(this.container);
+    this.occupationContainer = $('<div id="occupationContainer"></div>').appendTo(this.userContainer);
     this.occupationContainer.css({'width':25+'%','display': 'inline-block'});
 
     $(function() {
@@ -135,21 +139,21 @@ UiGlobalMenu.prototype.createCommanderStats = function() {
     var commanderArmor =10;
     var commanderEngergy =10;
 
-    this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.container);
+    this.healthContainer = $('<div id="healthContainer"></div>').appendTo(this.userContainer);
     this.healthContainer.css({'width':25+'%','display': 'inline-block'});
     var commanderHP = $('<div  style="white-space:nowrap; id="commanderHP"></div>').appendTo(this.healthContainer);
     commanderHP.progressbar({
         value: commanderHealth
     });
 
-    this.armorContainer = $('<div id="armorContainer"></div>').appendTo(this.container);
+    this.armorContainer = $('<div id="armorContainer"></div>').appendTo(this.userContainer);
     this.armorContainer.css({'width':25+'%','display': 'inline-block'});
     var commanderArm = $('<div  style="white-space:nowrap; id="commanderArm"></div>').appendTo(this.armorContainer);
     commanderArm.progressbar({
         value: commanderArmor
     });
 
-    this.engergyContainer = $('<div id="engergyContainer"></div>').appendTo(this.container);
+    this.engergyContainer = $('<div id="engergyContainer"></div>').appendTo(this.userContainer);
     this.engergyContainer.css({'width':25+'%','display': 'inline-block'});
     var commanderEngy = $('<div  style="white-space:nowrap; id="commanderEngy"></div>').appendTo(this.engergyContainer);
     commanderEngy.progressbar({
@@ -162,7 +166,7 @@ UiGlobalMenu.prototype.createCommanderStats = function() {
 UiGlobalMenu.prototype.createCoins = function() {
     var blackMarketFunds = 50;
     var credits = 200;
-    this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.container);
+    this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.userContainer);
     this.coinContainer.css({'width':25+'%','display': 'inline-block'});
     this.credits = $('<b>Credits:'+credits+'</b>').appendTo(this.coinContainer);
     this.blackMarketFunds = $('<b>Black Market Funds:'+blackMarketFunds+'</b>').appendTo(this.coinContainer);

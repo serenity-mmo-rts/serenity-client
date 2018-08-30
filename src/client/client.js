@@ -61,6 +61,8 @@ Client.prototype.init = function() {
         self.name = data.userName;
         uc.layerView.uiGlobalMenu.updateUserName(data.userName);
 
+        self.loadUserdata();
+/*
         console.log("check if gameData loaded: "+self.gameDataLoaded);
         if (self.gameDataLoaded) {
             self.loadUserdata();
@@ -71,7 +73,7 @@ Client.prototype.init = function() {
                 delete self.onGameDataLoaded['loggedIn'];
             };
             console.log("added callback to onGameDataLoaded")
-        }
+        }*/
 
     }));
 
@@ -271,6 +273,8 @@ Client.prototype.loadMap = function(mapId) {
                 delete self.onSpriteLoadedCallback['loadMap'];
             };
         }
+
+        self.loadUserdata();
 
     });
 }
