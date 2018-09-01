@@ -8,59 +8,73 @@ var UiPlaceItemMenu = function ( layerView ) {
         return self.layerView.loadedMapId();
     });
     this.objectsToPlace =  ko.observableArray([]);
-    this.mapObjects = ko.computed(function () {
-        if (this.mapId()) {
-            return game.layers.hashList[this.mapId()].mapData.mapObjects.hashList;
-        }
-        else {
-            return 0;
-        }
-    }, this);
 
-    this.mapObjects.subscribe(function (mapTypeId) {
-
-        if (mapTypeId) {
-            var tempArr = [];
-            var count = 0;
-            for (var id in self.mapObjects()) {
-                if (self.mapObjects()[id].needsTobePlaced()){
-                    var object = self.mapObjects()[id];
-                    var objectTypeId = object.objTypeId();
-                    var objectType = game.objectTypes.hashList[objectTypeId];
-                    var objectEntry = {
-                        _id: object._id(),
-                        buildMenuItemId: count,
-                        objectTypeId: objectTypeId,
-                        iconSpritesheetId: objectType.iconSpritesheetId,
-                        iconSpriteFrame: objectType.iconSpriteFrame,
-                        clickHandler: function(data, event) {
-                            self.initializeObject(data);
-                        }
-                    };
-                    tempArr.push(objectEntry);
-                    count ++;
-                }
-            }
-
-            // now update the member variable:
-            self.objectsToPlace(tempArr);
-
+    this.mapId.subscribe(function(newValue) {
+        if(newValue){
+            self.showPlaceObjects();
         }
     });
 
 };
 
+UiPlaceItemMenu.prototype.showPlaceObjects = function () {  // ObjectID missing
+    var self = this;
+    var mapObjects = game.layers.get(this.mapId()).mapData.mapObjects.hashList;
+    var tempArr = [];
+    var count = 0;
+    for (var id in mapObjects) {
+        if (mapObjects[id].needsTobePlaced()){
+            var object = mapObjects[id];
+            var objectTypeId = object.objTypeId();
+            var objectType = game.objectTypes.get(objectTypeId);
+            var objectEntry = {
+                _id: object._id(),
+                buildMenuItemId: count,
+                objectTypeId: objectTypeId,
+                iconSpritesheetId: objectType.iconSpritesheetId,
+                iconSpriteFrame: objectType.iconSpriteFrame,
+                clickHandler: function(data, event) {
+                    self.initializeObject(data);
+                }
+            };
+            tempArr.push(objectEntry);
+            count ++;
+            object.needsTobePlaced.subscribe(function(newValue) {
+                if(!newValue){
+                    self.removeFromPlaceObjects(object)
+                }
+            });
+        }
+    }
+    // now update the member variable:
+    this.objectsToPlace(tempArr);
+};
+
+UiPlaceItemMenu.prototype.removeFromPlaceObjects = function (object) {
+    for (i=0;i<this.objectsToPlace().length; i++){
+        var arrayObject = this.objectsToPlace()[i];
+        if (arrayObject._id ==object._id()){
+            this.objectsToPlace.splice(i,1);
+        }
+
+    }
+};
+
+UiPlaceItemMenu.prototype.addToPlaceObjects = function (object) {
+    var pos = this.objectsToPlace().indexOf(object._id);
+    if (pos ==-1){
+        this.objectsToPlace.push(object)
+    };
+};
 
 
 
 UiPlaceItemMenu.prototype.initializeObject = function (objectParams) {  // ObjectID missing
 
-    this.tmpEvent = new PlaceObjectEvent(game.layers.hashList[this.mapId()].eventScheduler.events);
+    this.tmpEvent = new PlaceObjectEvent(game.layers.get(this.mapId()).eventScheduler.events);
     this.tmpEvent.setParameters(objectParams);
-
     var object = game.layers.get(this.mapId()).mapData.mapObjects.get(objectParams._id);
     object.state(State.TEMP);
-
     this.mapControl = this.layerView.mapContainer.mapControl;
     this.mapControl.map.addTempObj(object);
     var self = this;
