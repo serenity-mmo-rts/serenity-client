@@ -2,12 +2,11 @@
 var UiPlaceItemMenu = function ( layerView ) {
 
     var self = this;
-
     this.layerView = layerView;
+    this.objectsToPlace =  ko.observableArray([]);
     this.mapId = ko.computed(function () {
         return self.layerView.loadedMapId();
     });
-    this.objectsToPlace =  ko.observableArray([]);
 
     this.mapId.subscribe(function(newValue) {
         if(newValue){
@@ -17,54 +16,67 @@ var UiPlaceItemMenu = function ( layerView ) {
 
 };
 
-UiPlaceItemMenu.prototype.showPlaceObjects = function () {  // ObjectID missing
-    var self = this;
+// check Objects to be placed for whole list, executed once for new clients
+UiPlaceItemMenu.prototype.showPlaceObjects = function () {
     var mapObjects = game.layers.get(this.mapId()).mapData.mapObjects.hashList;
     var tempArr = [];
-    var count = 0;
     for (var id in mapObjects) {
-        if (mapObjects[id].needsTobePlaced()){
+        if (mapObjects[id].className=="subObject") {
             var object = mapObjects[id];
-            var objectTypeId = object.objTypeId();
-            var objectType = game.objectTypes.get(objectTypeId);
-            var objectEntry = {
-                _id: object._id(),
-                buildMenuItemId: count,
-                objectTypeId: objectTypeId,
-                iconSpritesheetId: objectType.iconSpritesheetId,
-                iconSpriteFrame: objectType.iconSpriteFrame,
-                clickHandler: function(data, event) {
-                    self.initializeObject(data);
-                }
-            };
-            tempArr.push(objectEntry);
-            count ++;
-            object.needsTobePlaced.subscribe(function(newValue) {
-                if(!newValue){
-                    self.removeFromPlaceObjects(object)
-                }
-            });
+            if (mapObjects[id].needsTobePlaced()) {
+                tempArr.push(this.makeObjectEntry(object));
+            }
+            this.handleSubscription(object);
         }
     }
-    // now update the member variable:
     this.objectsToPlace(tempArr);
 };
 
+// returns object entry needed to rendering and event processing
+UiPlaceItemMenu.prototype.makeObjectEntry = function (object) {
+    var objectTypeId = object.objTypeId();
+    var objectType = game.objectTypes.get(objectTypeId);
+    var self= this;
+    var objectEntry = {
+        _id: object._id(),
+        iconSpritesheetId: objectType.iconSpritesheetId,
+        iconSpriteFrame: objectType.iconSpriteFrame,
+        clickHandler: function (data, event) {
+            self.initializeObject(data);
+        }
+    };
+    return  objectEntry
+};
+
+// handles the subscriptions, which either add or remove the object entries
+UiPlaceItemMenu.prototype.handleSubscription = function (object) {
+    var self = this;
+    object.needsTobePlaced.subscribe(function (newValue) {
+        if (!newValue) {
+            self.removeFromPlaceObjects(object)
+        }
+        else if (newValue){
+            self.addToPlaceObjects(object)
+        }
+    });
+};
+
+// removes object entry from observable array
 UiPlaceItemMenu.prototype.removeFromPlaceObjects = function (object) {
-    for (i=0;i<this.objectsToPlace().length; i++){
+    for (var i=0;i<this.objectsToPlace().length; i++){
         var arrayObject = this.objectsToPlace()[i];
         if (arrayObject._id ==object._id()){
             this.objectsToPlace.splice(i,1);
         }
-
     }
 };
 
+// adds object entry to observable array
 UiPlaceItemMenu.prototype.addToPlaceObjects = function (object) {
-    var pos = this.objectsToPlace().indexOf(object._id);
+    var pos = this.objectsToPlace().indexOf(object._id());
     if (pos ==-1){
-        this.objectsToPlace.push(object)
-    };
+        this.objectsToPlace.push(this.makeObjectEntry(object))
+    }
 };
 
 
