@@ -345,7 +345,12 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         this.renderObj(mapObject);
         var self = this;
        // mapObject.onChangeCallback = function() {self.renderObj(mapObject)};
-        mapObject.addCallback("renderObj", function() {self.renderObj(mapObject)})
+        mapObject.addCallback("renderObj", function() {
+            self.renderObj(mapObject)
+            if (mapObject.className=="subObject") {   // check whether map object is a subObject and hence has to add to be placed callback
+                uc.layerView.uiPlaceItemMenu.handleSubscription(mapObject);
+            }
+        });
     }
 
 
