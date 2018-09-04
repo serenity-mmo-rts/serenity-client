@@ -50,6 +50,7 @@ UiGlobalMenu.prototype.setUserData = function (userData) {
 UiGlobalMenu.prototype.createDivs = function() {
 
     if (this.client.userDataLoaded){
+        this.userContainer.empty();
         this.createUserInfo("not logged in");
         this.createLevelUpButton();
         this.createOccupation();

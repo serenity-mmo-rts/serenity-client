@@ -182,8 +182,14 @@ Client.prototype.loadUserdata = function() {
     var self = this;
     socket.emit('getUserData',{}, function(user) {
         if (user) {
-            var userObj = new User(game, user.internal);
-            game.users.add(userObj);
+            var existingUserObj = game.users.get(user.internal._id);
+            if (existingUserObj){
+                existingUserObj.load(user.internal);
+            }
+            else {
+                var userObj = new User(game, user.internal);
+                game.users.add(userObj);
+            }
             self.userDataLoaded = true;
             console.log("userdata was loaded...");
             self.layerView.setUserData(userObj);
