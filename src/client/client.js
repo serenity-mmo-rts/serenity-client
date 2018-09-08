@@ -247,11 +247,14 @@ Client.prototype.registerComponents = function(){
 
 Client.prototype.loadMap = function(mapId) {
     var self = this;
+    console.log("client: start getMap mapId="+mapId);
     socket.emit('getMap',{mapId: mapId}, function(mapData) {
         //init only one map
         var myNewMap = new Layer(game.layers ,mapData.initMap);
         game.layers.add(myNewMap);
 
+
+        console.log("client: load data for mapId="+mapId);
         // TODO: this should be the same as in load db, or not?
 
         // add all objects
@@ -261,14 +264,11 @@ Client.prototype.loadMap = function(mapId) {
 
         myNewMap.currentTime = mapData.currentTime;
 
-
-
+        console.log("client: start initializing mapId="+mapId);
         // now set pointers and
         myNewMap.initialize();
 
-
         myNewMap.newSnapshot();
-
 
         if (self.spritesLoaded) {
             self.layerView.loadMap(myNewMap._id());
