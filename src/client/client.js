@@ -253,7 +253,6 @@ Client.prototype.loadMap = function(mapId) {
         var myNewMap = new Layer(game.layers ,mapData.initMap);
         game.layers.add(myNewMap);
 
-
         console.log("client: load data for mapId="+mapId);
         // TODO: this should be the same as in load db, or not?
 
