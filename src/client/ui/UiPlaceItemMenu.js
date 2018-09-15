@@ -21,9 +21,9 @@ UiPlaceItemMenu.prototype.showPlaceObjects = function () {
     var mapObjects = game.layers.get(this.mapId()).mapData.mapObjects.hashList;
     var tempArr = [];
     for (var id in mapObjects) {
-        if (mapObjects[id].className=="subObject") {
+        if (mapObjects[id].className=="subObject" && mapObjects[id].activeOnLayer) {
             var object = mapObjects[id];
-            if (mapObjects[id].needsTobePlaced()) {
+            if (object.needsTobePlaced()) {
                 tempArr.push(this.makeObjectEntry(object));
             }
             this.handleSubscription(object);
