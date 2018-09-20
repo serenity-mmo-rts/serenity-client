@@ -18,7 +18,7 @@ UnitObjectTab.prototype.createMainContent = function () {
 UnitObjectTab.prototype.moveObjectToUpperLayer = function (container) {
     var self = this;
     container.click(function (e) {
-        var evt = new MoveThroughLayerEvent(self.mapObj.getMap().eventScheduler.events);
+        var evt = new DisplaceObjectEvent(self.mapObj.getMap().eventScheduler.events);
         evt.setParameters(self.mapObj);
         uc.addEvent(evt);
     });

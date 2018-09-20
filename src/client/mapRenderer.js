@@ -346,17 +346,24 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         var self = this;
        // mapObject.onChangeCallback = function() {self.renderObj(mapObject)};
         mapObject.addCallback("renderObj", function() {
-            self.renderObj(mapObject)
-            if (mapObject.className=="subObject") {   // check whether map object is a subObject and hence has to add to be placed callback
-                uc.layerView.uiPlaceItemMenu.handleSubscription(mapObject);
+            if (mapObject.state()==State.HIDDEN){
+                self.removeFromRenderer(mapObject);
             }
+            else{
+                self.renderObj(mapObject);
+                if (mapObject.className=="subObject") {   // check whether map object is a subObject and hence has to add to be placed callback
+                    uc.layerView.uiPlaceItemMenu.handleSubscription(mapObject);
+                    // disable subscription needs to be done
+                }
+            }
+
+
         });
     }
-
-
 };
 
-Map.prototype.renderObj = function(mapObject) {
+
+Map.prototype.removeFromRenderer = function(mapObject) {
     //remove if already in container:
     var checkedObj = this.objContainer.getChildByName(mapObject._id());
     if (checkedObj) {
@@ -366,6 +373,11 @@ Map.prototype.renderObj = function(mapObject) {
     if (mapObject.objectBitmap) {
         this.objContainer.removeChild(mapObject.objectBitmap);
     }
+};
+
+Map.prototype.renderObj = function(mapObject) {
+    //remove if already in container:
+    this.removeFromRenderer(mapObject);
 
     var objType = game.objectTypes.get(mapObject.objTypeId());
 

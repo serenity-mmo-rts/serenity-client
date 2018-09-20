@@ -110,7 +110,7 @@ Client.prototype.init = function() {
         var layer = game.layers.get(data.mapId);
 
         var event = EventFactory(layer.eventScheduler.events,data);
-        event.setPointers();
+
         //var layer = game.layers.get(event.mapId);
 
         //game.layers.get(event.mapId).eventScheduler.addEvent(event);
@@ -144,6 +144,7 @@ Client.prototype.init = function() {
         layer.timeScheduler.finishAllTillTime(event.startedTime);
         console.log("################# finished with timeScheduler events #####################");
 
+        event.setPointers();
         event.isFinished = false;
         layer.eventScheduler.addEvent(event);
 

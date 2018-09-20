@@ -73,8 +73,14 @@ UiPlaceItemMenu.prototype.removeFromPlaceObjects = function (object) {
 
 // adds object entry to observable array
 UiPlaceItemMenu.prototype.addToPlaceObjects = function (object) {
-    var pos = this.objectsToPlace().indexOf(object._id());
-    if (pos ==-1){
+    var found = false;
+    for (var i=0;i<this.objectsToPlace().length; i++){
+        var arrayObject = this.objectsToPlace()[i];
+        if (arrayObject._id ==object._id()){
+            var found = true;
+        }
+    }
+    if (!found){
         this.objectsToPlace.push(this.makeObjectEntry(object))
     }
 };
