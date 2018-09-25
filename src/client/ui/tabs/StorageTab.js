@@ -1,38 +1,32 @@
 var StorageTab = function (mapObj) {
 
+    var self = this;
+
     this.mapObj = mapObj;
-    this.resStorageBlock = this.mapObj.blocks.ResourceStorageManager;
-
-    // type vars:
-    var resTypeIds = this.resStorageBlock.ressourceTypeIds;
-    var resCap = this.resStorageBlock.ressourceCapacity;
-
-    // state vars:
-    var resStored = this.resStorageBlock.ressourceStoredAmount();
-    var resLastUpdate = this.resStorageBlock.ressourceLastUpdated();
-    var resChangePerSec = this.resStorageBlock.ressourceChangePerSec();
-
     var resObservables = [];
-    for (var i= 0, len=resTypeIds.length; i<len; i++){
-        var resType = game.ressourceTypes.hashList[resTypeIds[i]];
-        var storedAmount = resStored[i];
-        if (!storedAmount){
-            storedAmount = 0;
-        }
-        var res = {
-            _id: ko.observable(resTypeIds[i]),
-            iconSpritesheetId: resType.iconSpritesheetId,
-            iconSpriteFrame: resType.iconSpriteFrame,
-            amount: storedAmount,
-            cap: resCap[i]
-        };
-        resObservables.push(res);
+
+    if (this.mapObj.blocks.hasOwnProperty("ResourceStorageManager")) {
+        this.resStorageBlock = this.mapObj.blocks.ResourceStorageManager;
+
+        // type vars:
+        var resTypeIds = this.resStorageBlock.ressourceTypeIds;
+        var resCap = this.resStorageBlock.ressourceCapacity;
+        var resList = this.resStorageBlock.resList;
+
+        resList.each(function(resStorage) {
+            var resViewModel = new ResourceViewModel(resStorage);
+            resObservables.push(resViewModel);
+        });
+
     }
+
+
     this.resTypes = ko.observableArray(resObservables);
-
-
-
 
 };
 
-
+StorageTab.prototype.tick = function() {
+    ko.utils.arrayForEach(this.resTypes(), function(resType) {
+        resType.refresh();
+    });
+};
