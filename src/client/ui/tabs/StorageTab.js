@@ -5,8 +5,8 @@ var StorageTab = function (mapObj) {
     this.mapObj = mapObj;
     var resObservables = [];
 
-    if (this.mapObj.blocks.hasOwnProperty("ResourceStorageManager")) {
-        this.resStorageBlock = this.mapObj.blocks.ResourceStorageManager;
+    if (this.mapObj.blocks.hasOwnProperty("ResourceManager")) {
+        this.resStorageBlock = this.mapObj.blocks.ResourceManager;
 
         // type vars:
         var resTypeIds = this.resStorageBlock.ressourceTypeIds;
