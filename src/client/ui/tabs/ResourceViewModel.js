@@ -11,6 +11,8 @@ var ResourceViewModel = function(resStorage){
     this.iconSpriteFrame = resType.iconSpriteFrame;
     this.amount = ko.observable(0);
     this.cap = resStorage.capacity;
+    this.changePerHour = resStorage.changePerHour;
+    this.hubEffective = resStorage.hubEffective;
 
     this.timeIntervalMillisecond = ko.computed(function() {
         var resChangePerHour = self.resStorage.changePerHour();
