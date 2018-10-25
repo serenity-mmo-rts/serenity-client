@@ -32,7 +32,7 @@ var LayerView = function(client){
     //  this.UiPlaceItemMenu = new UiPlaceItemMenu(this);
    // this.uiContainer.addContentPanel(this.UiPlaceItemMenu.content, {visible: true, barPos: 'topleft', posInBar: 1});
     this.uiPlaceItemMenu = new UiPlaceItemMenu( this );
-    this.uiContainer.addContentPanel(createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/uiPlaceItemMenu.html'), {visible: true, barPos: 'topleft', posInBar: 1});
+    this.uiContainer.addContentPanel(createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/UiPlaceItemMenu.html'), {visible: true, barPos: 'topleft', posInBar: 1});
 
    // var uiPlaceItemMenuPanel = createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/uiPlaceItemMenu.html');
    // $("#uiPlaceItemMenuPlaceholder").append(uiPlaceItemMenuPanel);
@@ -45,7 +45,7 @@ var LayerView = function(client){
     $("#buildMenuPlaceholder").append(buildMenuPanel);
 
     this.itemContextMenu = new ItemContextMenu();
-    var itemContextMenuPanel = createKnockoutPanel(this.itemContextMenu, 'itemContextMenu', 'ui/itemContextMenu.html');
+    var itemContextMenuPanel = createKnockoutPanel(this.itemContextMenu, 'itemContextMenu', 'ui/ItemContextMenu.html');
     $("#itemContextMenuPlaceholder").append(itemContextMenuPanel);
     this.itemContextMenu.init();
 
