@@ -36,12 +36,12 @@ Client.prototype.init = function() {
     //socket = io.connect(window.location.href);
     socket = io.connect("http://localhost:8080/");
 
-    socket.socket.on('error', function (reason){
+    socket.on('error', function (reason){
         console.error('Unable to connect Socket.IO', reason);
     });
 
     socket.on('connect', function (){
-        console.info('successfully established a working connection with type '+socket.socket.transport.name);
+        console.info('successfully established a working connection with type '+socket.io.engine.transport.name);
         ntp.init(socket);
         //setInterval(function () {
         //    console.log("time offset "+ntp.offset());
