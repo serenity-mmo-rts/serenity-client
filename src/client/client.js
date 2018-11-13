@@ -48,35 +48,29 @@ Client.prototype.init = function() {
         //}, 5000);
     });
 
-    loginForm = new Login(socket);
+    this.loginForm = new Login(socket);
 
     socket.on('loginPrompt', (function(){
-        loginForm.show();
+        self.loginForm.show();
     }));
 
     socket.on('loggedIn', (function(data){
-        loginForm.close();
+        self.loginForm.close();
         console.log("logged in");
         self.userId = data.userId;
         self.name = data.userName;
         uc.layerView.uiGlobalMenu.updateUserName(data.userName);
-
         self.loadUserdata();
-/*
-        console.log("check if gameData loaded: "+self.gameDataLoaded);
-        if (self.gameDataLoaded) {
-            self.loadUserdata();
-        }
-        else {
-            self.onGameDataLoaded['loggedIn'] = function () {
-                self.loadUserdata();
-                delete self.onGameDataLoaded['loggedIn'];
-            };
-            console.log("added callback to onGameDataLoaded")
-        }*/
-
     }));
 
+    socket.on('loggedOut', (function(data){
+        console.log("logged out");
+        self.userId = null;
+        self.name = null;
+        self.userDataLoaded = false;
+        uc.layerView.uiGlobalMenu.setUserData(null);
+        self.loginForm.show();
+    }));
 
     socket.on('spritesheets', (function(spritesheets){
         game.spritesheets = new GameList(Spritesheet,spritesheets);
@@ -114,7 +108,7 @@ Client.prototype.init = function() {
         //var layer = game.layers.get(event.mapId);
 
         //game.layers.get(event.mapId).eventScheduler.addEvent(event);
-        console.info("received a new event from server via "+socket.socket.transport.name);
+        console.info("received a new event from server via "+socket.io.engine.transport.name);
 
         // check if this is an event that was originating from this client:
         var originalId = event.oldId;
@@ -177,18 +171,18 @@ Client.prototype.init = function() {
     }));
 
     socket.emit('ready');
-}
+};
 
 Client.prototype.loadUserdata = function() {
     var self = this;
     socket.emit('getUserData',{}, function(user) {
         if (user) {
-            var existingUserObj = game.users.get(user.internal._id);
-            if (existingUserObj){
-                existingUserObj.load(user.internal);
+            var userObj = game.users.get(user.internal._id);
+            if (userObj){
+                userObj.load(user.internal);
             }
             else {
-                var userObj = new User(game, user.internal);
+                userObj = new User(game, user.internal);
                 game.users.add(userObj);
             }
             self.userDataLoaded = true;
@@ -244,6 +238,11 @@ Client.prototype.registerComponents = function(){
         template: { require: 'text!ui/SpriteComponent.html' }
     });
 
+};
+
+
+Client.prototype.logout = function() {
+    self.socket.emit('logout');
 };
 
 Client.prototype.loadMap = function(mapId) {

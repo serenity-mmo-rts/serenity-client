@@ -35,16 +35,13 @@ var UiGlobalMenu = function ( layerView ) {
 UiGlobalMenu.prototype.setUserData = function (userData) {
     this.userData = userData;
 
-    this.createDivs();
-    /*
-    // @Caspar: guck hier mal drüber... irgendwie macht das wenig sinn, daher habe ich es auskommentiert:
+    if (userData){
+        this.createDivs();
+    }
+    else {
+        this.userContainer.empty();
+    }
 
-    // ERROR: userName does not exist in class User
-    userData.userName.subscribe(function(newValue) {
-        // ERROR: self is not defined
-      self.userName(); // update ui conainer
-    });
-    */
 };
 
 UiGlobalMenu.prototype.createDivs = function() {
@@ -65,12 +62,19 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
 
     var self = this;
 
-        var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.container);
-        openParentLayerBtn.click(function (e) {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            uc.loadMap(self.parentLayerId());
-        });
+    var openParentLayerBtn = $('<input id="openParentLayer" type="button" value="openParentLayer"/>').appendTo(this.container);
+    openParentLayerBtn.click(function (e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        uc.loadMap(self.parentLayerId());
+    });
+
+    var logoutBtn = $('<input id="logout" type="button" value="Logout"/>').appendTo(this.container);
+    logoutBtn.click(function (e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        uc.logout();
+    });
 
 };
 
