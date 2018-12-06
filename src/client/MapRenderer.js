@@ -28,17 +28,24 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.resContainer.alpha = 0.5;
 
-
-    this.bgMap = new ResAndBgWrapper(this,this.bgContainer,this.mapId,"background");
-
-    this.resourceMap = new ResAndBgWrapper(this,this.resContainer,this.mapId,"resource");
-
-
-    this.tempObj;
-    this.tempObjBitmap;
+    this.mapData = game.layers.get(this.mapId);
 
     this.layer = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.layer.mapTypeId());
+
+    this.bgMap = new ResourceMap(this, this.mapData.mapProperties, this.mapId, this.bgContainer);
+    //this.resourceMap = new ResourceMap(this, this.mapData.mapProperties, this.mapId, this.resContainer);
+
+    this.bgMap.initQuadtree(this.resTypeId);
+    //this.resourceMap.initQuadtree(this.resTypeId);
+
+    this.bgMap.checkRendering();
+    //this.resourceMap.checkRendering();
+
+    //this.bgMap = new ResAndBgWrapper(this,this.bgContainer,this.mapId,"background");
+    //this.resourceMap = new ResAndBgWrapper(this,this.resContainer,this.mapId,"resource");
+
+
 
     /*
     this.layer.mapData.objectChangedCallback = function(mapObject) {

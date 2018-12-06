@@ -29,6 +29,7 @@ UiBgMap.prototype.setResMap = function(ressourceMapWrapper) {
         }
         else {
             self.resourceMap.addOverlay($(this).val());
+            self.resourceMap.checkRendering();
         }
     });
 
