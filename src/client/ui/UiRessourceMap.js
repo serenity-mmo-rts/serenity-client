@@ -17,21 +17,24 @@ UiRessourceMap.prototype.setResMap = function(ressourceMapWrapper) {
     var self = this;
 
     this.resourceMap = ressourceMapWrapper;
-    this.resTypes = ressourceMapWrapper.mapData.mapProperties.resTypes;
 
-    this.s.empty();
-    $('<option />', {value: 'off', text: 'Off'}).appendTo(this.s);
-    for (var i in this.resTypes) {
-        $('<option />', {value: this.resTypes[i]._id, text: this.resTypes[i].name}).appendTo(this.s);
+    if (typeof ressourceMapWrapper !== "undefined") {
+        this.resTypes = ressourceMapWrapper.mapData.mapProperties.resTypes;
+
+        this.s.empty();
+        $('<option />', {value: 'off', text: 'Off'}).appendTo(this.s);
+        for (var i in this.resTypes) {
+            $('<option />', {value: this.resTypes[i]._id, text: this.resTypes[i].name}).appendTo(this.s);
+        }
+
+        $(this.s).change(function () {
+            if ($(this).val() == 'off') {
+                self.resourceMap.removeOverlay();
+            }
+            else {
+                self.resourceMap.addOverlay($(this).val());
+            }
+        });
     }
-
-    $(this.s).change(function () {
-        if ($(this).val() == 'off') {
-            self.resourceMap.removeOverlay();
-        }
-        else {
-            self.resourceMap.addOverlay($(this).val());
-        }
-    });
 
 };

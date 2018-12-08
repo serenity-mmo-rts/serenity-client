@@ -1,64 +1,70 @@
-var ResourceMap = function (mapRenderer, resMap, mapId, resContainer, type) {
+var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
     this.map = resMap;
     this.container = resContainer;
 
-    this.type = type;
-
     this.mapData = game.layers.get(this.mapId);
     this.mapType = game.layerTypes.get(this.mapData.mapTypeId);
 
-    this.mapWidth = this.mapData.width;
-    this.mapHeight = this.mapData.height;
+    this.mapWidth = this.mapData.width();
+    this.mapHeight = this.mapData.height();
+    this.mapRenderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
+    this.mapRenderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
 
     this.debugTiles = false;
-    this.debugLog = false;
+    this.debugLog = true;
 
     this.finishedLoadingCallback  = null;
     this.finishedScreenLoadingCallback  = null;
     this.updatingDisabled = false;
 
-    this.bmpResolutionToPixelScaling = 2;  // this variable can be increased to reduce cpu strain
-    this.numTilesOnScreen = 2; // this variable controls the number of tiles
+    // bmpResolution is always fixed to:
+    this.bitmapNumScales = 8;
+    this.bmpResolutionX = Math.pow(2, this.bitmapNumScales);
+    this.bmpResolutionY = Math.pow(2, this.bitmapNumScales)/2;
 
-    this.bmpToRenderScaling = this.bmpResolutionToPixelScaling / this.mapRenderer.mapContainer.zoom;
-    this.bmpResolutionX = Math.ceil(window.innerWidth / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
-    this.bmpResolutionY = Math.ceil(window.innerHeight / (this.numTilesOnScreen * this.bmpResolutionToPixelScaling));
-    this.bmpRenderSizeX = this.bmpResolutionX * this.bmpToRenderScaling;
-    this.bmpRenderSizeY = this.bmpResolutionY * this.bmpToRenderScaling;
-    if (this.debugLog) console.log("new RessourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
+    this.containerPerScale  = [];
+    this.maxScale = 20;
+    for (var scale = 0; scale <= this.maxScale; scale++) {
+        this.containerPerScale[scale] = new createjs.Container();
+        this.container.addChildAt(this.containerPerScale[scale], scale);
+    }
+    // each containerPerScale stores bitmaps at a specific map resolution:
+    // containerPerScale[0] contains 1  bitmap  spanning the whole map
+    // containerPerScale[1] contains 4  bitmaps spanning the whole map
+    // containerPerScale[2] contains 16 bitmaps spanning the whole map
+    // etc
 
     this.sourcesQuadTree = null;
-
     this.progressBar = null;
 };
 
 
 ResourceMap.prototype.enableProgressBar = function () {
     this.progressBar = new ProgressBar();
-}
+};
 
 ResourceMap.prototype.disableProgressBar = function () {
     if (this.progressBar != null) {
         this.progressBar.destroy();
         this.progressBar = null;
     }
-}
+};
 
 ResourceMap.prototype.initQuadtree = function (resTypeId) {
     if (this.debugLog) console.log("generate quadtree");
 
-    var renderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
-    var renderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
+    var renderWidth = this.mapRenderWidth;
+    var renderHeight = this.mapRenderHeight;
 
     var bounds = {
         x: -renderWidth/2,
         y: -renderHeight/2,
         width: renderWidth,
         height: renderHeight
-    }
+    };
 
     this.sourcesQuadTree = new QuadTree(bounds);
 
@@ -83,88 +89,151 @@ ResourceMap.prototype.initQuadtree = function (resTypeId) {
                 v: this.map.sources[i].v});
         }
     }
-}
+};
+
+ResourceMap.prototype.resize = function () {
+    this.checkRendering();
+};
 
 ResourceMap.prototype.checkRendering = function () {
 
     var self = this;
 
     if (this.updatingDisabled) {
-        if (this.debugLog) console.log("disabled update of resourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
         this.disableProgressBar();
     }
     else {
-        var xoff = this.mapRenderer.mainContainer.x;
-        var yoff = this.mapRenderer.mainContainer.y;
 
-        var centerBmpX = Math.round(-xoff / this.bmpRenderSizeX);
-        var centerBmpY = Math.round(-yoff / this.bmpRenderSizeY);
+        //console.log("this.mapRenderWidth="+this.mapRenderWidth+" this.mapRenderHeight="+this.mapRenderHeight);
 
-        var numTilesPerSide = 3 * this.numTilesOnScreen / 2;
+        var xoff = - this.mapRenderer.mainContainer.x + this.mapRenderWidth/2;
+        var yoff = - this.mapRenderer.mainContainer.y + this.mapRenderHeight/2;
+        var zoom = this.mapRenderer.mapContainer.zoom;
 
-        for (var i = this.container.children.length - 1; i >= 0; i--) {
-            var bmpObj = this.container.children[i];
-            var DistanceX = Math.abs(bmpObj.x + xoff);
-            var DistanceY = Math.abs(bmpObj.y + yoff);
+        //console.log("check rendering at xoff="+xoff+ " yoff="+yoff+" zoom="+zoom);
 
-            if (DistanceX <= (numTilesPerSide + 0.5) * this.bmpRenderSizeX && DistanceY <= (numTilesPerSide + 0.5) * this.bmpRenderSizeY) {
-                //console.log("keep bmp with name="+bmpObj.name)
-            }
-            else {
-                //console.log("remove bmp with name=" + bmpObj.name)
-                this.container.removeChildAt(i);
-            }
+        // calculate desired scale:
+        function log2(number) {
+            return Math.log(number) / Math.log(2);
         }
 
-        var counter = 0;
-        var numTilesInRing = 1;
-        for (var radFromCenter = 0; radFromCenter <= numTilesPerSide; radFromCenter++) {
-            for (var bmpX = centerBmpX - radFromCenter; bmpX <= centerBmpX + radFromCenter; bmpX++) {
-                var isFirstOrLast = (Math.abs(bmpX - centerBmpX) == radFromCenter);
-                for (var bmpY = centerBmpY - radFromCenter; bmpY <= centerBmpY + radFromCenter; bmpY=isFirstOrLast?(bmpY+1):(bmpY+2*radFromCenter)) {
-                    counter++;
-                    var bmpName = "x" + bmpX + "y" + bmpY;
-                    var existObj = this.container.getChildByName(bmpName);
-                    if (existObj == null) {
-                        if (this.debugLog) console.log("start adding bmpObj at radFromCenter=" +radFromCenter+ " with name=" + bmpName + " to resourceMap with bmpToRenderScaling=" + this.bmpToRenderScaling);
+        var optimal_scale = Math.round(log2((zoom*this.mapRenderWidth) / (this.bmpResolutionX)));
+        var minScale = optimal_scale-1;
+        var desiredScale = optimal_scale-1;
 
-                        //var resData = this.genResData((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
-                        //var bmpObj = this.genBitmapFromResData(resData);
+        for (var scale = minScale; scale <= desiredScale; scale+=2) {
 
-                        var bmpObj = this.genBitmapFromPlanetGenerator((bmpX - 0.5) * this.bmpRenderSizeX, (bmpX + 0.5) * this.bmpRenderSizeX, (bmpY - 0.5) * this.bmpRenderSizeY, (bmpY + 0.5) * this.bmpRenderSizeY);
+            //console.log("start rendering at scale="+scale);
 
-                        bmpObj.name = bmpName;
-                        bmpObj.x = this.bmpRenderSizeX * bmpX;
-                        bmpObj.y = this.bmpRenderSizeY * bmpY;
-                        //console.log("add bmpObj with name=" + bmpObj.name + " x=" + bmpObj.x + " y=" + bmpObj.y);
-                        bmpObj.regX = this.bmpResolutionX / 2;
-                        bmpObj.regY = this.bmpResolutionY / 2;
-                        this.container.addChild(bmpObj);
+            var totalDepth = scale + this.bitmapNumScales;
+            var numInScale = Math.pow(2, scale);
+            var bmpRenderSizeX = this.mapRenderWidth / numInScale;
+            var bmpRenderSizeY = this.mapRenderHeight / numInScale;
 
-                        //update progress bar:
-                        if (this.progressBar != null) {
-                            this.progressBar.progress(Math.round(100*counter/(4*numTilesPerSide*numTilesPerSide)));
+            var centerBmpX = Math.floor(xoff / bmpRenderSizeX);
+            var centerBmpY = Math.floor(yoff / bmpRenderSizeY);
+
+            var counter = 0;
+            var foundTile = true; // search as long as there is something missing:
+            for (var radFromCenter = 0; foundTile; radFromCenter++) {
+                foundTile = false;
+                for (var bmpXidx = centerBmpX - radFromCenter; bmpXidx <= centerBmpX + radFromCenter; bmpXidx++) {
+                    var isFirstOrLast = (Math.abs(bmpXidx - centerBmpX) == radFromCenter);
+                    for (var bmpYidx = centerBmpY - radFromCenter; bmpYidx <= centerBmpY + radFromCenter; bmpYidx = isFirstOrLast ? (bmpYidx + 1) : (bmpYidx + 2 * radFromCenter)) {
+                        counter++;
+
+                        var bmpName = "x" + bmpXidx + "y" + bmpYidx;
+
+                        var bmpxmin = (bmpXidx + numInScale/2) * this.bmpResolutionX;
+                        var bmpxmax = (bmpXidx + numInScale/2 +1) * this.bmpResolutionX;
+                        var bmpymin = (bmpYidx) * this.bmpResolutionY;
+                        var bmpymax = (bmpYidx+1) * this.bmpResolutionY;
+
+                        // check distance between tile-rect and screen-rect:
+                        var render_x = (bmpXidx+0.5) * bmpRenderSizeX;
+                        var render_y = (bmpYidx+0.5) * bmpRenderSizeY;
+                        //console.log("bmpXidx="+bmpXidx+" bmpYidx="+bmpYidx+" render_x="+render_x+" render_y="+render_y);
+
+                        var h_diff = Math.abs(render_x - xoff);
+                        var v_diff = Math.abs(render_y - yoff);
+                        //console.log("h_diff="+h_diff+" v_diff="+v_diff+" bmpRenderSizeX="+bmpRenderSizeX+" bmpRenderSizeY="+bmpRenderSizeY);
+                        if (h_diff - bmpRenderSizeX*0.5 <= 1.1*window.innerWidth/zoom &&
+                            v_diff - bmpRenderSizeY*0.5 <= 1.1*window.innerHeight/zoom) {
+
+                            foundTile = true; // it will continue with radius search
+
+                            var existObj = this.containerPerScale[scale].getChildByName(bmpName);
+                            if (existObj == null) {
+
+                                var bmpObj = this.genBitmapFromPlanetGenerator(bmpxmin, bmpxmax, bmpymin, bmpymax, totalDepth);
+
+                                bmpObj.name = bmpName;
+                                bmpObj.x = render_x - this.mapRenderWidth/2;
+                                bmpObj.y = render_y - this.mapRenderHeight/2;
+                                bmpObj.regX = this.bmpResolutionX / 2;
+                                bmpObj.regY = this.bmpResolutionY / 2;
+                                bmpObj.scaleX = this.mapRenderWidth / (this.bmpResolutionX * numInScale);
+                                bmpObj.scaleY = this.mapRenderHeight / (this.bmpResolutionY * numInScale);
+
+                                if (this.debugTiles) {
+                                    bmpObj.scaleX *= 0.99;
+                                    bmpObj.scaleY *= 0.99;
+                                }
+                                else {
+                                    var browser=navigator.userAgent.toLowerCase();
+                                    if(browser.indexOf('firefox') > -1) {
+                                        bmpObj.scaleX *= 1.001;
+                                        bmpObj.scaleY *= 1.001;
+                                    }
+                                }
+                                if (this.debugLog) {
+                                    console.log("added bmpObj at scale="+scale+" radFromCenter=" + radFromCenter + " with name=" + bmpName + " and with x=" + bmpObj.x + " y=" + bmpObj.y);
+                                }
+
+                                this.containerPerScale[scale].addChild(bmpObj);
+
+                                //update progress bar:
+                                if (this.progressBar != null) {
+                                    this.progressBar.progress(Math.round(100 * counter / (4 * numTilesPerSide * numTilesPerSide)));
+                                }
+
+                                //check if screen is fully loaded:
+                                if (this.finishedScreenLoadingCallback != null && radFromCenter > this.numTilesOnScreen / 2) {
+                                    this.finishedScreenLoadingCallback(this);
+                                }
+
+                                //do non-blocking recall of this function using setInterval:
+                                setTimeout(function () {
+                                    self.checkRendering();
+                                }, 40);
+                                return;
+                            }
                         }
-
-                        //check if screen is fully loaded:
-                        if (this.finishedScreenLoadingCallback != null && radFromCenter > this.numTilesOnScreen / 2) {
-                            this.finishedScreenLoadingCallback(this);
-                        }
-
-                        //do non-blocking recall of this function using setInterval:
-                        setTimeout(function () {
-                            self.checkRendering();
-                        }, 100);
-                        return;
                     }
                 }
             }
 
 
+            /*
+            // remove tiles that are far away from screen:
+            for (var i = this.containerPerScale[scale].children.length - 1; i >= 0; i--) {
+                var bmpObj = this.containerPerScale[scale].children[i];
+                var DistanceX = Math.abs(bmpObj.x + xoff);
+                var DistanceY = Math.abs(bmpObj.y + yoff);
+
+                if (DistanceX <= (numTilesPerSide + 0.5) * this.bmpRenderSizeX && DistanceY <= (numTilesPerSide + 0.5) * this.bmpRenderSizeY) {
+                    //console.log("keep bmp with name="+bmpObj.name)
+                }
+                else {
+                    //console.log("remove bmp with name=" + bmpObj.name)
+                    this.containerPerScale[scale].removeChildAt(i);
+                }
+            }
+            */
 
         }
 
-        //console.log("all tiles loaded");
+        console.log("all tiles loaded");
 
         this.disableProgressBar();
 
@@ -176,22 +245,21 @@ ResourceMap.prototype.checkRendering = function () {
 
 };
 
+/**
+ * specify parameter rect within the targetDepth resolution (i.e. if targetDepth==8, then bmpxmax=256 is the end of map)
+ * @param bmpxmin
+ * @param bmpxmax
+ * @param bmpymin
+ * @param bmpymax
+ * @param targetDepth
+ * @returns {*}
+ */
+ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax, targetDepth) {
 
-ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, bmpymin, bmpymax) {
-
-    var targetDepth = 14;
     var xpos = bmpxmin + Math.pow(2,targetDepth)/2;
     var ypos = bmpymin + Math.pow(2,targetDepth)/2;
     var width = (bmpxmax-bmpxmin);
     var height = (bmpymax-bmpymin);
-
-    targetDepth = targetDepth - this.bmpToRenderScaling;//planetMap.getDepthAtNormalZoom();
-    xpos = xpos / this.bmpToRenderScaling;
-    ypos = ypos / this.bmpToRenderScaling;
-    width = width / this.bmpToRenderScaling;
-    height = height / this.bmpToRenderScaling;
-
-
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;
@@ -222,21 +290,8 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     ctx.putImageData(imgData, 0, 0);
 
     var bmp = new createjs.Bitmap(mycanvas);
-    if (this.debugTiles) {
-        bmp.scaleX = this.bmpToRenderScaling*0.99;
-        bmp.scaleY = this.bmpToRenderScaling*0.99;
-    }
-    else {
-        bmp.scaleX = this.bmpToRenderScaling;
-        bmp.scaleY = this.bmpToRenderScaling;
-        var browser=navigator.userAgent.toLowerCase();
-        if(browser.indexOf('firefox') > -1) {
-            bmp.scaleX *= 1.001;
-            bmp.scaleY *= 1.001;
-        }
-    }
     return bmp;
-}
+};
 
 
 
@@ -330,6 +385,7 @@ ResourceMap.prototype.genResData = function (bmpxmin, bmpxmax, bmpymin, bmpymax)
 
 };
 
+/*
 ResourceMap.prototype.genBitmapFromResData = function (resData) {
     var mycanvas = document.createElement("canvas");
     mycanvas.width = this.bmpResolutionX;
@@ -365,12 +421,12 @@ ResourceMap.prototype.genBitmapFromResData = function (resData) {
     }
     return bmp;
 }
-
+*/
 
 ResourceMap.prototype.GetHotColour = function (v, vmin, vmax) {
     var resDataScaled = Math.round(255 * (v-vmin)/(vmax - vmin));
     return {r: resDataScaled, g: 0, b: 255 - resDataScaled};
-}
+};
 
 
 ResourceMap.prototype.newFilledArray = function (len, val) {
@@ -379,11 +435,11 @@ ResourceMap.prototype.newFilledArray = function (len, val) {
         rv[len] = val;
     }
     return rv;
-}
+};
 
 ResourceMap.prototype.wrapIndex = function (i, i_max) {
     return ((i % i_max) + i_max) % i_max;
-}
+};
 
 ResourceMap.prototype.addFinishedLoadingCallback = function (fcn) {
     this.finishedLoadingCallback  = fcn;

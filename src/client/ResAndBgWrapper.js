@@ -58,7 +58,7 @@ ResAndBgWrapper.prototype.loadOverlay = function() {
 
 
     if (this.resTypeId != null) {
-        console.log("start to generate new resource map overlay in background...")
+        console.log("start to generate new resource map overlay in background...");
 
         this.backgroundContainer = new createjs.Container();
         this.mapBackgroundLoading = new ResourceMap(this.mapRenderer, this.mapData.mapProperties, this.mapId, this.backgroundContainer, this.type);

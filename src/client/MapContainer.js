@@ -124,8 +124,8 @@ var MapContainer = function(mapId){
      this.zoomBgImageContainer.scaleX = zoomGround;
      this.zoomBgImageContainer.scaleY = zoomGround;
 
-     this.map.resourceMap.addOverlay();
-     this.map.bgMap.addOverlay();
+     //this.map.resourceMap.addOverlay();
+     //this.map.bgMap.addOverlay();
      this.map.checkRendering();
 
      this.stage.update();
