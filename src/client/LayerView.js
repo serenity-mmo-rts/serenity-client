@@ -12,6 +12,8 @@ var LayerView = function(client){
     this.userData = null;
     this.mapLoaded = false;
 
+    this.rgbMapName = ko.observable('linearMappingOfHeight');
+
     this.loadedMapId = ko.observable(0);
 
     window.addEventListener('resize',function(){self.resize()}, false);
@@ -51,7 +53,7 @@ var LayerView = function(client){
     this.uiObjectContextPanel.hide(0);
 
 
-    this.minimap = new Minimap();
+    this.minimap = new Minimap(this);
     this.minimapPanel = new UiSlidingPanelRight(0,3,this.minimap.canvas);
     this.minimap.init();
 
@@ -59,7 +61,7 @@ var LayerView = function(client){
     this.uiRessourceMapPanel = new UiSlidingPanelRight(150,2,this.uiRessourceMap.content );
     this.uiRessourceMapPanel.show(0);
 
-    this.uiBgMap = new UiBgMap();
+    this.uiBgMap = new UiBgMap(this);
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
     this.uiBgMapPanel.show(0);
 
@@ -71,7 +73,7 @@ var LayerView = function(client){
 
 LayerView.prototype.loadMap = function (mapId) {
     var self = this;
-    this.mapContainerTempLoading = new MapContainer(mapId);
+    this.mapContainerTempLoading = new MapContainer(this, mapId);
     this.mapContainerTempLoading.map.callbackFinishedLoading = function (){
         self.finishedLoadingMap();
     };

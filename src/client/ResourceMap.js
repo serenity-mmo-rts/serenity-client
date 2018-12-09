@@ -1,4 +1,5 @@
 var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
+    var self = this;
 
     this.mapId = mapId;
     this.mapRenderer = mapRenderer;
@@ -13,8 +14,14 @@ var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
     this.mapRenderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
     this.mapRenderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
 
+    this.rgbMapName = this.mapRenderer.mapContainer.layerView.rgbMapName;
+    this.rgbMapName.subscribe(function() {
+        self.clearAndInitBitmapCache();
+        self.checkRendering();
+    });
+
     this.debugTiles = false;
-    this.debugLog = true;
+    this.debugLog = false;
 
     this.finishedLoadingCallback  = null;
     this.finishedScreenLoadingCallback  = null;
@@ -25,22 +32,30 @@ var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
     this.bmpResolutionX = Math.pow(2, this.bitmapNumScales);
     this.bmpResolutionY = Math.pow(2, this.bitmapNumScales)/2;
 
-    this.containerPerScale  = [];
+
     this.maxScale = 20;
-    for (var scale = 0; scale <= this.maxScale; scale++) {
-        this.containerPerScale[scale] = new createjs.Container();
-        this.container.addChildAt(this.containerPerScale[scale], scale);
-    }
+    this.containerPerScale  = [];
+    this.clearAndInitBitmapCache();
+
+    this.sourcesQuadTree = null;
+    this.progressBar = null;
+};
+
+ResourceMap.prototype.clearAndInitBitmapCache = function() {
+    this.containerPerScale  = [];
+    this.container.removeAllChildren();
+
     // each containerPerScale stores bitmaps at a specific map resolution:
     // containerPerScale[0] contains 1  bitmap  spanning the whole map
     // containerPerScale[1] contains 4  bitmaps spanning the whole map
     // containerPerScale[2] contains 16 bitmaps spanning the whole map
     // etc
 
-    this.sourcesQuadTree = null;
-    this.progressBar = null;
+    for (var scale = 0; scale <= this.maxScale; scale++) {
+        this.containerPerScale[scale] = new createjs.Container();
+        this.container.addChildAt(this.containerPerScale[scale], scale);
+    }
 };
-
 
 ResourceMap.prototype.enableProgressBar = function () {
     this.progressBar = new ProgressBar();
@@ -268,7 +283,7 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var imgData = ctx.createImageData(width, height);
 
     var tmpMapGenerator = this.mapData.mapGenerator.getSeededCopy();
-    var rgb = tmpMapGenerator.getMatrix(xpos,2*ypos,width,2*height,targetDepth,"rgb",true); // x,y, width, height, dept
+    var rgb = tmpMapGenerator.getMatrix(xpos,2*ypos,width,2*height,targetDepth,this.rgbMapName(),true); // x,y, width, height, dept
 
     var r = rgb.r;
     var g = rgb.g;

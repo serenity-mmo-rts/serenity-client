@@ -1,9 +1,10 @@
 
  // contains the container structure of Easeljs, zoom,  entry points of containers etc.*/
-var MapContainer = function(mapId){
+var MapContainer = function(layerView,mapId){
 
     var self = this;
 
+    this.layerView = layerView;
     this.mapId = mapId;
 
 

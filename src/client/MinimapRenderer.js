@@ -1,6 +1,12 @@
-var Minimap = function(){
-
+var Minimap = function(layerView){
+    var self = this;
+    this.layerView = layerView;
     this.targetDepth = 8;
+
+    this.rgbMapName = this.layerView.rgbMapName;
+    this.rgbMapName.subscribe(function() {
+        self.draw();
+    });
 
     this.w = 256;
     this.h = this.w/2;
@@ -25,7 +31,7 @@ Minimap.prototype.init = function() {
     this.stage.y = 0;
     this.stage.x = 0;
     this.stage.mouseMoveOutside = true;
-}
+};
 
 Minimap.prototype.setMapControl = function(mapControl) {
 
@@ -87,7 +93,7 @@ Minimap.prototype.genBitmapFromPlanetGenerator = function(targetDepth) {
     var height = Math.pow(2,targetDepth);
 
     var tmpMapGenerator = this.layer.mapGenerator.getSeededCopy();
-    var rgb = tmpMapGenerator.getMatrix(xpos, ypos, width, height, targetDepth, "rgb"); // x,y, width, height, depth
+    var rgb = tmpMapGenerator.getMatrix(xpos, ypos, width, height, targetDepth, this.rgbMapName()); // x,y, width, height, depth
 
     var mycanvas = document.createElement("canvas");
     mycanvas.width = width;
