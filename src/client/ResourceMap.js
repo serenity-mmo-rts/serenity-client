@@ -39,6 +39,8 @@ var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
 
     this.sourcesQuadTree = null;
     this.progressBar = null;
+
+    this.checkRenderingAlreadyRunning = false;
 };
 
 ResourceMap.prototype.clearAndInitBitmapCache = function() {
@@ -112,6 +114,16 @@ ResourceMap.prototype.resize = function () {
 
 ResourceMap.prototype.checkRendering = function () {
 
+    if (this.checkRenderingAlreadyRunning) {
+        return;
+    }
+    else {
+        this.checkRenderingAlreadyRunning = true;
+        this.checkRenderingNextRun();
+    }
+};
+
+ResourceMap.prototype.checkRenderingNextRun = function() {
     var self = this;
 
     if (this.updatingDisabled) {
@@ -219,7 +231,7 @@ ResourceMap.prototype.checkRendering = function () {
 
                                 //do non-blocking recall of this function using setInterval:
                                 setTimeout(function () {
-                                    self.checkRendering();
+                                    self.checkRenderingNextRun();
                                 }, 40);
                                 return;
                             }
@@ -250,6 +262,7 @@ ResourceMap.prototype.checkRendering = function () {
 
         console.log("all tiles loaded");
 
+        this.checkRenderingAlreadyRunning = false;
         this.disableProgressBar();
 
         if ( this.finishedLoadingCallback != null) {
@@ -257,8 +270,7 @@ ResourceMap.prototype.checkRendering = function () {
         }
 
     }
-
-};
+}
 
 /**
  * specify parameter rect within the targetDepth resolution (i.e. if targetDepth==8, then bmpxmax=256 is the end of map)

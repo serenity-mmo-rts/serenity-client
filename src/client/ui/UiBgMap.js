@@ -9,6 +9,10 @@ var UiBgMap = function (layerView) {
     this.selectMapBgType = $('<select />').addClass("ui-widget ui-widget-content ui-state-default ui-corner-all").appendTo(this.labelMapBgType);
     $('<option />', {value: 'linearMappingOfHeight', text: 'linear mapping of height'}).appendTo(this.selectMapBgType);
     $('<option />', {value: 'vegetationByHeightRanges', text: 'vegetation by height ranges'}).appendTo(this.selectMapBgType);
+    $('<option />', {value: 'heightGrayscale', text: 'heightGrayscale'}).appendTo(this.selectMapBgType);
+    $('<option />', {value: 'tempGrayscale', text: 'tempGrayscale'}).appendTo(this.selectMapBgType);
+    $('<option />', {value: 'humidityGrayscale', text: 'humidityGrayscale'}).appendTo(this.selectMapBgType);
+    this.selectMapBgType.val(self.layerView.rgbMapName());
     $(this.selectMapBgType).change(function() {
         self.layerView.rgbMapName(self.selectMapBgType.val());
     });

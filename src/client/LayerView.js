@@ -12,7 +12,7 @@ var LayerView = function(client){
     this.userData = null;
     this.mapLoaded = false;
 
-    this.rgbMapName = ko.observable('linearMappingOfHeight');
+    this.rgbMapName = ko.observable('vegetationByHeightRanges');
 
     this.loadedMapId = ko.observable(0);
 
@@ -63,7 +63,7 @@ var LayerView = function(client){
 
     this.uiBgMap = new UiBgMap(this);
     this.uiBgMapPanel = new UiSlidingPanelRight(150,2,this.uiBgMap.content );
-    this.uiBgMapPanel.show(0);
+    this.uiBgMapPanel.hide(0);
 
     this.minimapPanel.addNextPanel(this.uiRessourceMapPanel);
     this.uiRessourceMapPanel.addNextPanel(this.uiBgMapPanel);
