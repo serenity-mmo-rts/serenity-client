@@ -145,10 +145,10 @@ ResourceMap.prototype.checkRenderingNextRun = function() {
         }
 
         var optimal_scale = Math.round(log2((zoom*this.mapRenderWidth) / (this.bmpResolutionX)));
-        var minScale = optimal_scale-1;
+        var minScale = optimal_scale-1;//=1;
         var desiredScale = optimal_scale-1;
 
-        for (var scale = minScale; scale <= desiredScale; scale+=2) {
+        for (var scale = minScale; scale <= desiredScale; scale++) {
 
             //console.log("start rendering at scale="+scale);
 
@@ -302,10 +302,10 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var b = rgb.b;
     var sizeX = rgb.sizeX;
     var data = imgData.data;
-    for (var yDest = 0, ySource=2; yDest < height; yDest++, ySource+=2) {
+    for (var yDest = 0, ySource=0; yDest < height; yDest++, ySource++) {
         var startOfRowDest = width * yDest;
         var startOfRowSource = sizeX * ySource;
-        for (var xDest = 0, xSource=2; xDest < width; xDest++, xSource++) {
+        for (var xDest = 0, xSource=0; xDest < width; xDest++, xSource++) {
             var startOfPixelDest = (startOfRowDest + xDest) *4;
             var startOfPixelSource = (startOfRowSource + xSource);
             data[startOfPixelDest] = r[startOfPixelSource];
