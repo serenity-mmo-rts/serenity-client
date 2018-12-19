@@ -12,12 +12,12 @@ var LayerView = function(client){
     this.userData = null;
     this.mapLoaded = false;
 
-    this.rgbMapName = ko.observable('vegetationByHeightRanges');
+    this.rgbMapName = ko.observable('linearMappingOfHeight');
 
     this.loadedMapId = ko.observable(0);
 
     window.addEventListener('resize',function(){self.resize()}, false);
-    createjs.Ticker.framerate = 60;
+    createjs.Ticker.framerate = 20;
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
     this.uiContainer = new UIContainer();
