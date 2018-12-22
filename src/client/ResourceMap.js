@@ -294,28 +294,30 @@ ResourceMap.prototype.genBitmapFromPlanetGenerator = function(bmpxmin, bmpxmax, 
     var ctx = mycanvas.getContext("2d");
     var imgData = ctx.createImageData(width, height);
 
-    var tmpMapGenerator = this.mapData.mapGenerator.getSeededCopy();
-    var rgb = tmpMapGenerator.getMatrix(xpos,2*ypos,width,2*height,targetDepth,this.rgbMapName(),true); // x,y, width, height, dept
+    if (this.mapData.mapGenerator.getSeededCopy) {
+        var tmpMapGenerator = this.mapData.mapGenerator.getSeededCopy();
+        var rgb = tmpMapGenerator.getMatrix(xpos, 2 * ypos, width, 2 * height, targetDepth, this.rgbMapName(), true); // x,y, width, height, dept
 
-    var r = rgb.r;
-    var g = rgb.g;
-    var b = rgb.b;
-    var sizeX = rgb.sizeX;
-    var data = imgData.data;
-    for (var yDest = 0, ySource=0; yDest < height; yDest++, ySource++) {
-        var startOfRowDest = width * yDest;
-        var startOfRowSource = sizeX * ySource;
-        for (var xDest = 0, xSource=0; xDest < width; xDest++, xSource++) {
-            var startOfPixelDest = (startOfRowDest + xDest) *4;
-            var startOfPixelSource = (startOfRowSource + xSource);
-            data[startOfPixelDest] = r[startOfPixelSource];
-            data[startOfPixelDest + 1] = g[startOfPixelSource];
-            data[startOfPixelDest + 2] = b[startOfPixelSource];
-            data[startOfPixelDest + 3] = 255; //alpha
+        var r = rgb.r;
+        var g = rgb.g;
+        var b = rgb.b;
+        var sizeX = rgb.sizeX;
+        var data = imgData.data;
+        for (var yDest = 0, ySource = 0; yDest < height; yDest++, ySource++) {
+            var startOfRowDest = width * yDest;
+            var startOfRowSource = sizeX * ySource;
+            for (var xDest = 0, xSource = 0; xDest < width; xDest++, xSource++) {
+                var startOfPixelDest = (startOfRowDest + xDest) * 4;
+                var startOfPixelSource = (startOfRowSource + xSource);
+                data[startOfPixelDest] = r[startOfPixelSource];
+                data[startOfPixelDest + 1] = g[startOfPixelSource];
+                data[startOfPixelDest + 2] = b[startOfPixelSource];
+                data[startOfPixelDest + 3] = 255; //alpha
+            }
         }
-    }
-    ctx.putImageData(imgData, 0, 0);
+        ctx.putImageData(imgData, 0, 0);
 
+    }
     var bmp = new createjs.Bitmap(mycanvas);
     return bmp;
 };
