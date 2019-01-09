@@ -33,8 +33,9 @@ Client.prototype.init = function() {
     this.layerView = new LayerView( this );
     this.registerComponents();
 
+    this.socketio_host_url = document.location.host;
     //socket = io.connect(window.location.href);
-    socket = io.connect("http://localhost:8080/");
+    socket = io.connect(this.socketio_host_url);
 
     socket.on('error', function (reason){
         console.error('Unable to connect Socket.IO', reason);
