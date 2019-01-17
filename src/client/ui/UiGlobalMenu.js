@@ -27,6 +27,7 @@ var UiGlobalMenu = function ( layerView ) {
     this.userContainer = $('<div id="container"></div>').appendTo(this.content);
 
     this.createLayerUpButton();
+    this.createAdminButton();
 
 
 
@@ -76,6 +77,10 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
         uc.logout();
     });
 
+};
+
+UiGlobalMenu.prototype.createAdminButton = function() {
+    $('<a href="/admin.html" target="_blank">Admin Controls</a>').appendTo(this.container);
 };
 
 
