@@ -80,7 +80,7 @@ UiGlobalMenu.prototype.createLayerUpButton = function() {
 };
 
 UiGlobalMenu.prototype.createAdminButton = function() {
-    $('<a href="/admin.html" target="_blank">Admin Controls</a>').appendTo(this.container);
+    $('<a href="/ui/admin.html" target="_blank">Admin Controls</a>').appendTo(this.container);
 };
 
 
