@@ -6,23 +6,45 @@
 </head>
 <body>
 
-<button type="button" onclick="update()">update</button><br>
-<button type="button" onclick="init()">init</button><br>
-<button type="button" onclick="restart()">restart</button><br>
+<button type="button" onclick="update()">update</button><div id="update"></div>
+<br>
+<button type="button" onclick="init()">init</button><div id="init"></div>
+<br>
+<button type="button" onclick="restart()">restart</button><div id="restart"></div>
+<br>
+
 
 <script>
     function update() {
         var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("update").innerHTML =
+                    this.responseText;
+            }
+        };
         xhttp.open("GET", "/admin/update", true);
         xhttp.send();
     }
     function init() {
         var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("init").innerHTML =
+                    this.responseText;
+            }
+        };
         xhttp.open("GET", "/admin/init", true);
         xhttp.send();
     }
     function restart() {
         var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("restart").innerHTML =
+                    this.responseText;
+            }
+        };
         xhttp.open("GET", "/admin/restart", true);
         xhttp.send();
     }
