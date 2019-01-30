@@ -16,6 +16,7 @@
 
 <script>
     function update() {
+        document.getElementById("update").innerHTML = "";
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -27,6 +28,7 @@
         xhttp.send();
     }
     function init() {
+        document.getElementById("init").innerHTML = "";
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -38,6 +40,7 @@
         xhttp.send();
     }
     function restart() {
+        document.getElementById("restart").innerHTML = "";
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
