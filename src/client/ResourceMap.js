@@ -131,6 +131,14 @@ ResourceMap.prototype.checkRenderingNextRun = function() {
     }
     else {
 
+        if (!this.mapData.mapGenerator.isInitialized ) {
+            this.mapData.mapGenerator.init();
+        }
+
+        if (this.mapData.mapGenerator.rgbMapName != this.rgbMapName()) {
+            this.mapData.mapGenerator.setRgbMapName(this.rgbMapName());
+        }
+
         //console.log("this.mapRenderWidth="+this.mapRenderWidth+" this.mapRenderHeight="+this.mapRenderHeight);
 
         var xoff = - this.mapRenderer.mainContainer.x + this.mapRenderWidth/2;

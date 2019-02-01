@@ -14,7 +14,9 @@ var UiBgMap = function (layerView) {
     $('<option />', {value: 'humidityGrayscale', text: 'humidityGrayscale'}).appendTo(this.selectMapBgType);
     this.selectMapBgType.val(self.layerView.rgbMapName());
     $(this.selectMapBgType).change(function() {
+        self.layerView.mapContainer.map.mapData.mapGenerator.setRgbMapName(self.selectMapBgType.val());
         self.layerView.rgbMapName(self.selectMapBgType.val());
+        self.setResMap(self.resourceMap);
     });
 
     this.label = $('<label>Height Range</label>').appendTo(this.content);
@@ -43,17 +45,21 @@ UiBgMap.prototype.setResMap = function(ressourceMapWrapper) {
     this.resourceMap = ressourceMapWrapper;
     this.resTypes = ressourceMapWrapper.mapData.mapProperties.resTypes;
     var planetMapping = ressourceMapWrapper.mapData.mapGenerator.planetMapping;
+    if (planetMapping) {
+        this.selectHeightRange.empty();
+        $('<option />', {value: 'off', text: 'Off'}).appendTo(this.selectHeightRange);
+        for (var height_range_name in planetMapping.mappings) {
+            $('<option />', {value: height_range_name, text: height_range_name}).appendTo(this.selectHeightRange);
+        }
 
-    this.selectHeightRange.empty();
-    $('<option />', {value: 'off', text: 'Off'}).appendTo(this.selectHeightRange);
-    for (var height_range_name in planetMapping.mappings) {
-        $('<option />', {value: height_range_name, text: height_range_name}).appendTo(this.selectHeightRange);
-    }
-
-    this.selectMappingType.empty();
-    $('<option />', {value: 'rgb', text: 'rgb'}).appendTo(this.selectMappingType);
-    for (var k=0; k<planetMapping.mapNames.length; k++) {
-        $('<option />', {value: planetMapping.mapNames[k], text: planetMapping.mapNames[k]}).appendTo(this.selectMappingType);
+        this.selectMappingType.empty();
+        $('<option />', {value: 'rgb', text: 'rgb'}).appendTo(this.selectMappingType);
+        for (var k = 0; k < planetMapping.mapNames.length; k++) {
+            $('<option />', {
+                value: planetMapping.mapNames[k],
+                text: planetMapping.mapNames[k]
+            }).appendTo(this.selectMappingType);
+        }
     }
 
     function updateMapping() {

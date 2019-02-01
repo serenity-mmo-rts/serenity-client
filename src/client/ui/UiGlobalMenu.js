@@ -178,8 +178,8 @@ UiGlobalMenu.prototype.createCoins = function() {
     var credits = 200;
     this.coinContainer = $('<div id="coinContainer"></div>').appendTo(this.userContainer);
     this.coinContainer.css({'width':25+'%','display': 'inline-block'});
-    this.credits = $('<b>Credits:'+credits+'</b>').appendTo(this.coinContainer);
-    this.blackMarketFunds = $('<b>Black Market Funds:'+blackMarketFunds+'</b>').appendTo(this.coinContainer);
+    //this.credits = $('<b>Credits:'+credits+'</b>').appendTo(this.coinContainer);
+    //this.blackMarketFunds = $('<b>Black Market Funds:'+blackMarketFunds+'</b>').appendTo(this.coinContainer);
 };
 
 
