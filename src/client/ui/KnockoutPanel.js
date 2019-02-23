@@ -14,7 +14,7 @@ createKnockoutPanel = function (koViewModel, compRegName, viewPath) {
     // register a new knockout component:
     ko.components.register(compRegName, {
         viewModel: { instance: koViewModel },
-        template: { require: 'text!'+viewPath }
+        template: { require: 'text!'+viewPath },
     });
     var contentDiv = $('<div data-bind="component: \''+compRegName+'\'"></div>').addClass("ui-widget");
     ko.applyBindings(koViewModel, contentDiv[0]);

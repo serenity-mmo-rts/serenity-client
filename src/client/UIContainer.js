@@ -9,9 +9,11 @@ var UIContainer = function(){
  * @param content is the html element to add.
  * @param params is an object {visible: true, barPos: 'topleft', posInBar: 0}
  */
-UIContainer.prototype.addContentPanel = function(content, params) {
+UIContainer.prototype.addContentPanel = function(classInstance, content, params) {
 
     // params = {visible: true, barPos: 'topleft', posInBar: 0};
+
+    this.classInstance = classInstance;
 
     // create the panel to hold the content:
     var zIndex = this.panels.length - params.posInBar;
@@ -23,6 +25,11 @@ UIContainer.prototype.addContentPanel = function(content, params) {
         panel.hide(0);
     }
     this.panels.splice(params.posInBar, 0, panel);
+
+    this.classInstance.afterRenderCb = function() {
+        //console.log("classInstance.afterRenderCb.... panel.update()");
+        panel.update();
+    };
 
     // link the newly inserted panel to the previous panel in the bar:
     if(params.posInBar>0) {

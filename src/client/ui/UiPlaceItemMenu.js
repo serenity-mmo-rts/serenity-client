@@ -13,6 +13,7 @@ var UiPlaceItemMenu = function ( layerView ) {
             self.showPlaceObjects();
         }
     });
+    this.afterRenderCb = null;
 
 };
 
@@ -85,7 +86,11 @@ UiPlaceItemMenu.prototype.addToPlaceObjects = function (object) {
     }
 };
 
-
+UiPlaceItemMenu.prototype.afterRender = function () {
+    if (this.afterRenderCb) {
+        this.afterRenderCb();
+    }
+};
 
 UiPlaceItemMenu.prototype.initializeObject = function (objectParams) {  // ObjectID missing
 

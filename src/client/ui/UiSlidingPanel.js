@@ -6,6 +6,8 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.nextPanel = null;
     this.topPosition = topPosition;
 
+    this.content = content;
+
     this.panelDiv = document.createElement('div');
     this.panelDiv.style.position="absolute";
     this.panelDiv.style.top = topPosition+"px";

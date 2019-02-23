@@ -29,13 +29,13 @@ var LayerView = function(client){
      * @type {UiGlobalMenu}
      */
     this.uiGlobalMenu = new UiGlobalMenu( this );
-    this.uiContainer.addContentPanel(this.uiGlobalMenu.content, {visible: true, barPos: 'topleft', posInBar: 0});
+    this.uiContainer.addContentPanel(this.uiGlobalMenu, this.uiGlobalMenu.content, {visible: true, barPos: 'topleft', posInBar: 0});
 
     this.uiPlaceItemMenu = new UiPlaceItemMenu( this );
-    this.uiContainer.addContentPanel(createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/UiPlaceItemMenu.html'), {visible: true, barPos: 'topleft', posInBar: 1});
+    this.uiContainer.addContentPanel(this.uiPlaceItemMenu, createKnockoutPanel(this.uiPlaceItemMenu, 'uiPlaceItemMenu', 'ui/UiPlaceItemMenu.html'), {visible: true, barPos: 'topleft', posInBar: 1});
 
     this.testComponent = new testComponent();
-    this.uiContainer.addContentPanel(createKnockoutPanel(this.testComponent, 'testComponent', 'ui/testComponent.html'), {visible: true, barPos: 'topleft', posInBar: 2});
+    this.uiContainer.addContentPanel(this.testComponent, createKnockoutPanel(this.testComponent, 'testComponent', 'ui/testComponent.html'), {visible: true, barPos: 'topleft', posInBar: 2});
 
     this.buildMenu = new BuildMenu( this );
     var buildMenuPanel = createKnockoutPanel(this.buildMenu, 'buildMenu', 'ui/buildMenu.html');

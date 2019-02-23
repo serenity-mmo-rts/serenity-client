@@ -128,18 +128,6 @@ UiGlobalMenu.prototype.createOccupation = function() {
         $( "#radio" ).buttonset();
     });
 
-    var selectionMenu = $('<div id="occupationSelectionMenu">' +
-    '<form>' +
-    '<div id="radio">' +
-    '<input type="radio" id="radio1" name="radio" /><label for="radio1">Pilot</label>' +
-    '<input type="radio" id="radio2" name="radio" /><label for="radio2">Merchant</label>' +
-    '<input type="radio" id="radio3" name="radio" /><label for="radio3">Soldier</label>' +
-    '</div>' +
-    '</form>' +
-    '</div>');
-
-    selectionMenu.appendTo(this.occupationContainer);
-
 };
 
 

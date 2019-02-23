@@ -6,10 +6,17 @@ var testComponent = function () {
     this.mouseCoordX = ko.observable(0);
     this.mouseCoordY = ko.observable(0);
     this.debugText = ko.observable('none');
+    this.afterRenderCb = null;
 };
 
 testComponent.prototype.setFPS = function(fps) {
     this.fps(fps.toString());
+};
+
+testComponent.prototype.afterRender = function (param1, param2, param3) {
+    if (this.afterRenderCb) {
+        this.afterRenderCb();
+    }
 };
 
 testComponent.prototype.setMouseCoord = function(mouseCoord) {
