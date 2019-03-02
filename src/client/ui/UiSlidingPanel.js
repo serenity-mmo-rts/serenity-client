@@ -1,19 +1,26 @@
 
-var UiSlidingPanel = function(topPosition,zIndex,content){
+var UiSlidingPanel = function(topPosition,zIndex,content,barPos){
     var self = this;
 
     this.isVisible = true;
     this.nextPanel = null;
     this.topPosition = topPosition;
+    this.barPos = barPos;
 
     this.content = content;
 
     this.panelDiv = document.createElement('div');
     this.panelDiv.style.position="absolute";
-    this.panelDiv.style.top = topPosition+"px";
-    this.panelDiv.style.left = "0px";
     this.panelDiv.style.width = "auto";
     this.panelDiv.style.zIndex = zIndex;
+    if (this.barPos == "bottomleft") {
+        this.panelDiv.style.bottom = topPosition+"px";
+        this.panelDiv.style.left = "0px";
+    }
+    else {
+        this.panelDiv.style.top = topPosition+"px";
+        this.panelDiv.style.left = "0px";
+    }
 
     this.innerDiv = document.createElement('div');
     this.innerDiv.style.position="absolute";
@@ -26,7 +33,12 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.buttonDiv = document.createElement('div');
     this.buttonDiv.style.position = "absolute";
     this.buttonDiv.style.right = "-30px";
-    this.buttonDiv.style.bottom = "0px";
+    if (this.barPos == "bottomleft") {
+        this.buttonDiv.style.top = "0px";
+    }
+    else {
+        this.buttonDiv.style.bottom = "0px";
+    }
     this.buttonDiv.className = "toggleButton ui-corner-all";
     this.buttonDiv.onclick = function() {
         self.toggle();
@@ -35,17 +47,28 @@ var UiSlidingPanel = function(topPosition,zIndex,content){
     this.panelDiv.appendChild(this.innerDiv);
     this.innerDiv.appendChild(this.buttonDiv);
     //$('#allUiPanels').append(this.panelDiv);
-    $('#uiPanels').append(this.panelDiv);
 
 };
 
 UiSlidingPanel.prototype.setPos = function(left,top) {
     var rect = this.innerDiv.getBoundingClientRect();
-    if(left != rect.left || top != rect.top ) {
-        $( this.panelDiv ).animate({
-            left: left,
-            top: top
-        }, 300, function() {
+
+    var oldRectOffset = null;
+    var newPos = {
+        left: left
+    };
+    if (this.barPos == "bottomleft") {
+        oldRectOffset = rect.bottom;
+        newPos.bottom = top + this.innerDiv.offsetHeight;
+    }
+    else {
+        oldRectOffset = rect.top;
+        newPos.top = top;
+    }
+
+    if(left != rect.left || top != oldRectOffset ) {
+
+        $( this.panelDiv ).animate(newPos, 300, function() {
             // Animation complete.
         });
         if (this.nextPanel !== null) {

@@ -58,6 +58,13 @@ var BuildMenu = function ( layerView ) {
         }
     });
 
+    this.afterRenderCb = null;
+};
+
+BuildMenu.prototype.afterRender = function () {
+    if (this.afterRenderCb) {
+        this.afterRenderCb();
+    }
 };
 
 BuildMenu.prototype.initializeObject = function (objectTypeId) {  // ObjectID missing

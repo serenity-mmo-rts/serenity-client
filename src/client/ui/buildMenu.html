@@ -1,15 +1,16 @@
-<div id="buildMenu" data-bind="foreach: buildMenuData"
-     class="ui-widget-content ui-accordion">
+<div class="">
+    <div id="buildMenu"  data-bind="foreach: buildMenuData" class="ui-widget-content ui-accordion">
 
-    <h3>
-        <a href="#" data-bind="text: name"></a>
-    </h3>
-    <ol data-bind="foreach: objectTypes" class="build-menu-list">
-        <li class="buildMenuItem">
-            <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
-                <span><spritecomponent params='spritesheetId: iconSpritesheetId, spriteFrame: iconSpriteFrame, width: 32, height: 32'></spritecomponent><span class="buildMenuText" data-bind="text: objectTypeId"></span></span>
-            </a>
-        </li>
-    </ol>
-
+        <h3>
+            <a href="#" data-bind="text: name"></a>
+        </h3>
+        <ol data-bind="foreach: objectTypes" class="build-menu-list">
+            <li class="buildMenuItem">
+                <a href="#" data-bind="{attr: { title: tooltip }, click: clickHandler}">
+                    <span><spritecomponent params='spritesheetId: iconSpritesheetId, spriteFrame: iconSpriteFrame, width: 32, height: 32'></spritecomponent><span class="buildMenuText" data-bind="text: objectTypeId"></span></span>
+                </a>
+            </li>
+        </ol>
+    </div>
+    <span data-bind="template: { afterRender: function(param1, param2) { param2.afterRender(); } }"></span>
 </div>

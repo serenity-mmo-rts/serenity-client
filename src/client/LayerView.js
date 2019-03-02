@@ -20,7 +20,7 @@ var LayerView = function(client){
     createjs.Ticker.framerate = 20;
     createjs.Ticker.addEventListener("tick", function () {self.tick()});
 
-    this.uiContainer = new UIContainer();
+    this.uiContainer = new UIContainer('topleft');
 
 
 
@@ -37,9 +37,12 @@ var LayerView = function(client){
     this.testComponent = new testComponent();
     this.uiContainer.addContentPanel(this.testComponent, createKnockoutPanel(this.testComponent, 'testComponent', 'ui/testComponent.html'), {visible: true, barPos: 'topleft', posInBar: 2});
 
+
+    this.uiContainerBottomLeft = new UIContainer('bottomleft');
+
     this.buildMenu = new BuildMenu( this );
-    var buildMenuPanel = createKnockoutPanel(this.buildMenu, 'buildMenu', 'ui/buildMenu.html');
-    $("#buildMenuPlaceholder").append(buildMenuPanel);
+    this.uiContainerBottomLeft.addContentPanel(this.buildMenu, createKnockoutPanel(this.buildMenu, 'buildMenu', 'ui/buildMenu.html'), {visible: true, barPos: 'bottomleft', posInBar: 0});
+
 
     this.itemContextMenu = new ItemContextMenu();
     var itemContextMenuPanel = createKnockoutPanel(this.itemContextMenu, 'itemContextMenu', 'ui/ItemContextMenu.html');

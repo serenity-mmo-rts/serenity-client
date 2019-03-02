@@ -1,7 +1,22 @@
-var UIContainer = function(){
+var UIContainer = function(barPos){
 
+    this.barPos = barPos;
     this.panels = [];
 
+
+    this.panelDiv = document.createElement('div');
+    this.panelDiv.style.position="absolute";
+    this.panelDiv.style.width = "auto";
+    if (this.barPos == "bottomleft") {
+        this.panelDiv.style.bottom = "0px";
+        this.panelDiv.style.left = "0px";
+    }
+    else {
+        this.panelDiv.style.top = "0px";
+        this.panelDiv.style.left = "0px";
+    }
+
+    $('#uiPanels').append(this.panelDiv);
 };
 
 /**
@@ -17,7 +32,10 @@ UIContainer.prototype.addContentPanel = function(classInstance, content, params)
 
     // create the panel to hold the content:
     var zIndex = this.panels.length - params.posInBar;
-    var panel = new UiSlidingPanel(0,zIndex,content);
+    var panel = new UiSlidingPanel(0,zIndex,content,params.barPos);
+
+    this.panelDiv.append(panel.panelDiv);
+
     if (params.visible) {
         panel.show(0);
     }
