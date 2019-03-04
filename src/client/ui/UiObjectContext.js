@@ -112,20 +112,8 @@ UiObjectContext.prototype.mainInfo = function(mapObj) {
     pointDisplay.appendTo(headerContent);
 
     // Graphics //
-    var spritesheet = game.spritesheets.get(this.objetType.spritesheetId);
-    var spriteFrameIcon = spritesheet.frames[this.objetType.spriteFrame];
-    var x = spriteFrameIcon[0];
-    var y = spriteFrameIcon[1];
-    var breite = spriteFrameIcon[2];
-    var hoehe = spriteFrameIcon[3];
-    var scale = (100/breite);
-    var img = spritesheet.images[spriteFrameIcon[4]];
-    var container= $('<div style="white-space:nowrap"></div>').css({'width':100, 'height':100,'zoom':scale});
-    var image = $('<div style="white-space:nowrap"></div>');
-    image.css({'background-image': 'url('+img+')' ,'background-position-x':-x , 'background-position-y':-y,'background-repeat':'no-repeat','width':breite+'%','height':hoehe+'%','background-size':'auto'});
-    image.appendTo(container);
-    container.appendTo(headerContent);
-
+    this.objectIcon = new SpriteImg(this.objetType.iconSpritesheetId,this.objetType.iconSpriteFrame,100,100);
+    this.objectIcon.content.appendTo(headerContent);
 
     // Upgrade progress bar
     this.progressbar = $('<div id="progressbar"></div>');
