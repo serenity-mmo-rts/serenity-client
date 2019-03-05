@@ -45,7 +45,7 @@ var Map = function(mapContainer, stage,mapId) {
     //this.bgMap = new ResAndBgWrapper(this,this.bgContainer,this.mapId,"background");
     //this.resourceMap = new ResAndBgWrapper(this,this.resContainer,this.mapId,"resource");
 
-
+    this.isPeriodic = this.mapType.isPeriodic;
 
     /*
     this.layer.mapData.objectChangedCallback = function(mapObject) {
@@ -160,21 +160,21 @@ Map.prototype.checkRendering = function(){
 
     for (var itemId in itemList) {
         // ToDO more checks whether item should be rendered or not (map listner, quadtree etc.)
-
         this.checkRenderingOfItem(itemList[itemId]);
-
     }
 
-    /*
+    var counter = 0;
     for (var mapObjectId in objectList) {
+        counter++;
         this.checkRenderingOfObject(objectList[mapObjectId]);
     }
-    */
 
     var worldObjectList = this.layer.mapGenerator.getWorldObjects();
     for (var worldObjectId in worldObjectList) {
+        counter++;
         this.checkRenderingOfObject(worldObjectList[worldObjectId]);
     }
+    console.log("counter="+counter)
 
     this.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
 
@@ -324,9 +324,23 @@ Map.prototype.renderDashedLine =  function(x1, y1, x2, y2, dashLen) {
 
 
 Map.prototype.checkRenderingOfObject = function(mapObject){
+    //console.log(".............")
 
-    var DistanceX = Math.abs(this.gameCoord2RenderX(mapObject.x(),mapObject.y()) +this.mainContainer.x);
-    var DistanceY = Math.abs(this.gameCoord2RenderY(mapObject.x(),mapObject.y()) +this.mainContainer.y);
+    var camPosX = -this.mainContainer.x;
+    var camPosY = -this.mainContainer.y;
+    //console.log("camPosX="+camPosX + "  camPosY="+camPosY);
+    //console.log("mapObject.x()="+mapObject.x() + "  mapObject.y()="+mapObject.y());
+
+    var objRenderX = this.gameCoord2RenderXnearCam(mapObject.x(),mapObject.y());
+    var objRenderY = this.gameCoord2RenderYnearCam(mapObject.x(),mapObject.y());
+
+    //console.log("objRenderX="+objRenderX + "  objRenderY="+objRenderY);
+
+    // TODO: add periodic boundaries:
+    var DistanceX = Math.abs( objRenderX-camPosX);
+    var DistanceY = Math.abs( objRenderY-camPosY);
+
+
     var isalreadyRendered  = false;
     var shouldbeRendered = false;
 
@@ -339,10 +353,17 @@ Map.prototype.checkRenderingOfObject = function(mapObject){
         }
     }
 
+    //console.log("shouldbeRendered="+shouldbeRendered);
+
     var checkedObj = this.objContainer.getChildByName(mapObject._id());
     isalreadyRendered = this.objContainer.contains(checkedObj);
 
-    if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
+    if (isalreadyRendered && shouldbeRendered) {
+        // check if coordinates are still correct:
+        checkedObj.x = objRenderX;
+        checkedObj.y = objRenderY;
+    }
+    else if (isalreadyRendered && !shouldbeRendered) {   // remove from rendering container
         this.objContainer.removeChild(checkedObj);
         //mapObject.onChangeCallback = [];
         mapObject.removeCallback("renderObj");
@@ -565,16 +586,16 @@ Map.prototype.renderObj = function(mapObject) {
         }
     }
 
-    objectBitmap.x = this.gameCoord2RenderX(mapObject.x(), mapObject.y());
-    objectBitmap.y = this.gameCoord2RenderY(mapObject.x(), mapObject.y());
+    objectBitmap.x = this.gameCoord2RenderXnearCam(mapObject.x(), mapObject.y());
+    objectBitmap.y = this.gameCoord2RenderYnearCam(mapObject.x(), mapObject.y());
     var self = this;
     mapObject.x.subscribe(function(newValue){
-        objectBitmap.x = self.gameCoord2RenderX(mapObject.x(), mapObject.y());
-        objectBitmap.y = self.gameCoord2RenderY(mapObject.x(), mapObject.y());
+        objectBitmap.x = self.gameCoord2RenderXnearCam(mapObject.x(), mapObject.y());
+        objectBitmap.y = self.gameCoord2RenderYnearCam(mapObject.x(), mapObject.y());
     });
     mapObject.y.subscribe(function(newValue){
-        objectBitmap.x = self.gameCoord2RenderX(mapObject.x(), mapObject.y());
-        objectBitmap.y = self.gameCoord2RenderY(mapObject.x(), mapObject.y());
+        objectBitmap.x = self.gameCoord2RenderXnearCam(mapObject.x(), mapObject.y());
+        objectBitmap.y = self.gameCoord2RenderYnearCam(mapObject.x(), mapObject.y());
     });
 
     objectBitmap.mapObjectId = ko.computed(function() {
@@ -613,6 +634,30 @@ Map.prototype.moveObjectToRenderCoord = function(mapObject, x, y) {
     mapObject.y = this.renderCoord2GameY(objectBitmap.x, objectBitmap.y);
 }
 
+Map.prototype.gameCoord2RenderXnearCam = function(gameX,gameY) {
+    var renderX = this.gameCoord2RenderX(gameX,gameY);
+    if (this.isPeriodic) {
+        var camPosX = -this.mainContainer.x;
+        var renderWidth = this.mapType.ratioWidthHeight * this.layer.width();
+        var renderX_toCam = renderX - camPosX + renderWidth/2;
+        renderX_toCam = renderX_toCam.mod(renderWidth) - renderWidth/2;
+        renderX = renderX_toCam + camPosX;
+    }
+    return renderX;
+}
+
+Map.prototype.gameCoord2RenderYnearCam = function(gameX,gameY) {
+    var renderY = this.gameCoord2RenderY(gameX,gameY);
+    if (this.isPeriodic) {
+        var camPosY = -this.mainContainer.y;
+        var renderHeight = this.layer.height();
+        var renderY_toCam = renderY - camPosY + renderHeight/2;
+        renderY_toCam = renderY_toCam.mod(renderHeight) - renderHeight/2;
+        renderY = renderY_toCam + camPosY;
+    }
+    return renderY;
+}
+
 Map.prototype.gameCoord2RenderX = function(gameX,gameY) {
     var renderX = this.mapType.scale * this.mapType.ratioWidthHeight * (gameX - gameY);
     return renderX;
@@ -623,13 +668,27 @@ Map.prototype.gameCoord2RenderY = function(gameX,gameY) {
     return renderY;
 }
 
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
+
 Map.prototype.renderCoord2GameX = function(renderX,renderY) {
     var gameX = (renderY + renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    if (this.isPeriodic) {
+        gameX += this.layer.width() / 2;
+        gameX.mod(this.layer.width());
+        gameX -= this.layer.width() / 2;
+    }
     return gameX;
 }
 
 Map.prototype.renderCoord2GameY = function(renderX,renderY) {
     var gameY = (renderY - renderX/this.mapType.ratioWidthHeight) / (2*this.mapType.scale);
+    if (this.isPeriodic) {
+        gameY += this.layer.height() / 2;
+        gameY.mod(this.layer.height());
+        gameY -= this.layer.height() / 2;
+    }
     return gameY;
 }
 

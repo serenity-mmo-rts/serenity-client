@@ -11,8 +11,8 @@ var ResourceMap = function (mapRenderer, resMap, mapId, resContainer) {
 
     this.mapWidth = this.mapData.width();
     this.mapHeight = this.mapData.height();
-    this.mapRenderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight);
-    this.mapRenderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight);
+    this.mapRenderWidth = this.mapRenderer.gameCoord2RenderX(this.mapWidth, -this.mapHeight) / 2;
+    this.mapRenderHeight = this.mapRenderer.gameCoord2RenderY(this.mapWidth, this.mapHeight) / 2;
 
     this.rgbMapName = this.mapRenderer.mapContainer.layerView.rgbMapName;
     this.rgbMapName.subscribe(function() {
@@ -135,7 +135,7 @@ ResourceMap.prototype.checkRenderingNextRun = function() {
             this.mapData.mapGenerator.init();
         }
 
-        if (this.mapData.mapGenerator.rgbMapName != this.rgbMapName()) {
+        if (this.mapData.mapGenerator.rgbMapName != this.rgbMapName() && this.mapData.mapGenerator.setRgbMapName) {
             this.mapData.mapGenerator.setRgbMapName(this.rgbMapName());
         }
 

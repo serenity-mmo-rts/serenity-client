@@ -64,12 +64,15 @@ var MapContainer = function(layerView,mapId){
     canvas.onmousedown = function(event){
         event.preventDefault();
     };
-    canvas.addEventListener("mousewheel", (function (evt) {
+
+    this.mousewheelCallback = function (evt) {
         self.MouseWheelHandler(evt)
-    }), false);
-    canvas.addEventListener("DOMMouseScroll", (function (evt) {
+    };
+    this.DOMMouseScrollCallback = function (evt) {
         self.MouseWheelHandler(evt)
-    }), false);
+    };
+    canvas.addEventListener("mousewheel", this.mousewheelCallback, false);
+    canvas.addEventListener("DOMMouseScroll", this.DOMMouseScrollCallback, false);
 
     this.resize();
     this.updateZoom();
@@ -171,5 +174,9 @@ var MapContainer = function(layerView,mapId){
      this.stage.autoClear = true; // This must be true to clear the stage.
      this.stage.removeAllChildren();
      this.stage.update();
+
+     var canvas = document.getElementById("canvas");
+     canvas.removeEventListener("mousewheel", this.mousewheelCallback);
+     canvas.removeEventListener("DOMMouseScroll", this.DOMMouseScrollCallback);
  }
 
