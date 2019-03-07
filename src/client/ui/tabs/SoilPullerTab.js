@@ -27,5 +27,3 @@ var SoilPullerTab = function (mapObj) {
     this.resTypes = ko.observableArray(resObservables);
 
 };
-
-

@@ -155,8 +155,8 @@ UiObjectContext.prototype.createTabs = function() {
         somePanel.appendTo(maintab.content);
     }
     else if (this.mapObj.blocks.hasOwnProperty("SoilPuller")) {
-        var soilPullerTabViewModel = new SoilPullerTab(this.mapObj);
-        var somePanel = createKnockoutPanel(soilPullerTabViewModel, 'SoilPullerTab', 'ui/tabs/SoilPullerTab.html');
+        this.soilPullerTabViewModel = new SoilPullerTab(this.mapObj);
+        var somePanel = createKnockoutPanel(this.soilPullerTabViewModel, 'SoilPullerTab', 'ui/tabs/SoilPullerTab.html');
         var maintab = {
             content: $('<div id="mainTab"></div>').css({'display': 'inline-block'})
         };
@@ -175,8 +175,8 @@ UiObjectContext.prototype.createTabs = function() {
         var maintab = new TowerTab(this.mapObj);
     }
     else if (this.mapObj.blocks.hasOwnProperty("ResourceManager")) {
-        var storageTabViewModel = new StorageTab(this.mapObj);
-        var somePanel = createKnockoutPanel(storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
+        this.storageTabViewModel = new StorageTab(this.mapObj);
+        var somePanel = createKnockoutPanel(this.storageTabViewModel, 'StorageTab', 'ui/tabs/StorageTab.html');
         var maintab = {
             content: $('<div id="mainTab"></div>')
         };
@@ -245,6 +245,10 @@ UiObjectContext.prototype.tick = function() {
 
             if (this.resourcesTabViewModel) {
                 this.resourcesTabViewModel.tick();
+            }
+
+            if (this.storageTabViewModel) {
+                this.storageTabViewModel.tick();
             }
 
         }
