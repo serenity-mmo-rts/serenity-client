@@ -558,7 +558,20 @@ Map.prototype.renderObj = function(mapObject) {
     }
     else {
         if (objType.spriteAnimation !== null){
-            var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId], "working");
+
+            if (mapObject.state() == State.TEMP) {
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId], "working");
+            }
+            else if (mapObject.state() == State.CONSTRUCTION) {
+
+                var construction = game.objectTypes.get("constructionSite");
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[construction.spritesheetId]);
+                objectBitmap.gotoAndStop(construction.spriteFrame);
+                objectBitmap.alpha = 1;
+            }
+            else {
+                var objectBitmap = new createjs.Sprite(uc.spritesheets[objType.spritesheetId], "working");
+            }
 
         }
         else {
@@ -586,6 +599,10 @@ Map.prototype.renderObj = function(mapObject) {
         }
     }
 
+    if (objType.spriteScaling) {
+        objectBitmap.scaleX = objType.spriteScaling;
+        objectBitmap.scaleY = objType.spriteScaling;
+    }
     objectBitmap.x = this.gameCoord2RenderXnearCam(mapObject.x(), mapObject.y());
     objectBitmap.y = this.gameCoord2RenderYnearCam(mapObject.x(), mapObject.y());
     var self = this;

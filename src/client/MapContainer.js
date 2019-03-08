@@ -49,7 +49,7 @@ var MapContainer = function(layerView,mapId){
     this.stage.addChild(this.mapContainer,this.menuContainer);
 
     // zoom levels
-    this.zoomLevel = 0;
+    this.zoomLevel = -15;
     this.zoom = 1; //this.zoomFactors[this.zoomLevel];
 
     // Initialize Map
