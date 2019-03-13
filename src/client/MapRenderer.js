@@ -28,9 +28,9 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.resContainer.alpha = 0.5;
 
-    this.mapData = game.layers.get(this.mapId);
-
     this.layer = game.layers.get(this.mapId);
+    this.mapData = this.layer;
+
     this.mapType = game.layerTypes.get(this.layer.mapTypeId());
 
     this.bgMap = new ResourceMap(this, this.mapData.mapProperties, this.mapId, this.bgContainer);

@@ -42,12 +42,9 @@ var MapControl = function (map) {
         if (self.startDragAt != null) {
             self.screenMoved = true;
             var mouseAt = self.map.mainContainer.globalToLocal(ev.stageX, ev.stageY);
-            self.map.mainContainer.x += mouseAt.x - self.startDragAt.x;
-            self.map.mainContainer.y += mouseAt.y - self.startDragAt.y;
-
-            var groundDragScaling = self.map.mapType.groundDragScaling;
-            self.map.bgImageContainer.x = groundDragScaling * self.map.mainContainer.x;
-            self.map.bgImageContainer.y = groundDragScaling * self.map.mainContainer.y;
+            var newX = self.map.mainContainer.x + mouseAt.x - self.startDragAt.x;
+            var newY = self.map.mainContainer.y + mouseAt.y - self.startDragAt.y;
+            self.mapContainer.scrollToCoordinates(newX, newY);
         }
     });
 
