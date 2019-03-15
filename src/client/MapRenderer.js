@@ -174,7 +174,7 @@ Map.prototype.checkRendering = function(){
         counter++;
         this.checkRenderingOfObject(worldObjectList[worldObjectId]);
     }
-    console.log("counter="+counter)
+    //console.log("counter="+counter)
 
     this.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
 

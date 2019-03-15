@@ -268,7 +268,7 @@ ResourceMap.prototype.checkRenderingNextRun = function() {
 
         }
 
-        console.log("all tiles loaded");
+        //console.log("all tiles loaded");
 
         this.checkRenderingAlreadyRunning = false;
         this.disableProgressBar();
