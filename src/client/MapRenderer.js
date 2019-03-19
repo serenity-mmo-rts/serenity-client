@@ -13,15 +13,17 @@ var Map = function(mapContainer, stage,mapId) {
     this.tickCounter = 0;
 
     this.bgContainer = new createjs.Container();
+    this.objBgContainer = new createjs.Container();
     this.objContainer = new createjs.Container();
     this.resContainer = new createjs.Container();
     this.movContainer = new createjs.Container();
     this.movUpContainer = new createjs.Container();
 
     this.bgContainer.mouseMoveOutside = true;
+    this.objBgContainer.mouseMoveOutside = true;
     this.objContainer.mouseMoveOutside = true;
     this.resContainer.mouseMoveOutside = true;
-    this.mainContainer.addChild(this.bgContainer,this.objContainer,this.resContainer,this.movContainer,this.movUpContainer);
+    this.mainContainer.addChild(this.bgContainer,this.objBgContainer,this.objContainer,this.resContainer,this.movContainer,this.movUpContainer);
 
     this.moveUpSubscriptions = {};
     this.moveSubscriptions = {};
@@ -122,6 +124,8 @@ Map.prototype.createMap = function() {
     backgroundShape.x = 0;
     backgroundShape.y = 0;
     this.bgImageContainer.addChild(backgroundShape);
+
+    this.layer.mapGenerator.renderBgObjects(this.objBgContainer);
 
     this.checkRendering();
 
