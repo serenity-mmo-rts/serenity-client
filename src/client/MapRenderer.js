@@ -659,7 +659,7 @@ Map.prototype.gameCoord2RenderXnearCam = function(gameX,gameY) {
     var renderX = this.gameCoord2RenderX(gameX,gameY);
     if (this.isPeriodic) {
         var camPosX = -this.mainContainer.x;
-        var renderWidth = this.mapType.ratioWidthHeight * this.layer.width();
+        var renderWidth = this.mapType.ratioWidthHeight * this.mapType.scale * this.layer.width();
         var renderX_toCam = renderX - camPosX + renderWidth/2;
         renderX_toCam = renderX_toCam.mod(renderWidth) - renderWidth/2;
         renderX = renderX_toCam + camPosX;
@@ -671,7 +671,7 @@ Map.prototype.gameCoord2RenderYnearCam = function(gameX,gameY) {
     var renderY = this.gameCoord2RenderY(gameX,gameY);
     if (this.isPeriodic) {
         var camPosY = -this.mainContainer.y;
-        var renderHeight = this.layer.height();
+        var renderHeight =  this.mapType.scale * this.layer.height();
         var renderY_toCam = renderY - camPosY + renderHeight/2;
         renderY_toCam = renderY_toCam.mod(renderHeight) - renderHeight/2;
         renderY = renderY_toCam + camPosY;
