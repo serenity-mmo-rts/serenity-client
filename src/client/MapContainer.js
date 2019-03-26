@@ -124,7 +124,7 @@ MapContainer.prototype.MouseWheelHandler = function (e) {
 
 MapContainer.prototype.scrollToCoordinates = function (x, y) {
 
-    console.log("scroll to x="+x+" y="+y)
+    //console.log("scroll to x="+x+" y="+y)
     this.mainContainer.x = x;
     this.mainContainer.y = y;
 

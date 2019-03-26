@@ -49,11 +49,15 @@ var Map = function(mapContainer, stage,mapId) {
 
     this.isPeriodic = this.mapType.isPeriodic;
 
-    /*
+
     this.layer.mapData.objectChangedCallback = function(mapObject) {
-        self.checkRenderingOfObject(mapObject);
-        self.objContainer.sortChildren(function (a, b){ return a.y - b.y; });
-    };*/
+        if (mapObject instanceof MapObject) {
+            self.checkRenderingOfObject(mapObject);
+            self.objContainer.sortChildren(function (a, b) {
+                return a.y - b.y;
+            });
+        }
+    };
 
     // create unique list of images to load:
     var imagesToLoadHashList = {};
