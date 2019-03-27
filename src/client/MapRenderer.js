@@ -452,7 +452,7 @@ Map.prototype.renderObj = function(mapObject) {
             }
 
             if (uc.layerView.uiGlobalMenu)
-                uc.layerView.uiGlobalMenu.setDebugText(orientation.toString() + " mirror: " + mirror.toString() + " flip: " + flipUpDown.toString());
+                uc.layerView.testComponent.setDebugText(orientation.toString() + " mirror: " + mirror.toString() + " flip: " + flipUpDown.toString());
 
             orientation = Math.round(12*orientation/pi);
             // the result should be a number between 0 and 6
