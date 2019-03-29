@@ -1,7 +1,3 @@
-# Layer RTS Engine
+# Serenity Client
 
 Web client with UI and map rendering using easeljs.
-
-## Credits
-* KnockoutJs creators
-* EaselJs
